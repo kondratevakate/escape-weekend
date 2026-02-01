@@ -1,18 +1,8 @@
-import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet';
 import { useState, useMemo } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { kolaPlaces, PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
 import { CategoryFilter } from './CategoryFilter';
-import { PlaceMarker } from './PlaceMarker';
-
-// Fix Leaflet default marker icon issue
-import L from 'leaflet';
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
+import { MapView } from './MapView';
 
 // Kola Peninsula center
 const KOLA_CENTER: [number, number] = [68.0, 34.0];
@@ -60,32 +50,11 @@ export const KolaMap = () => {
       </div>
 
       {/* Map */}
-      <MapContainer
+      <MapView 
+        places={filteredPlaces}
         center={KOLA_CENTER}
         zoom={INITIAL_ZOOM}
-        zoomControl={false}
-        className="h-full w-full"
-        style={{ background: '#e8f4f8' }}
-      >
-        {/* Artistic watercolor-style map tiles */}
-        <TileLayer
-          attribution='&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a>'
-          url="https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg"
-        />
-        
-        {/* Labels overlay */}
-        <TileLayer
-          attribution='&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a>'
-          url="https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}{r}.png"
-        />
-
-        <ZoomControl position="bottomright" />
-
-        {/* Place markers */}
-        {filteredPlaces.map(place => (
-          <PlaceMarker key={place.id} place={place} />
-        ))}
-      </MapContainer>
+      />
 
       {/* Legend */}
       <div className="absolute bottom-4 left-4 z-[1000] bg-background/95 backdrop-blur-sm rounded-xl p-4 shadow-lg border">
