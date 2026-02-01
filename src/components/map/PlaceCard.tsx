@@ -1,19 +1,28 @@
 import { useState, useRef } from 'react';
 import { Place, categoryConfig } from '@/data/kolaPlaces';
-import { X, Star, Heart, ChevronUp, ChevronDown, ExternalLink, Clock, ThumbsUp } from 'lucide-react';
+import { X, Star, Heart, ChevronUp, ChevronDown, ExternalLink, Clock, ThumbsUp, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { usePlaceStats, formatCount } from '@/hooks/usePlaceStats';
 import { ShareButton } from './ShareButton';
+import { SaveToListDrawer } from './SaveToListDrawer';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { UserList } from '@/hooks/useUserLists';
 
 interface PlaceCardProps {
   place: Place;
   isFavorite: boolean;
   onClose: () => void;
   onToggleFavorite: () => void;
+  // User lists props
+  userLists?: UserList[];
+  onToggleInList?: (listId: string, placeId: string) => void;
+  onCreateList?: (name: string, emoji: string) => string;
+  onDeleteList?: (id: string) => void;
+  isInList?: (listId: string, placeId: string) => boolean;
+  isInAnyList?: (placeId: string) => boolean;
 }
 
 // Mock data - in real implementation this would come from Google Places API
@@ -74,7 +83,18 @@ const getMockReviews = () => [
 
 const SWIPE_THRESHOLD = 80;
 
-export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: PlaceCardProps) => {
+export const PlaceCard = ({ 
+  place, 
+  isFavorite, 
+  onClose, 
+  onToggleFavorite,
+  userLists = [],
+  onToggleInList,
+  onCreateList,
+  onDeleteList,
+  isInList,
+  isInAnyList,
+}: PlaceCardProps) => {
   const { t, language } = useLanguage();
   const config = categoryConfig[place.category];
   const mockData = getMockPlaceData(place);
@@ -83,6 +103,9 @@ export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: Plac
 
   // Reviews toggle state
   const [showReviews, setShowReviews] = useState(false);
+  
+  // Save to list drawer state
+  const [showSaveDrawer, setShowSaveDrawer] = useState(false);
   
   // Like animation state
   const [isAnimating, setIsAnimating] = useState(false);
@@ -181,6 +204,23 @@ export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: Plac
             <Heart 
               className="absolute top-1/2 left-1/2 h-16 w-16 fill-red-500 text-red-500 animate-heart-pop pointer-events-none z-10" 
             />
+          )}
+          {/* Bookmark button */}
+          {onToggleInList && onCreateList && onDeleteList && isInList && (
+            <button 
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                setShowSaveDrawer(true);
+              }}
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              className="absolute top-2 right-24 flex items-center gap-1 px-2 py-1.5 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background transition-colors active:scale-95"
+            >
+              <Bookmark className={cn(
+                "h-4 w-4 transition-colors", 
+                isInAnyList?.(place.id) ? "fill-primary text-primary" : ""
+              )} />
+            </button>
           )}
           {/* Like button on photo */}
           <button 
@@ -335,6 +375,20 @@ export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: Plac
           </div>
         </div>
       </div>
+
+      {/* Save to List Drawer */}
+      {onToggleInList && onCreateList && onDeleteList && isInList && (
+        <SaveToListDrawer
+          open={showSaveDrawer}
+          onOpenChange={setShowSaveDrawer}
+          placeId={place.id}
+          lists={userLists}
+          onToggleInList={onToggleInList}
+          onCreateList={onCreateList}
+          onDeleteList={onDeleteList}
+          isInList={isInList}
+        />
+      )}
     </div>
   );
 };
