@@ -7,6 +7,7 @@ import { PlaceCard } from '@/components/map/PlaceCard';
 import { ExploreMode } from '@/components/map/ExploreMode';
 import { CookieConsent } from '@/components/CookieConsent';
 import { kolaPlaces, Place, PlaceCategory } from '@/data/kolaPlaces';
+import { saamiHistoryPlaces } from '@/data/saamiHistoryLayer';
 import { collections } from '@/data/collections';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useUserLists } from '@/hooks/useUserLists';
@@ -15,6 +16,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+
 // Category group mappings
 const categoryGroupMap: Record<CategoryGroup, PlaceCategory[]> = {
   nature: ['nature', 'reserve'],
@@ -47,6 +49,7 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryGroup | 'all'>('all');
   const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [showHistoryLayer, setShowHistoryLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -69,9 +72,18 @@ const Index = () => {
     setShowFavoritesOnly(prev => !prev);
   }, []);
 
+  const handleToggleHistoryLayer = useCallback(() => {
+    setShowHistoryLayer(prev => !prev);
+  }, []);
+
   // Filter places based on header category group AND map category filter AND active collection
   const filteredPlaces = useMemo(() => {
-    let places = kolaPlaces;
+    // Combine base places with Saami history places when history layer is active
+    let allPlaces = showHistoryLayer 
+      ? [...kolaPlaces, ...saamiHistoryPlaces]
+      : kolaPlaces;
+    
+    let places = allPlaces;
     
     // If a collection is active, filter by collection placeIds
     if (activeCollectionId) {
@@ -90,7 +102,11 @@ const Index = () => {
     
     // Then filter by map category filter
     if (selectedCategories.length > 0) {
-      places = places.filter(place => selectedCategories.includes(place.category));
+      // When history layer is on, always include history places
+      places = places.filter(place => 
+        selectedCategories.includes(place.category) || 
+        (showHistoryLayer && place.category === 'history')
+      );
     }
     
     // Filter by favorites if enabled
@@ -99,7 +115,7 @@ const Index = () => {
     }
     
     return places;
-  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites, activeCollectionId]);
+  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites, activeCollectionId, showHistoryLayer]);
 
   const handlePlaceClick = useCallback((place: Place) => {
     setSelectedPlace(place);
@@ -175,8 +191,10 @@ const Index = () => {
             selectedCategories={selectedCategories}
             showFavoritesOnly={showFavoritesOnly}
             favoritesCount={favorites.length}
+            showHistoryLayer={showHistoryLayer}
             onToggleCategory={handleToggleCategory}
             onToggleFavoritesOnly={handleToggleFavoritesOnly}
+            onToggleHistoryLayer={handleToggleHistoryLayer}
             onMapReady={handleMapReady}
             onPlaceClick={handlePlaceClick}
           />

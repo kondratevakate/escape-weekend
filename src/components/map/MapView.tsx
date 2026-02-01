@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Place, PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
+import { saamiTerritoryGeoJSON } from '@/data/saamiHistoryLayer';
 import { CategoryFilter } from './CategoryFilter';
 
 interface MapViewProps {
@@ -12,8 +13,10 @@ interface MapViewProps {
   selectedCategories: PlaceCategory[];
   showFavoritesOnly: boolean;
   favoritesCount: number;
+  showHistoryLayer: boolean;
   onToggleCategory: (category: PlaceCategory) => void;
   onToggleFavoritesOnly: () => void;
+  onToggleHistoryLayer: () => void;
   onMapReady?: () => void;
   onPlaceClick?: (place: Place) => void;
 }
@@ -32,14 +35,17 @@ export const MapView = ({
   selectedCategories,
   showFavoritesOnly,
   favoritesCount,
+  showHistoryLayer,
   onToggleCategory,
   onToggleFavoritesOnly,
+  onToggleHistoryLayer,
   onMapReady, 
   onPlaceClick 
 }: MapViewProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
+  const historyLayerRef = useRef<L.GeoJSON | null>(null);
 
   // Initialize map
   useEffect(() => {
@@ -75,6 +81,36 @@ export const MapView = ({
       }
     };
   }, [onMapReady]);
+
+  // Update history layer visibility
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+
+    if (showHistoryLayer && !historyLayerRef.current) {
+      // Add Saami territory polygon
+      historyLayerRef.current = L.geoJSON(saamiTerritoryGeoJSON as GeoJSON.Feature, {
+        style: {
+          fillColor: 'hsl(340, 65%, 45%)',
+          fillOpacity: 0.12,
+          color: 'hsl(340, 65%, 35%)',
+          weight: 2,
+          dashArray: '6, 4',
+        },
+      }).addTo(mapInstanceRef.current);
+      
+      // Add popup to polygon
+      historyLayerRef.current.bindPopup(`
+        <div style="text-align: center; padding: 4px;">
+          <strong>📜 Территория саамов</strong><br/>
+          <small style="color: #666;">Историческое расселение<br/>саамского народа</small>
+        </div>
+      `);
+    } else if (!showHistoryLayer && historyLayerRef.current) {
+      // Remove layer
+      historyLayerRef.current.remove();
+      historyLayerRef.current = null;
+    }
+  }, [showHistoryLayer]);
 
   // Update markers when places or favorites change
   useEffect(() => {
@@ -173,9 +209,25 @@ export const MapView = ({
             showFavoritesOnly={showFavoritesOnly}
             onToggleFavoritesOnly={onToggleFavoritesOnly}
             favoritesCount={favoritesCount}
+            showHistoryLayer={showHistoryLayer}
+            onToggleHistoryLayer={onToggleHistoryLayer}
           />
         </div>
       </div>
+      
+      {/* History layer attribution */}
+      {showHistoryLayer && (
+        <div className="absolute bottom-2 left-2 z-[1000]">
+          <a 
+            href="https://atlaskmns.ru" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            📜 Данные: atlaskmns.ru
+          </a>
+        </div>
+      )}
     </div>
   );
 };

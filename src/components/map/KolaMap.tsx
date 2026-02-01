@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { kolaPlaces, PlaceCategory, categoryConfig, Place } from '@/data/kolaPlaces';
+import { saamiHistoryPlaces } from '@/data/saamiHistoryLayer';
 import { CategoryFilter } from './CategoryFilter';
 import { MapView } from './MapView';
 import { PlaceCard } from './PlaceCard';
@@ -24,9 +25,11 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   const { t } = useLanguage();
   const { favorites, toggleFavorite, isFavorite, favoritesCount } = useFavorites();
   
-  const allCategories = Object.keys(categoryConfig) as PlaceCategory[];
-  const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>(allCategories);
+  // Filter out 'history' from default selected categories - it's controlled by history layer toggle
+  const defaultCategories = (Object.keys(categoryConfig) as PlaceCategory[]).filter(c => c !== 'history');
+  const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>(defaultCategories);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [showHistoryLayer, setShowHistoryLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isExploreMode, setIsExploreMode] = useState(false);
@@ -36,12 +39,21 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   }, []);
 
   const filteredPlaces = useMemo(() => {
-    let places = kolaPlaces.filter(place => selectedCategories.includes(place.category));
+    // Combine base places with Saami history places when history layer is active
+    const allPlaces = showHistoryLayer 
+      ? [...kolaPlaces, ...saamiHistoryPlaces]
+      : kolaPlaces;
+    
+    let places = allPlaces.filter(place => 
+      selectedCategories.includes(place.category) ||
+      (showHistoryLayer && place.category === 'history')
+    );
+    
     if (showFavoritesOnly) {
       places = places.filter(place => favorites.includes(place.id));
     }
     return places;
-  }, [selectedCategories, showFavoritesOnly, favorites]);
+  }, [selectedCategories, showFavoritesOnly, favorites, showHistoryLayer]);
 
   const handleToggleCategory = (category: PlaceCategory) => {
     setSelectedCategories(prev => {
@@ -56,6 +68,10 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
 
   const handleToggleFavoritesOnly = () => {
     setShowFavoritesOnly(prev => !prev);
+  };
+
+  const handleToggleHistoryLayer = () => {
+    setShowHistoryLayer(prev => !prev);
   };
 
   const handlePlaceClick = useCallback((place: Place) => {
@@ -133,6 +149,8 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
             showFavoritesOnly={showFavoritesOnly}
             onToggleFavoritesOnly={handleToggleFavoritesOnly}
             favoritesCount={favoritesCount}
+            showHistoryLayer={showHistoryLayer}
+            onToggleHistoryLayer={handleToggleHistoryLayer}
           />
         </div>
       )}
@@ -158,8 +176,10 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         selectedCategories={selectedCategories}
         showFavoritesOnly={showFavoritesOnly}
         favoritesCount={favoritesCount}
+        showHistoryLayer={showHistoryLayer}
         onToggleCategory={handleToggleCategory}
         onToggleFavoritesOnly={handleToggleFavoritesOnly}
+        onToggleHistoryLayer={handleToggleHistoryLayer}
         onMapReady={handleMapReady}
         onPlaceClick={handlePlaceClick}
       />
