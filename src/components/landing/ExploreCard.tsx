@@ -10,7 +10,7 @@ export const ExploreCard = ({ onStart }: ExploreCardProps) => {
   const { t, language } = useLanguage();
 
   return (
-    <div className="relative overflow-hidden rounded-xl">
+    <div className="relative overflow-hidden rounded-lg">
       {/* Background image */}
       <div 
         className="absolute inset-0 bg-cover bg-center"
@@ -23,29 +23,30 @@ export const ExploreCard = ({ onStart }: ExploreCardProps) => {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
       
       {/* Content */}
-      <div className="relative p-4 min-h-[140px] md:min-h-[160px] flex flex-col justify-end">
-        <div className="flex items-center gap-2 mb-2">
-          <Compass className="h-5 w-5 text-white" />
-          <span className="text-white/90 text-sm font-medium">
+      <div className="relative p-3 min-h-[100px] flex flex-col justify-end">
+        <div className="flex items-center gap-1.5 mb-1">
+          <Compass className="h-4 w-4 text-white" />
+          <span className="text-white/90 text-xs font-medium">
             {language === 'ru' ? 'Режим открытий' : 'Discovery Mode'}
           </span>
         </div>
         
-        <h3 className="text-white font-bold text-lg md:text-xl mb-1.5">
+        <h3 className="text-white font-bold text-sm mb-1">
           {language === 'ru' ? 'Свайпай и открывай' : 'Swipe & Discover'}
         </h3>
         
-        <p className="text-white/70 text-xs md:text-sm mb-3 line-clamp-2">
+        <p className="text-white/70 text-[11px] mb-2 line-clamp-1">
           {language === 'ru' 
-            ? 'Листайте места как карточки. Понравилось — свайп вправо!' 
-            : 'Browse places like cards. Like it? Swipe right!'}
+            ? 'Листайте места как карточки' 
+            : 'Browse places like cards'}
         </p>
         
         <Button 
           onClick={onStart}
-          className="w-full bg-white text-black hover:bg-white/90"
+          size="sm"
+          className="w-full h-8 text-xs bg-white text-black hover:bg-white/90"
         >
-          {language === 'ru' ? 'Начать исследование' : 'Start Exploring'}
+          {language === 'ru' ? 'Начать' : 'Start'}
         </Button>
       </div>
     </div>
