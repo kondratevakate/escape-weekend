@@ -83,6 +83,9 @@ export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: Plac
 
   // Reviews toggle state
   const [showReviews, setShowReviews] = useState(false);
+  
+  // Like animation state
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // Swipe state
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -152,12 +155,21 @@ export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: Plac
           />
           {/* Like button on photo */}
           <button 
-            onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              setIsAnimating(true);
+              setTimeout(() => setIsAnimating(false), 400);
+              onToggleFavorite(); 
+            }}
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             className="absolute top-2 right-12 flex items-center gap-1 px-2 py-1.5 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background transition-colors active:scale-95"
           >
-            <Heart className={cn("h-4 w-4 transition-colors", isFavorite ? "fill-red-500 text-red-500" : "")} />
+            <Heart className={cn(
+              "h-4 w-4 transition-colors", 
+              isFavorite ? "fill-red-500 text-red-500" : "",
+              isAnimating && "animate-heart-bounce"
+            )} />
             <span className="text-xs font-medium">{formatCount(stats.likesCount + (isFavorite ? 1 : 0))}</span>
           </button>
           {/* Close button */}
