@@ -19,7 +19,7 @@ export const DiscoverPanel = ({
 }: DiscoverPanelProps) => {
   return (
     <ScrollArea className="h-full">
-      <div className="p-4 space-y-6">
+      <div className="p-3 md:p-4 space-y-4 md:space-y-5">
         {/* Explore Mode Card */}
         <ExploreCard onStart={onStartExplore} />
         
