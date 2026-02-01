@@ -17,7 +17,7 @@ export const PlacesList = ({
   onPlaceClick,
 }: PlacesListProps) => {
   return (
-    <div className="grid grid-cols-1 gap-4 p-4">
+    <div className="flex flex-col gap-2 p-3">
       {places.map((place) => (
         <PlaceListCard
           key={place.id}
