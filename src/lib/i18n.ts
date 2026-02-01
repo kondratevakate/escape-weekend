@@ -8,6 +8,7 @@ export const translations = {
       headline: 'Откройте красоту Кольского полуострова',
       subheadline: 'Курированная подборка лучших мест — от северного сияния до древних гор. Исследуйте, сохраняйте, делитесь.',
       cta: 'Открыть карту',
+      noPlaces: 'Нет мест для отображения',
     },
     
     // Header
@@ -115,6 +116,7 @@ export const translations = {
       headline: 'Discover the beauty of Kola Peninsula',
       subheadline: 'A curated collection of the best places — from Northern Lights to ancient mountains. Explore, save, share.',
       cta: 'Open map',
+      noPlaces: 'No places to display',
     },
     
     // Header
