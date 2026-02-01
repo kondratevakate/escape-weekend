@@ -1,10 +1,18 @@
 import { useState } from 'react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
-import { Search, Sparkles } from 'lucide-react';
+import { Search, Sparkles, User, LogOut, Heart, Menu } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 export type CategoryGroup = 'nature' | 'hiking' | 'top';
 
 interface CategoryTab {
@@ -28,6 +36,7 @@ interface HeaderProps {
 
 export const Header = ({ selectedCategory, onCategoryChange, onSearch }: HeaderProps) => {
   const { language, t } = useLanguage();
+  const { isAuthenticated, user, logout, setShowLoginModal } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
@@ -96,9 +105,62 @@ export const Header = ({ selectedCategory, onCategoryChange, onSearch }: HeaderP
           ))}
         </nav>
         
-        {/* Language Switcher - Right */}
+        {/* Language Switcher */}
         <div className="shrink-0">
           <LanguageSwitcher variant="globe" />
+        </div>
+
+        {/* User Menu */}
+        <div className="shrink-0">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="rounded-full gap-2 pl-2 pr-3 h-9 border-muted-foreground/20"
+              >
+                <Menu className="h-4 w-4" />
+                <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center">
+                  {isAuthenticated ? (
+                    <span className="text-xs font-medium">
+                      {user?.email?.charAt(0).toUpperCase()}
+                    </span>
+                  ) : (
+                    <User className="h-3.5 w-3.5 text-muted-foreground" />
+                  )}
+                </div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {isAuthenticated ? (
+                <>
+                  <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                    {user?.email}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Heart className="h-4 w-4 mr-2" />
+                    {language === 'ru' ? 'Избранное' : 'Favorites'}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout} className="text-destructive">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    {t('auth.logout')}
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem onClick={() => setShowLoginModal(true)}>
+                    <User className="h-4 w-4 mr-2" />
+                    {t('auth.login')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowLoginModal(true)}>
+                    {language === 'ru' ? '✨ Регистрация' : '✨ Sign up'}
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       
