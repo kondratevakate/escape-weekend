@@ -1,8 +1,10 @@
 import { useState, useMemo, useCallback } from 'react';
 import 'leaflet/dist/leaflet.css';
-import { kolaPlaces, PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
+import { kolaPlaces, PlaceCategory, categoryConfig, Place } from '@/data/kolaPlaces';
 import { CategoryFilter } from './CategoryFilter';
 import { MapView } from './MapView';
+import { PlaceCard } from './PlaceCard';
+import { PlaceSheet } from './PlaceSheet';
 import { Loader2 } from 'lucide-react';
 
 // Kola Peninsula center
@@ -13,6 +15,8 @@ export const KolaMap = () => {
   const allCategories = Object.keys(categoryConfig) as PlaceCategory[];
   const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>(allCategories);
   const [isMapReady, setIsMapReady] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const handleMapReady = useCallback(() => {
     setIsMapReady(true);
@@ -32,6 +36,18 @@ export const KolaMap = () => {
       return [...prev, category];
     });
   };
+
+  const handlePlaceClick = useCallback((place: Place) => {
+    setSelectedPlace(place);
+  }, []);
+
+  const handleCloseCard = useCallback(() => {
+    setSelectedPlace(null);
+  }, []);
+
+  const handleOpenSheet = useCallback(() => {
+    setIsSheetOpen(true);
+  }, []);
 
   return (
     <div className="relative h-screen w-full">
@@ -69,6 +85,25 @@ export const KolaMap = () => {
         center={KOLA_CENTER}
         zoom={INITIAL_ZOOM}
         onMapReady={handleMapReady}
+        onPlaceClick={handlePlaceClick}
+      />
+
+      {/* Place card overlay */}
+      {selectedPlace && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1001] max-w-[calc(100%-2rem)]">
+          <PlaceCard 
+            place={selectedPlace} 
+            onClose={handleCloseCard}
+            onOpenFullMap={handleOpenSheet}
+          />
+        </div>
+      )}
+
+      {/* Reviews sheet */}
+      <PlaceSheet 
+        place={selectedPlace}
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
       />
 
       {/* Legend - right side, hidden on mobile */}
