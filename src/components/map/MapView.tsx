@@ -7,9 +7,10 @@ interface MapViewProps {
   places: Place[];
   center: [number, number];
   zoom: number;
+  onMapReady?: () => void;
 }
 
-export const MapView = ({ places, center, zoom }: MapViewProps) => {
+export const MapView = ({ places, center, zoom, onMapReady }: MapViewProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
@@ -24,15 +25,19 @@ export const MapView = ({ places, center, zoom }: MapViewProps) => {
       zoomControl: false,
     });
 
-    // Artistic watercolor-style tiles
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg', {
-      attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a>',
+    // CartoDB Positron - fast, minimal, free
+    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19,
+      updateWhenIdle: true,
+      keepBuffer: 2,
     }).addTo(mapInstanceRef.current);
 
-    // Labels overlay
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a>',
-    }).addTo(mapInstanceRef.current);
+    // Notify when tiles are loaded
+    tileLayer.on('load', () => {
+      onMapReady?.();
+    });
 
     // Zoom control on bottom right
     L.control.zoom({ position: 'bottomright' }).addTo(mapInstanceRef.current);
@@ -43,7 +48,7 @@ export const MapView = ({ places, center, zoom }: MapViewProps) => {
         mapInstanceRef.current = null;
       }
     };
-  }, []);
+  }, [onMapReady]);
 
   // Update markers when places change
   useEffect(() => {
