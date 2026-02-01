@@ -23,7 +23,7 @@ export const ExploreCard = ({ onStart }: ExploreCardProps) => {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
       
       {/* Content */}
-      <div className="relative p-5 min-h-[180px] flex flex-col justify-end">
+      <div className="relative p-4 min-h-[140px] md:min-h-[160px] flex flex-col justify-end">
         <div className="flex items-center gap-2 mb-2">
           <Compass className="h-5 w-5 text-white" />
           <span className="text-white/90 text-sm font-medium">
@@ -31,11 +31,11 @@ export const ExploreCard = ({ onStart }: ExploreCardProps) => {
           </span>
         </div>
         
-        <h3 className="text-white font-bold text-xl mb-2">
+        <h3 className="text-white font-bold text-lg md:text-xl mb-1.5">
           {language === 'ru' ? 'Свайпай и открывай' : 'Swipe & Discover'}
         </h3>
         
-        <p className="text-white/70 text-sm mb-4">
+        <p className="text-white/70 text-xs md:text-sm mb-3 line-clamp-2">
           {language === 'ru' 
             ? 'Листайте места как карточки. Понравилось — свайп вправо!' 
             : 'Browse places like cards. Like it? Swipe right!'}
