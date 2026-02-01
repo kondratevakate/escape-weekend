@@ -2,8 +2,10 @@ import { useState, useMemo } from 'react';
 import { Place, categoryConfig } from '@/data/kolaPlaces';
 import { SwipeableCard } from './SwipeableCard';
 import { Button } from '@/components/ui/button';
-import { X, MapPin, Star, RotateCcw, Map } from 'lucide-react';
+import { X, MapPin, Star, RotateCcw, Map, Share2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAllPlaceStats, formatCount } from '@/hooks/usePlaceStats';
+import { ShareButton } from './ShareButton';
 
 interface ExploreModeProps {
   places: Place[];
@@ -28,6 +30,7 @@ const getPlaceImage = (place: Place) => {
 
 export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: ExploreModeProps) => {
   const { t, language } = useLanguage();
+  const { getStats, recordShare } = useAllPlaceStats();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [viewedIds, setViewedIds] = useState<Set<string>>(new Set());
 
@@ -157,8 +160,20 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
                 {/* Title */}
                 <h3 className="font-bold text-xl mb-1">{currentPlace.name}</h3>
                 {currentPlace.nameEn && language === 'ru' && (
-                  <p className="text-sm text-muted-foreground mb-3">{currentPlace.nameEn}</p>
+                  <p className="text-sm text-muted-foreground mb-2">{currentPlace.nameEn}</p>
                 )}
+
+                {/* Social stats - minimalist */}
+                <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
+                  <span className="flex items-center gap-1">
+                    <span>❤️</span>
+                    <span>{formatCount(getStats(currentPlace.id).likesCount)}</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span>📤</span>
+                    <span>{formatCount(getStats(currentPlace.id).sharesCount)}</span>
+                  </span>
+                </div>
 
                 {/* Description */}
                 {currentPlace.description && (
@@ -168,9 +183,16 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
                 )}
 
                 {/* Location hint */}
-                <div className="flex items-center gap-1.5 mt-4 text-xs text-muted-foreground">
-                  <MapPin className="h-3.5 w-3.5" />
-                  <span>{currentPlace.region}</span>
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5" />
+                    <span>{currentPlace.region}</span>
+                  </div>
+                  <ShareButton 
+                    place={currentPlace} 
+                    onShare={() => recordShare(currentPlace.id)} 
+                    variant="icon"
+                  />
                 </div>
               </div>
             </div>

@@ -65,6 +65,16 @@ export const translations = {
       aiSummary: 'AI резюме отзывов',
     },
     
+    // Social
+    social: {
+      likes: 'нравится',
+      shares: 'поделились',
+      share: 'Поделиться',
+      copyLink: 'Скопировать',
+      linkCopied: 'Ссылка скопирована!',
+      more: 'Ещё...',
+    },
+    
     // Cookie consent
     cookies: {
       message: 'Мы используем cookies для улучшения работы сайта.',
@@ -152,6 +162,16 @@ export const translations = {
     // Place card
     place: {
       aiSummary: 'AI review summary',
+    },
+    
+    // Social
+    social: {
+      likes: 'likes',
+      shares: 'shares',
+      share: 'Share',
+      copyLink: 'Copy link',
+      linkCopied: 'Link copied!',
+      more: 'More...',
     },
     
     // Cookie consent
