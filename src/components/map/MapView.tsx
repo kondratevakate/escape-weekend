@@ -7,6 +7,7 @@ interface MapViewProps {
   places: Place[];
   center: [number, number];
   zoom: number;
+  favorites?: string[];
   onMapReady?: () => void;
   onPlaceClick?: (place: Place) => void;
 }
@@ -17,7 +18,7 @@ const getMarkerSize = () => {
   return window.innerWidth < 768 ? 32 : 44;
 };
 
-export const MapView = ({ places, center, zoom, onMapReady, onPlaceClick }: MapViewProps) => {
+export const MapView = ({ places, center, zoom, favorites = [], onMapReady, onPlaceClick }: MapViewProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
@@ -57,7 +58,7 @@ export const MapView = ({ places, center, zoom, onMapReady, onPlaceClick }: MapV
     };
   }, [onMapReady]);
 
-  // Update markers when places change
+  // Update markers when places or favorites change
   useEffect(() => {
     if (!mapInstanceRef.current) return;
 
@@ -71,11 +72,38 @@ export const MapView = ({ places, center, zoom, onMapReady, onPlaceClick }: MapV
     // Add new markers
     places.forEach(place => {
       const config = categoryConfig[place.category];
+      const isFavorite = favorites.includes(place.id);
       
+      // Build marker HTML with optional favorite styling
+      const favoriteStyles = isFavorite 
+        ? `
+          box-shadow: 0 0 0 3px hsl(45, 93%, 47%), 0 4px 12px rgba(0,0,0,0.25);
+          animation: pulse-favorite 2s ease-in-out infinite;
+        `
+        : 'box-shadow: 0 4px 12px rgba(0,0,0,0.25);';
+      
+      const favoriteIndicator = isFavorite 
+        ? `<div style="
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: hsl(45, 93%, 47%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            border: 2px solid white;
+          ">❤️</div>`
+        : '';
+
       const icon = L.divIcon({
         className: 'custom-marker',
         html: `
           <div class="marker-container" style="
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -84,12 +112,13 @@ export const MapView = ({ places, center, zoom, onMapReady, onPlaceClick }: MapV
             background: ${config.bgColor};
             border: 2px solid ${config.color};
             border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            ${favoriteStyles}
             font-size: ${iconFontSize}px;
             cursor: pointer;
             transition: all 0.2s ease;
           ">
             ${config.icon}
+            ${favoriteIndicator}
           </div>
         `,
         iconSize: [markerSize, markerSize],
@@ -107,13 +136,13 @@ export const MapView = ({ places, center, zoom, onMapReady, onPlaceClick }: MapV
       marker.addTo(mapInstanceRef.current!);
       markersRef.current.push(marker);
     });
-  }, [places, onPlaceClick]);
+  }, [places, favorites, onPlaceClick]);
 
   return (
     <div 
       ref={mapRef} 
       className="h-full w-full"
-      style={{ background: '#e8f4f8' }}
+      style={{ background: 'hsl(var(--muted))' }}
     />
   );
 };
