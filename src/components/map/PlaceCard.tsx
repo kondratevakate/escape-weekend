@@ -1,9 +1,11 @@
 import { useState, useRef } from 'react';
 import { Place, categoryConfig } from '@/data/kolaPlaces';
-import { X, MapPin, Star, ExternalLink, Heart } from 'lucide-react';
+import { X, MapPin, Star, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
+import { usePlaceStats, formatCount } from '@/hooks/usePlaceStats';
+import { ShareButton } from './ShareButton';
 
 interface PlaceCardProps {
   place: Place;
@@ -44,7 +46,7 @@ export const PlaceCard = ({ place, isFavorite, onClose, onOpenFullMap, onToggleF
   const { t, language } = useLanguage();
   const config = categoryConfig[place.category];
   const mockData = getMockPlaceData(place);
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${place.coordinates[0]},${place.coordinates[1]}`;
+  const { stats, recordShare } = usePlaceStats(place.id);
 
   // Swipe state
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -167,8 +169,20 @@ export const PlaceCard = ({ place, isFavorite, onClose, onOpenFullMap, onToggleF
           {/* Title */}
           <h3 className="font-bold text-lg leading-tight mb-1">{place.name}</h3>
           {place.nameEn && language === 'ru' && (
-            <p className="text-xs text-muted-foreground mb-3">{place.nameEn}</p>
+            <p className="text-xs text-muted-foreground mb-2">{place.nameEn}</p>
           )}
+
+          {/* Social stats - minimalist */}
+          <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
+            <span className="flex items-center gap-1">
+              <span>❤️</span>
+              <span>{formatCount(stats.likesCount)}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <span>📤</span>
+              <span>{formatCount(stats.sharesCount)}</span>
+            </span>
+          </div>
 
           {/* AI Summary */}
           <div className="bg-muted/50 rounded-lg p-3 mb-3">
@@ -200,16 +214,7 @@ export const PlaceCard = ({ place, isFavorite, onClose, onOpenFullMap, onToggleF
               <MapPin className="h-4 w-4 mr-1" />
               {t('actions.reviews')}
             </Button>
-            <Button 
-              size="sm" 
-              className="flex-1"
-              asChild
-            >
-              <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
-                <ExternalLink className="h-4 w-4 mr-1" />
-                Maps
-              </a>
-            </Button>
+            <ShareButton place={place} onShare={recordShare} />
           </div>
         </div>
       </div>
