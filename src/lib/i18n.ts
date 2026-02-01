@@ -2,14 +2,6 @@ export type Language = 'ru' | 'en';
 
 export const translations = {
   ru: {
-    // Landing
-    landing: {
-      brand: 'Кольский',
-      headline: 'Откройте красоту Кольского полуострова',
-      subheadline: 'Курированная подборка лучших мест — от северного сияния до древних гор. Исследуйте, сохраняйте, делитесь.',
-      cta: 'Открыть карту',
-    },
-    
     // Header
     explore: 'Исследуй Кольский',
     subtitle: 'Край северного сияния',
@@ -109,14 +101,6 @@ export const translations = {
   },
   
   en: {
-    // Landing
-    landing: {
-      brand: 'Kola',
-      headline: 'Discover the beauty of Kola Peninsula',
-      subheadline: 'A curated collection of the best places — from Northern Lights to ancient mountains. Explore, save, share.',
-      cta: 'Open map',
-    },
-    
     // Header
     explore: 'Explore Kola',
     subtitle: 'Land of Northern Lights',

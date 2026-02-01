@@ -1,49 +1,32 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
-interface LanguageSwitcherProps {
-  variant?: 'default' | 'minimal';
-}
-
-export const LanguageSwitcher = ({ variant = 'default' }: LanguageSwitcherProps) => {
+export const LanguageSwitcher = () => {
   const { language, setLanguage } = useLanguage();
 
-  if (variant === 'minimal') {
-    return (
-      <button
-        onClick={() => setLanguage(language === 'ru' ? 'en' : 'ru')}
-        className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
-      >
-        {language === 'ru' ? 'EN' : 'RU'}
-      </button>
-    );
-  }
-
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-0.5 bg-muted/60 backdrop-blur-sm rounded-full p-0.5 text-xs font-medium">
       <button
         onClick={() => setLanguage('ru')}
         className={cn(
-          "w-7 h-7 rounded-full flex items-center justify-center text-sm transition-all",
+          "px-2 py-1 rounded-full transition-all duration-200",
           language === 'ru'
-            ? "bg-primary/10 ring-2 ring-primary/30"
-            : "opacity-50 hover:opacity-100"
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
         )}
-        aria-label="Русский"
       >
-        🇷🇺
+        🇷🇺 RU
       </button>
       <button
         onClick={() => setLanguage('en')}
         className={cn(
-          "w-7 h-7 rounded-full flex items-center justify-center text-sm transition-all",
+          "px-2 py-1 rounded-full transition-all duration-200",
           language === 'en'
-            ? "bg-primary/10 ring-2 ring-primary/30"
-            : "opacity-50 hover:opacity-100"
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
         )}
-        aria-label="English"
       >
-        🇬🇧
+        🇬🇧 EN
       </button>
     </div>
   );
