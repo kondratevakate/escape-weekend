@@ -164,9 +164,9 @@ export const MapView = ({
         style={{ background: 'hsl(var(--muted))' }}
       />
       
-      {/* Category filter overlay */}
-      <div className="absolute top-4 right-4 z-[1000]">
-        <div className="bg-background/95 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-border">
+      {/* Category filter overlay - right side, vertically centered */}
+      <div className="absolute top-1/2 -translate-y-1/2 right-3 z-[1000]">
+        <div className="bg-background/95 backdrop-blur-sm rounded-xl p-2 shadow-lg border border-border">
           <CategoryFilter
             selectedCategories={selectedCategories}
             onToggleCategory={onToggleCategory}
