@@ -5,26 +5,41 @@ import { CategoryFilter } from './CategoryFilter';
 import { MapView } from './MapView';
 import { PlaceCard } from './PlaceCard';
 import { PlaceSheet } from './PlaceSheet';
-import { Loader2 } from 'lucide-react';
+import { ExploreMode } from './ExploreMode';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { CookieConsent } from '@/components/CookieConsent';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Loader2, Compass } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 // Kola Peninsula center
 const KOLA_CENTER: [number, number] = [68.0, 34.0];
 const INITIAL_ZOOM = 7;
 
 export const KolaMap = () => {
+  const { t } = useLanguage();
+  const { favorites, toggleFavorite, isFavorite, favoritesCount } = useFavorites();
+  
   const allCategories = Object.keys(categoryConfig) as PlaceCategory[];
   const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>(allCategories);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isExploreMode, setIsExploreMode] = useState(false);
 
   const handleMapReady = useCallback(() => {
     setIsMapReady(true);
   }, []);
 
   const filteredPlaces = useMemo(() => {
-    return kolaPlaces.filter(place => selectedCategories.includes(place.category));
-  }, [selectedCategories]);
+    let places = kolaPlaces.filter(place => selectedCategories.includes(place.category));
+    if (showFavoritesOnly) {
+      places = places.filter(place => favorites.includes(place.id));
+    }
+    return places;
+  }, [selectedCategories, showFavoritesOnly, favorites]);
 
   const handleToggleCategory = (category: PlaceCategory) => {
     setSelectedCategories(prev => {
@@ -35,6 +50,10 @@ export const KolaMap = () => {
       }
       return [...prev, category];
     });
+  };
+
+  const handleToggleFavoritesOnly = () => {
+    setShowFavoritesOnly(prev => !prev);
   };
 
   const handlePlaceClick = useCallback((place: Place) => {
@@ -49,13 +68,31 @@ export const KolaMap = () => {
     setIsSheetOpen(true);
   }, []);
 
+  const handleToggleSelectedFavorite = useCallback(() => {
+    if (selectedPlace) {
+      toggleFavorite(selectedPlace.id);
+    }
+  }, [selectedPlace, toggleFavorite]);
+
+  // Explore mode
+  if (isExploreMode) {
+    return (
+      <ExploreMode
+        places={kolaPlaces}
+        favorites={favorites}
+        onToggleFavorite={toggleFavorite}
+        onClose={() => setIsExploreMode(false)}
+      />
+    );
+  }
+
   return (
     <div className="relative h-screen w-full">
       {/* Loading overlay */}
       {!isMapReady && (
         <div className="absolute inset-0 z-[2000] bg-background flex flex-col items-center justify-center gap-4">
           <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          <p className="text-muted-foreground text-sm">Загружаем карту...</p>
+          <p className="text-muted-foreground text-sm">{t('loading')}</p>
         </div>
       )}
 
@@ -65,25 +102,53 @@ export const KolaMap = () => {
           <div className="flex items-center justify-between mb-3 md:mb-4">
             <div>
               <h1 className="text-xl md:text-3xl font-bold text-foreground tracking-tight">
-                Исследуй Кольский
+                {t('explore')}
               </h1>
               <p className="text-muted-foreground text-sm md:text-base mt-0.5 md:mt-1">
-                Край северного сияния • {filteredPlaces.length} мест
+                {t('subtitle')} • {filteredPlaces.length} {t('places')}
               </p>
             </div>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setIsExploreMode(true)}
+                className="hidden sm:flex"
+              >
+                <Compass className="h-4 w-4 mr-1.5" />
+                {t('actions.explore')}
+              </Button>
+              <LanguageSwitcher />
+            </div>
           </div>
-          <CategoryFilter 
-            selectedCategories={selectedCategories} 
-            onToggleCategory={handleToggleCategory}
-          />
+          <div className="flex items-center gap-2">
+            <CategoryFilter 
+              selectedCategories={selectedCategories} 
+              onToggleCategory={handleToggleCategory}
+              showFavoritesOnly={showFavoritesOnly}
+              onToggleFavoritesOnly={handleToggleFavoritesOnly}
+              favoritesCount={favoritesCount}
+            />
+          </div>
         </div>
       </div>
+
+      {/* Explore button - mobile only */}
+      <Button
+        variant="default"
+        size="icon"
+        onClick={() => setIsExploreMode(true)}
+        className="sm:hidden fixed bottom-20 right-4 z-[1000] h-12 w-12 rounded-full shadow-lg"
+      >
+        <Compass className="h-5 w-5" />
+      </Button>
 
       {/* Map */}
       <MapView 
         places={filteredPlaces}
         center={KOLA_CENTER}
         zoom={INITIAL_ZOOM}
+        favorites={favorites}
         onMapReady={handleMapReady}
         onPlaceClick={handlePlaceClick}
       />
@@ -93,8 +158,10 @@ export const KolaMap = () => {
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1001] max-w-[calc(100%-2rem)]">
           <PlaceCard 
             place={selectedPlace} 
+            isFavorite={isFavorite(selectedPlace.id)}
             onClose={handleCloseCard}
             onOpenFullMap={handleOpenSheet}
+            onToggleFavorite={handleToggleSelectedFavorite}
           />
         </div>
       )}
@@ -108,16 +175,19 @@ export const KolaMap = () => {
 
       {/* Legend - right side, hidden on mobile */}
       <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 z-[1000] bg-background/95 backdrop-blur-sm rounded-xl p-4 shadow-lg border">
-        <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">Легенда</p>
+        <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">{t('legend')}</p>
         <div className="flex flex-col gap-2">
           {(Object.entries(categoryConfig) as [PlaceCategory, typeof categoryConfig[PlaceCategory]][]).map(([key, config]) => (
             <div key={key} className="flex items-center gap-2 text-sm">
               <span className="text-lg">{config.icon}</span>
-              <span className="text-foreground/80">{config.label}</span>
+              <span className="text-foreground/80">{t(`categories.${key}`)}</span>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Cookie consent */}
+      <CookieConsent />
     </div>
   );
 };

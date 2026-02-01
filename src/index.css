@@ -126,3 +126,46 @@
     box-shadow: 0 6px 20px rgba(0,0,0,0.35);
   }
 }
+
+/* Favorite marker pulse animation */
+@keyframes pulse-favorite {
+  0%, 100% {
+    box-shadow: 0 0 0 3px hsl(45, 93%, 47%), 0 4px 12px rgba(0,0,0,0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 6px hsl(45, 93%, 47%, 0.5), 0 4px 12px rgba(0,0,0,0.25);
+  }
+}
+
+/* Prose styles for cookie policy page */
+.prose {
+  @apply text-foreground;
+}
+
+.prose h1 {
+  @apply text-3xl font-bold mb-4 text-foreground;
+}
+
+.prose h2 {
+  @apply text-xl font-semibold mt-8 mb-3 text-foreground;
+}
+
+.prose h3 {
+  @apply text-lg font-semibold mt-6 mb-2 text-foreground;
+}
+
+.prose p {
+  @apply mb-4 leading-relaxed;
+}
+
+.prose ul {
+  @apply list-disc pl-6 mb-4 space-y-2;
+}
+
+.prose li {
+  @apply leading-relaxed;
+}
+
+.prose strong {
+  @apply font-semibold text-foreground;
+}
