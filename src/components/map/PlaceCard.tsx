@@ -125,17 +125,7 @@ export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: Plac
 
   return (
     <div className="relative">
-      {/* Swipe indicators */}
-      <div 
-        className="absolute inset-0 rounded-xl border-4 border-destructive pointer-events-none z-10"
-        style={{ opacity: leftIndicatorOpacity }}
-      />
-      <div 
-        className="absolute inset-0 rounded-xl border-4 border-accent pointer-events-none z-10"
-        style={{ opacity: rightIndicatorOpacity }}
-      />
-
-      <div 
+      <div
         className={cn(
           "bg-card rounded-xl shadow-2xl border overflow-hidden max-w-sm w-full touch-none select-none",
           isDragging ? "cursor-grabbing" : "cursor-grab"
@@ -160,22 +150,27 @@ export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: Plac
             className="w-full h-full object-cover pointer-events-none"
             draggable={false}
           />
+          {/* Like button on photo */}
+          <button 
+            onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
+            className="absolute top-2 right-12 flex items-center gap-1 px-2 py-1.5 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background transition-colors"
+          >
+            <Heart className={cn("h-4 w-4 transition-colors", isFavorite ? "fill-red-500 text-red-500" : "")} />
+            <span className="text-xs font-medium">{formatCount(stats.likesCount + (isFavorite ? 1 : 0))}</span>
+          </button>
+          {/* Close button */}
           <button 
             onClick={(e) => { e.stopPropagation(); onClose(); }}
             className="absolute top-2 right-2 p-1.5 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
+          {/* Rating badge */}
           <div className="absolute bottom-2 left-2 flex items-center gap-1 px-2 py-1 bg-background/80 backdrop-blur-sm rounded-full text-xs">
             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
             <span className="font-medium">{mockData.rating.toFixed(1)}</span>
             <span className="text-muted-foreground">({mockData.reviewCount})</span>
           </div>
-          {isFavorite && (
-            <div className="absolute top-2 left-2 p-1.5 bg-accent/90 rounded-full">
-              <Heart className="h-4 w-4 fill-current text-accent-foreground" />
-            </div>
-          )}
         </div>
 
         {/* Content */}
@@ -300,41 +295,11 @@ export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: Plac
             </CollapsibleContent>
           </Collapsible>
 
-          {/* Actions */}
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex-1"
-              onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
-            >
-              <Heart className={cn("h-4 w-4 mr-1", isFavorite && "fill-current text-accent")} />
-              {isFavorite ? '❤️' : t('actions.like')}
-            </Button>
+          {/* Actions - only Share */}
+          <div className="flex justify-center">
             <ShareButton place={place} onShare={recordShare} />
           </div>
         </div>
-      </div>
-
-      {/* Swipe hint */}
-      <div className="flex justify-center gap-6 mt-3">
-        <button
-          onClick={onClose}
-          className="flex items-center justify-center w-12 h-12 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors active:scale-95"
-        >
-          <X className="h-5 w-5" />
-        </button>
-        <button
-          onClick={onToggleFavorite}
-          className={cn(
-            "flex items-center justify-center w-12 h-12 rounded-full transition-colors active:scale-95",
-            isFavorite 
-              ? "bg-accent text-accent-foreground"
-              : "bg-accent/20 text-accent hover:bg-accent/30"
-          )}
-        >
-          <Heart className={cn("h-5 w-5", isFavorite && "fill-current")} />
-        </button>
       </div>
     </div>
   );
