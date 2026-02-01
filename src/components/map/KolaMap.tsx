@@ -173,14 +173,14 @@ export const KolaMap = () => {
         onOpenChange={setIsSheetOpen}
       />
 
-      {/* Legend - right side, hidden on mobile - INFO ONLY */}
-      <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 z-[1000] bg-background/90 backdrop-blur-sm rounded-xl p-3 shadow-lg border">
-        <p className="text-[10px] text-muted-foreground mb-2 font-semibold uppercase tracking-wider">{t('legend')}</p>
-        <div className="flex flex-col gap-1.5">
+      {/* Legend - right side, hidden on mobile */}
+      <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 z-[1000] bg-background/95 backdrop-blur-sm rounded-xl p-4 shadow-lg border">
+        <p className="text-xs text-muted-foreground mb-3 font-semibold uppercase tracking-wide">{t('legend')}</p>
+        <div className="flex flex-col gap-2">
           {(Object.entries(categoryConfig) as [PlaceCategory, typeof categoryConfig[PlaceCategory]][]).map(([key, config]) => (
-            <div key={key} className="flex items-center gap-2 text-xs">
-              <span className="text-sm">{config.icon}</span>
-              <span className="text-muted-foreground">{t(`categories.${key}`)}</span>
+            <div key={key} className="flex items-center gap-2 text-sm">
+              <span className="text-lg">{config.icon}</span>
+              <span className="text-foreground/80">{t(`categories.${key}`)}</span>
             </div>
           ))}
         </div>
