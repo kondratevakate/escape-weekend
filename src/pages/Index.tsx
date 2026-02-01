@@ -28,6 +28,8 @@ const Index = () => {
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
   
   const [selectedCategory, setSelectedCategory] = useState<CategoryGroup | 'all'>('all');
+  const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>([]);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -37,14 +39,40 @@ const Index = () => {
     setIsMapReady(true);
   }, []);
 
-  // Filter places based on selected category group
+  const handleToggleCategory = useCallback((category: PlaceCategory) => {
+    setSelectedCategories(prev => 
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  }, []);
+
+  const handleToggleFavoritesOnly = useCallback(() => {
+    setShowFavoritesOnly(prev => !prev);
+  }, []);
+
+  // Filter places based on header category group AND map category filter
   const filteredPlaces = useMemo(() => {
-    if (selectedCategory === 'all') {
-      return kolaPlaces;
+    let places = kolaPlaces;
+    
+    // First filter by header category group
+    if (selectedCategory !== 'all') {
+      const allowedCategories = categoryGroupMap[selectedCategory];
+      places = places.filter(place => allowedCategories.includes(place.category));
     }
-    const allowedCategories = categoryGroupMap[selectedCategory];
-    return kolaPlaces.filter(place => allowedCategories.includes(place.category));
-  }, [selectedCategory]);
+    
+    // Then filter by map category filter
+    if (selectedCategories.length > 0) {
+      places = places.filter(place => selectedCategories.includes(place.category));
+    }
+    
+    // Filter by favorites if enabled
+    if (showFavoritesOnly) {
+      places = places.filter(place => favorites.includes(place.id));
+    }
+    
+    return places;
+  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites]);
 
   const handlePlaceClick = useCallback((place: Place) => {
     setSelectedPlace(place);
@@ -122,6 +150,11 @@ const Index = () => {
             center={KOLA_CENTER}
             zoom={INITIAL_ZOOM}
             favorites={favorites}
+            selectedCategories={selectedCategories}
+            showFavoritesOnly={showFavoritesOnly}
+            favoritesCount={favorites.length}
+            onToggleCategory={handleToggleCategory}
+            onToggleFavoritesOnly={handleToggleFavoritesOnly}
             onMapReady={handleMapReady}
             onPlaceClick={handlePlaceClick}
           />
