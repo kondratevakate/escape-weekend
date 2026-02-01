@@ -1,17 +1,18 @@
 import { useState, useRef } from 'react';
 import { Place, categoryConfig } from '@/data/kolaPlaces';
-import { X, MapPin, Star, Heart } from 'lucide-react';
+import { X, Star, Heart, ChevronUp, ChevronDown, ExternalLink, Clock, ThumbsUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { usePlaceStats, formatCount } from '@/hooks/usePlaceStats';
 import { ShareButton } from './ShareButton';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface PlaceCardProps {
   place: Place;
   isFavorite: boolean;
   onClose: () => void;
-  onOpenFullMap: () => void;
   onToggleFavorite: () => void;
 }
 
@@ -40,18 +41,55 @@ const getMockPlaceData = (place: Place) => {
   };
 };
 
+// Mock reviews data
+const getMockReviews = () => [
+  { 
+    id: 1,
+    author: 'Алексей Морозов', 
+    avatar: 'А',
+    rating: 5, 
+    text: 'Потрясающее место! Виды невероятные, особенно на закате.', 
+    date: '2 недели назад',
+    helpful: 12
+  },
+  { 
+    id: 2,
+    author: 'Мария Ковалёва', 
+    avatar: 'М',
+    rating: 4, 
+    text: 'Красиво, но дорога сложная. Берите внедорожник.', 
+    date: '1 месяц назад',
+    helpful: 8
+  },
+  { 
+    id: 3,
+    author: 'Дмитрий Соколов', 
+    avatar: 'Д',
+    rating: 5, 
+    text: 'Был зимой — северное сияние видно отлично!', 
+    date: '2 месяца назад',
+    helpful: 24
+  },
+];
+
 const SWIPE_THRESHOLD = 80;
 
-export const PlaceCard = ({ place, isFavorite, onClose, onOpenFullMap, onToggleFavorite }: PlaceCardProps) => {
+export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: PlaceCardProps) => {
   const { t, language } = useLanguage();
   const config = categoryConfig[place.category];
   const mockData = getMockPlaceData(place);
   const { stats, recordShare } = usePlaceStats(place.id);
+  const reviews = getMockReviews();
+
+  // Reviews toggle state
+  const [showReviews, setShowReviews] = useState(false);
 
   // Swipe state
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const startPos = useRef({ x: 0, y: 0 });
+
+  const googleMapsReviewsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}`;
 
   const handleStart = (clientX: number, clientY: number) => {
     setIsDragging(true);
@@ -194,6 +232,74 @@ export const PlaceCard = ({ place, isFavorite, onClose, onOpenFullMap, onToggleF
             </p>
           </div>
 
+          {/* Collapsible Reviews Section */}
+          <Collapsible open={showReviews} onOpenChange={setShowReviews}>
+            <CollapsibleTrigger asChild>
+              <button 
+                className="w-full flex items-center justify-between px-3 py-2 bg-muted/30 hover:bg-muted/50 rounded-lg transition-colors mb-3"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="flex items-center gap-2 text-sm font-medium">
+                  📝 {t('actions.reviews')} ({reviews.length})
+                </span>
+                {showReviews ? (
+                  <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                )}
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
+              <ScrollArea className="max-h-48 mb-3">
+                <div className="space-y-3 pr-2">
+                  {reviews.map((review) => (
+                    <div key={review.id} className="bg-muted/30 rounded-lg p-3">
+                      <div className="flex items-start gap-2">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-semibold flex-shrink-0">
+                          {review.avatar}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-medium text-xs truncate">{review.author}</span>
+                            <span className="text-[10px] text-muted-foreground flex items-center gap-1 flex-shrink-0">
+                              <Clock className="h-2.5 w-2.5" />
+                              {review.date}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-0.5 mt-0.5">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star 
+                                key={i} 
+                                className={`h-2.5 w-2.5 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground/30'}`} 
+                              />
+                            ))}
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                            {review.text}
+                          </p>
+                          <div className="flex items-center gap-1 mt-1.5 text-[10px] text-muted-foreground">
+                            <ThumbsUp className="h-2.5 w-2.5" />
+                            <span>{review.helpful}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+              <a 
+                href={googleMapsReviewsUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full px-3 py-2 text-xs text-primary hover:text-primary/80 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors mb-3"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLink className="h-3 w-3" />
+                {language === 'ru' ? 'Все отзывы в Google Maps' : 'All reviews on Google Maps'}
+              </a>
+            </CollapsibleContent>
+          </Collapsible>
+
           {/* Actions */}
           <div className="flex gap-2">
             <Button 
@@ -204,15 +310,6 @@ export const PlaceCard = ({ place, isFavorite, onClose, onOpenFullMap, onToggleF
             >
               <Heart className={cn("h-4 w-4 mr-1", isFavorite && "fill-current text-accent")} />
               {isFavorite ? '❤️' : t('actions.like')}
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex-1"
-              onClick={(e) => { e.stopPropagation(); onOpenFullMap(); }}
-            >
-              <MapPin className="h-4 w-4 mr-1" />
-              {t('actions.reviews')}
             </Button>
             <ShareButton place={place} onShare={recordShare} />
           </div>

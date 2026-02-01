@@ -4,7 +4,6 @@ import { kolaPlaces, PlaceCategory, categoryConfig, Place } from '@/data/kolaPla
 import { CategoryFilter } from './CategoryFilter';
 import { MapView } from './MapView';
 import { PlaceCard } from './PlaceCard';
-import { PlaceSheet } from './PlaceSheet';
 import { ExploreMode } from './ExploreMode';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { CookieConsent } from '@/components/CookieConsent';
@@ -30,7 +29,6 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isExploreMode, setIsExploreMode] = useState(false);
 
   const handleMapReady = useCallback(() => {
@@ -66,10 +64,6 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
 
   const handleCloseCard = useCallback(() => {
     setSelectedPlace(null);
-  }, []);
-
-  const handleOpenSheet = useCallback(() => {
-    setIsSheetOpen(true);
   }, []);
 
   const handleToggleSelectedFavorite = useCallback(() => {
@@ -177,18 +171,10 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
             place={selectedPlace} 
             isFavorite={isFavorite(selectedPlace.id)}
             onClose={handleCloseCard}
-            onOpenFullMap={handleOpenSheet}
             onToggleFavorite={handleToggleSelectedFavorite}
           />
         </div>
       )}
-
-      {/* Reviews sheet */}
-      <PlaceSheet 
-        place={selectedPlace}
-        open={isSheetOpen}
-        onOpenChange={setIsSheetOpen}
-      />
 
       {/* Interactive Legend - right side, hidden on mobile */}
       <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 z-[1000] bg-background/95 backdrop-blur-sm rounded-xl p-3 shadow-lg border">

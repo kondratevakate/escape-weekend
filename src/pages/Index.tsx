@@ -4,7 +4,6 @@ import { Footer } from '@/components/landing/Footer';
 import { DiscoverPanel } from '@/components/landing/DiscoverPanel';
 import { MapView } from '@/components/map/MapView';
 import { PlaceCard } from '@/components/map/PlaceCard';
-import { PlaceSheet } from '@/components/map/PlaceSheet';
 import { ExploreMode } from '@/components/map/ExploreMode';
 import { CookieConsent } from '@/components/CookieConsent';
 import { kolaPlaces, Place, PlaceCategory } from '@/data/kolaPlaces';
@@ -41,7 +40,6 @@ const Index = () => {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isExploreMode, setIsExploreMode] = useState(false);
   const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null);
@@ -100,10 +98,6 @@ const Index = () => {
 
   const handleCloseCard = useCallback(() => {
     setSelectedPlace(null);
-  }, []);
-
-  const handleOpenSheet = useCallback(() => {
-    setIsSheetOpen(true);
   }, []);
 
   const handleToggleSelectedFavorite = useCallback(() => {
@@ -185,7 +179,6 @@ const Index = () => {
                 place={selectedPlace} 
                 isFavorite={isFavorite(selectedPlace.id)}
                 onClose={handleCloseCard}
-                onOpenFullMap={handleOpenSheet}
                 onToggleFavorite={handleToggleSelectedFavorite}
               />
             </div>
@@ -195,13 +188,6 @@ const Index = () => {
 
       {/* Footer */}
       <Footer />
-
-      {/* Reviews sheet */}
-      <PlaceSheet 
-        place={selectedPlace}
-        open={isSheetOpen}
-        onOpenChange={setIsSheetOpen}
-      />
 
       {/* Cookie consent */}
       <CookieConsent />
