@@ -102,6 +102,18 @@ export const translations = {
       forgotPassword: 'Забыли пароль?',
     },
     
+    // User Lists
+    userLists: {
+      title: 'Мои списки',
+      saveToList: 'Сохранить в список',
+      createList: 'Создать список',
+      listName: 'Название списка',
+      create: 'Создать',
+      wantToVisit: 'Хочу посетить',
+      favorites: 'Избранное',
+      places: 'мест',
+    },
+    
     // Legend
     legend: 'Легенда',
     
@@ -208,6 +220,18 @@ export const translations = {
       email: 'Email',
       password: 'Password',
       forgotPassword: 'Forgot password?',
+    },
+    
+    // User Lists
+    userLists: {
+      title: 'My Lists',
+      saveToList: 'Save to list',
+      createList: 'Create list',
+      listName: 'List name',
+      create: 'Create',
+      wantToVisit: 'Want to visit',
+      favorites: 'Favorites',
+      places: 'places',
     },
     
     // Legend

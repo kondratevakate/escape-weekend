@@ -9,6 +9,7 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { kolaPlaces, Place, PlaceCategory } from '@/data/kolaPlaces';
 import { collections } from '@/data/collections';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useUserLists } from '@/hooks/useUserLists';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, PanelLeftClose, PanelLeft } from 'lucide-react';
@@ -29,6 +30,14 @@ const Index = () => {
   const { t } = useLanguage();
   const { requireAuth } = useAuth();
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
+  const { 
+    lists: userLists, 
+    toggleInList, 
+    createList, 
+    deleteList, 
+    isInList, 
+    isInAnyList 
+  } = useUserLists();
 
   // Wrap toggleFavorite with auth check
   const handleToggleFavorite = useCallback((id: string) => {
@@ -180,6 +189,12 @@ const Index = () => {
                 isFavorite={isFavorite(selectedPlace.id)}
                 onClose={handleCloseCard}
                 onToggleFavorite={handleToggleSelectedFavorite}
+                userLists={userLists}
+                onToggleInList={toggleInList}
+                onCreateList={createList}
+                onDeleteList={deleteList}
+                isInList={isInList}
+                isInAnyList={isInAnyList}
               />
             </div>
           )}
