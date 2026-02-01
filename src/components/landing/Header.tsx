@@ -1,13 +1,9 @@
 import { useState } from 'react';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
-import { UserMenu } from '@/components/auth/UserMenu';
-import { SuggestPlaceModal } from '@/components/SuggestPlaceModal';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
-import { Search, Sparkles, Plus } from 'lucide-react';
+import { Search, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 
 export type CategoryGroup = 'nature' | 'hiking' | 'top';
 
@@ -34,7 +30,6 @@ export const Header = ({ selectedCategory, onCategoryChange, onSearch }: HeaderP
   const { language, t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [showSuggestModal, setShowSuggestModal] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,29 +96,11 @@ export const Header = ({ selectedCategory, onCategoryChange, onSearch }: HeaderP
           ))}
         </nav>
         
-        {/* Right controls */}
-        <div className="flex items-center gap-1 shrink-0">
-          {/* Suggest place button - desktop */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="hidden md:flex h-9 gap-2 text-muted-foreground hover:text-foreground"
-            onClick={() => setShowSuggestModal(true)}
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden lg:inline">
-              {language === 'ru' ? 'Добавить' : 'Add place'}
-            </span>
-          </Button>
-          
-          <ThemeSwitcher />
+        {/* Language Switcher - Right */}
+        <div className="shrink-0">
           <LanguageSwitcher variant="globe" />
-          <UserMenu onSuggestPlace={() => setShowSuggestModal(true)} />
         </div>
       </div>
-      
-      {/* Suggest Place Modal */}
-      <SuggestPlaceModal open={showSuggestModal} onOpenChange={setShowSuggestModal} />
       
       {/* Mobile category tabs - below header */}
       <div className="md:hidden flex items-center justify-center gap-1 pb-2 px-4">
