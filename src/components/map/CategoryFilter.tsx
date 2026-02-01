@@ -10,7 +10,7 @@ export const CategoryFilter = ({ selectedCategories, onToggleCategory }: Categor
   const categories = Object.entries(categoryConfig) as [PlaceCategory, typeof categoryConfig[PlaceCategory]][];
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-1.5 md:gap-2">
       {categories.map(([key, config]) => {
         const isSelected = selectedCategories.includes(key);
         return (
@@ -18,7 +18,7 @@ export const CategoryFilter = ({ selectedCategories, onToggleCategory }: Categor
             key={key}
             onClick={() => onToggleCategory(key)}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
+              "flex items-center gap-1.5 md:gap-2 px-2.5 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-200",
               "border-2 hover:scale-105 active:scale-95",
               isSelected
                 ? "border-transparent shadow-lg"
@@ -30,8 +30,8 @@ export const CategoryFilter = ({ selectedCategories, onToggleCategory }: Categor
               borderColor: config.color,
             } : undefined}
           >
-            <span className="text-lg">{config.icon}</span>
-            <span>{config.label}</span>
+            <span className="text-base md:text-lg">{config.icon}</span>
+            <span className="hidden sm:inline">{config.label}</span>
           </button>
         );
       })}
