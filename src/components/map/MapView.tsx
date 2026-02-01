@@ -1,13 +1,19 @@
 import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Place, categoryConfig } from '@/data/kolaPlaces';
+import { Place, PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
+import { CategoryFilter } from './CategoryFilter';
 
 interface MapViewProps {
   places: Place[];
   center: [number, number];
   zoom: number;
   favorites?: string[];
+  selectedCategories: PlaceCategory[];
+  showFavoritesOnly: boolean;
+  favoritesCount: number;
+  onToggleCategory: (category: PlaceCategory) => void;
+  onToggleFavoritesOnly: () => void;
   onMapReady?: () => void;
   onPlaceClick?: (place: Place) => void;
 }
@@ -18,7 +24,19 @@ const getMarkerSize = () => {
   return window.innerWidth < 768 ? 32 : 44;
 };
 
-export const MapView = ({ places, center, zoom, favorites = [], onMapReady, onPlaceClick }: MapViewProps) => {
+export const MapView = ({ 
+  places, 
+  center, 
+  zoom, 
+  favorites = [], 
+  selectedCategories,
+  showFavoritesOnly,
+  favoritesCount,
+  onToggleCategory,
+  onToggleFavoritesOnly,
+  onMapReady, 
+  onPlaceClick 
+}: MapViewProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
@@ -139,10 +157,25 @@ export const MapView = ({ places, center, zoom, favorites = [], onMapReady, onPl
   }, [places, favorites, onPlaceClick]);
 
   return (
-    <div 
-      ref={mapRef} 
-      className="h-full w-full"
-      style={{ background: 'hsl(var(--muted))' }}
-    />
+    <div className="relative h-full w-full">
+      <div 
+        ref={mapRef} 
+        className="h-full w-full"
+        style={{ background: 'hsl(var(--muted))' }}
+      />
+      
+      {/* Category filter overlay */}
+      <div className="absolute top-4 right-4 z-[1000]">
+        <div className="bg-background/95 backdrop-blur-sm rounded-lg p-2 shadow-lg border border-border">
+          <CategoryFilter
+            selectedCategories={selectedCategories}
+            onToggleCategory={onToggleCategory}
+            showFavoritesOnly={showFavoritesOnly}
+            onToggleFavoritesOnly={onToggleFavoritesOnly}
+            favoritesCount={favoritesCount}
+          />
+        </div>
+      </div>
+    </div>
   );
 };

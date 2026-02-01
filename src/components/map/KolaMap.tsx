@@ -161,6 +161,11 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         center={KOLA_CENTER}
         zoom={INITIAL_ZOOM}
         favorites={favorites}
+        selectedCategories={selectedCategories}
+        showFavoritesOnly={showFavoritesOnly}
+        favoritesCount={favoritesCount}
+        onToggleCategory={handleToggleCategory}
+        onToggleFavoritesOnly={handleToggleFavoritesOnly}
         onMapReady={handleMapReady}
         onPlaceClick={handlePlaceClick}
       />
