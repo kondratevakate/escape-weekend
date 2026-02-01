@@ -1,19 +1,20 @@
 import { useState, useCallback, useMemo } from 'react';
 import { Header, CategoryGroup } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
-import { PlacesList } from '@/components/landing/PlacesList';
+import { DiscoverPanel } from '@/components/landing/DiscoverPanel';
 import { MapView } from '@/components/map/MapView';
 import { PlaceCard } from '@/components/map/PlaceCard';
 import { PlaceSheet } from '@/components/map/PlaceSheet';
+import { ExploreMode } from '@/components/map/ExploreMode';
 import { CookieConsent } from '@/components/CookieConsent';
 import { kolaPlaces, Place, PlaceCategory } from '@/data/kolaPlaces';
+import { collections } from '@/data/collections';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-
 // Category group mappings
 const categoryGroupMap: Record<CategoryGroup, PlaceCategory[]> = {
   nature: ['nature', 'reserve'],
@@ -42,6 +43,8 @@ const Index = () => {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isExploreMode, setIsExploreMode] = useState(false);
+  const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null);
 
   const handleMapReady = useCallback(() => {
     setIsMapReady(true);
@@ -59,9 +62,18 @@ const Index = () => {
     setShowFavoritesOnly(prev => !prev);
   }, []);
 
-  // Filter places based on header category group AND map category filter
+  // Filter places based on header category group AND map category filter AND active collection
   const filteredPlaces = useMemo(() => {
     let places = kolaPlaces;
+    
+    // If a collection is active, filter by collection placeIds
+    if (activeCollectionId) {
+      const collection = collections.find(c => c.id === activeCollectionId);
+      if (collection) {
+        places = places.filter(place => collection.placeIds.includes(place.id));
+        return places; // Skip other filters when collection is active
+      }
+    }
     
     // First filter by header category group
     if (selectedCategory !== 'all') {
@@ -80,7 +92,7 @@ const Index = () => {
     }
     
     return places;
-  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites]);
+  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites, activeCollectionId]);
 
   const handlePlaceClick = useCallback((place: Place) => {
     setSelectedPlace(place);
@@ -120,11 +132,10 @@ const Index = () => {
             isSidebarOpen ? "md:w-[320px]" : "md:w-0 md:overflow-hidden"
           )}
         >
-          <PlacesList
-            places={filteredPlaces}
-            favorites={favorites}
-            selectedPlaceId={selectedPlace?.id}
-            onToggleFavorite={handleToggleFavorite}
+          <DiscoverPanel
+            activeCollectionId={activeCollectionId}
+            onStartExplore={() => setIsExploreMode(true)}
+            onSelectCollection={setActiveCollectionId}
             onPlaceClick={handlePlaceClick}
           />
         </aside>
@@ -194,6 +205,16 @@ const Index = () => {
 
       {/* Cookie consent */}
       <CookieConsent />
+
+      {/* Explore Mode */}
+      {isExploreMode && (
+        <ExploreMode
+          places={filteredPlaces}
+          favorites={favorites}
+          onToggleFavorite={handleToggleFavorite}
+          onClose={() => setIsExploreMode(false)}
+        />
+      )}
     </div>
   );
 };
