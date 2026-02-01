@@ -17,27 +17,27 @@ export const HiddenGems = ({ onPlaceClick }: HiddenGemsProps) => {
   })).filter(gem => gem.place);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2 overflow-hidden">
       <div className="flex items-center gap-2 px-1">
-        <Sparkles className="h-4 w-4 text-primary" />
-        <h3 className="text-sm font-semibold text-foreground">
+        <Sparkles className="h-3.5 w-3.5 text-primary shrink-0" />
+        <h3 className="text-xs font-semibold text-foreground truncate">
           {language === 'ru' ? 'Места, о которых вы не знали' : 'Hidden Gems'}
         </h3>
       </div>
       
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         {gems.map((gem) => (
           <button
             key={gem.id}
             onClick={() => gem.place && onPlaceClick(gem.place)}
             className={cn(
-              "w-full flex items-stretch gap-3 rounded-xl overflow-hidden",
+              "w-full flex items-center gap-2.5 rounded-lg overflow-hidden",
               "bg-card border border-border hover:border-primary/50",
-              "transition-all duration-200 hover:shadow-md text-left"
+              "transition-all duration-200 hover:shadow-sm text-left p-1.5"
             )}
           >
             {/* Thumbnail */}
-            <div className="relative w-20 h-20 flex-shrink-0">
+            <div className="relative w-14 h-14 flex-shrink-0 rounded-md overflow-hidden">
               <img
                 src={gem.image}
                 alt={gem.place?.name}
@@ -46,11 +46,11 @@ export const HiddenGems = ({ onPlaceClick }: HiddenGemsProps) => {
             </div>
             
             {/* Content */}
-            <div className="flex-1 py-2 pr-3 flex flex-col justify-center">
-              <h4 className="font-semibold text-sm text-foreground line-clamp-1">
+            <div className="flex-1 min-w-0 py-0.5">
+              <h4 className="font-medium text-xs text-foreground line-clamp-1">
                 {gem.place?.name}
               </h4>
-              <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+              <p className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5 leading-tight">
                 {language === 'ru' ? gem.teaser : gem.teaserEn}
               </p>
             </div>
