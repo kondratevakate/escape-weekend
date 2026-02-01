@@ -29,23 +29,38 @@ export const PlaceListCard = ({
     <div
       onClick={onClick}
       className={cn(
-        "group relative bg-card rounded-xl overflow-hidden cursor-pointer transition-all",
-        "hover:shadow-md border",
+        "group relative bg-card rounded-lg overflow-hidden cursor-pointer transition-all",
+        "hover:shadow-sm border",
         isSelected 
           ? "ring-2 ring-primary border-primary" 
           : "border-border hover:border-primary/30"
       )}
     >
-      {/* Image placeholder with category gradient */}
-      <div 
-        className="aspect-[4/3] relative"
-        style={{ 
-          background: `linear-gradient(135deg, ${config.bgColor} 0%, ${config.color}20 100%)` 
-        }}
-      >
-        {/* Category emoji centered */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-4xl opacity-60">{config.icon}</span>
+      {/* Compact horizontal layout */}
+      <div className="flex items-center gap-3 p-2.5">
+        {/* Category icon */}
+        <div 
+          className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
+          style={{ 
+            background: `linear-gradient(135deg, ${config.bgColor} 0%, ${config.color}20 100%)` 
+          }}
+        >
+          <span className="text-lg">{config.icon}</span>
+        </div>
+        
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-medium text-sm text-foreground line-clamp-1">
+            {displayName}
+          </h3>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+            <span>{t(`categories.${place.category}`)}</span>
+            <span className="opacity-50">•</span>
+            <span className="flex items-center gap-0.5">
+              <Heart className="h-3 w-3" />
+              {formatCount(stats.likesCount)}
+            </span>
+          </div>
         </div>
         
         {/* Favorite button */}
@@ -55,8 +70,8 @@ export const PlaceListCard = ({
             onToggleFavorite();
           }}
           className={cn(
-            "absolute top-2 right-2 p-2 rounded-full transition-all",
-            "bg-background/80 backdrop-blur-sm hover:bg-background",
+            "shrink-0 p-1.5 rounded-full transition-all",
+            "hover:bg-muted",
             isFavorite && "text-destructive"
           )}
         >
@@ -64,31 +79,6 @@ export const PlaceListCard = ({
             className={cn("h-4 w-4", isFavorite && "fill-current")} 
           />
         </button>
-      </div>
-
-      {/* Content */}
-      <div className="p-3">
-        {/* Name */}
-        <h3 className="font-medium text-foreground line-clamp-1 mb-1">
-          {displayName}
-        </h3>
-        
-        {/* Category */}
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
-          <span>{config.icon}</span>
-          <span>{t(`categories.${place.category}`)}</span>
-        </div>
-        
-        {/* Stats */}
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Heart className="h-3 w-3" />
-            {formatCount(stats.likesCount)}
-          </span>
-          <span className="flex items-center gap-1">
-            📤 {formatCount(stats.sharesCount)}
-          </span>
-        </div>
       </div>
     </div>
   );

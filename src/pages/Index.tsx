@@ -8,7 +8,9 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { kolaPlaces, Place, PlaceCategory } from '@/data/kolaPlaces';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Loader2 } from 'lucide-react';
+import { Loader2, PanelLeftClose, PanelLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 // Category group mappings
 const categoryGroupMap: Record<CategoryGroup, PlaceCategory[]> = {
@@ -29,6 +31,7 @@ const Index = () => {
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const handleMapReady = useCallback(() => {
     setIsMapReady(true);
@@ -72,7 +75,15 @@ const Index = () => {
       {/* Main content - Split layout */}
       <main className="flex-1 pt-14 md:pt-16 flex flex-col md:flex-row overflow-hidden">
         {/* Left panel - Places list (desktop) / Bottom drawer (mobile) */}
-        <aside className="order-2 md:order-1 h-[40vh] md:h-full md:w-[380px] lg:w-[420px] overflow-y-auto border-t md:border-t-0 md:border-r border-border bg-background">
+        <aside 
+          className={cn(
+            "order-2 md:order-1 overflow-y-auto border-t md:border-t-0 md:border-r border-border bg-background transition-all duration-300",
+            // Mobile: always show bottom panel
+            "h-[40vh] md:h-full",
+            // Desktop: collapsible
+            isSidebarOpen ? "md:w-[320px]" : "md:w-0 md:overflow-hidden"
+          )}
+        >
           <PlacesList
             places={filteredPlaces}
             favorites={favorites}
@@ -84,6 +95,20 @@ const Index = () => {
         
         {/* Right panel - Map */}
         <div className="order-1 md:order-2 flex-1 relative h-[60vh] md:h-full">
+          {/* Sidebar toggle button - desktop only */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="hidden md:flex absolute top-4 left-4 z-[1000] h-9 w-9 bg-background/95 backdrop-blur-sm shadow-md"
+          >
+            {isSidebarOpen ? (
+              <PanelLeftClose className="h-4 w-4" />
+            ) : (
+              <PanelLeft className="h-4 w-4" />
+            )}
+          </Button>
+
           {/* Loading overlay */}
           {!isMapReady && (
             <div className="absolute inset-0 z-[2000] bg-background flex flex-col items-center justify-center gap-4">
