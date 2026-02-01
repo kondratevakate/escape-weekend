@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { Header, CategoryGroup } from '@/components/landing/Header';
+import { Footer } from '@/components/landing/Footer';
 import { PlacesList } from '@/components/landing/PlacesList';
 import { MapView } from '@/components/map/MapView';
 import { PlaceCard } from '@/components/map/PlaceCard';
@@ -173,6 +174,9 @@ const Index = () => {
           )}
         </div>
       </main>
+
+      {/* Footer */}
+      <Footer />
 
       {/* Reviews sheet */}
       <PlaceSheet 
