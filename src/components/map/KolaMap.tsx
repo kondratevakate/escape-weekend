@@ -17,7 +17,11 @@ import { Button } from '@/components/ui/button';
 const KOLA_CENTER: [number, number] = [68.0, 34.0];
 const INITIAL_ZOOM = 7;
 
-export const KolaMap = () => {
+interface KolaMapProps {
+  embedded?: boolean;
+}
+
+export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   const { t } = useLanguage();
   const { favorites, toggleFavorite, isFavorite, favoritesCount } = useFavorites();
   
@@ -87,7 +91,7 @@ export const KolaMap = () => {
   }
 
   return (
-    <div className="relative h-screen w-full">
+    <div className="relative h-full w-full">
       {/* Loading overlay */}
       {!isMapReady && (
         <div className="absolute inset-0 z-[2000] bg-background flex flex-col items-center justify-center gap-4">
@@ -96,53 +100,60 @@ export const KolaMap = () => {
         </div>
       )}
 
-      {/* Header - mobile only filters, desktop minimal */}
-      <div className="absolute top-0 left-0 right-0 z-[1000] bg-gradient-to-b from-background via-background/95 to-transparent pb-6 md:pb-4 pt-3 md:pt-4 px-3 md:px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-3 md:mb-0">
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">
-                {t('explore')}
-              </h1>
-              <p className="text-muted-foreground text-xs md:text-sm mt-0.5">
-                {t('subtitle')} • {filteredPlaces.length} {t('places')}
-              </p>
+      {/* Header - only show when not embedded */}
+      {!embedded && (
+        <div className="absolute top-0 left-0 right-0 z-[1000] bg-gradient-to-b from-background via-background/95 to-transparent pb-6 md:pb-4 pt-3 md:pt-4 px-3 md:px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-3 md:mb-0">
+              <div>
+                <h1 className="text-xl md:text-2xl font-bold text-foreground tracking-tight">
+                  {t('explore')}
+                </h1>
+                <p className="text-muted-foreground text-xs md:text-sm mt-0.5">
+                  {t('subtitle')} • {filteredPlaces.length} {t('places')}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setIsExploreMode(true)}
+                  className="hidden md:flex"
+                >
+                  <Compass className="h-4 w-4 mr-1.5" />
+                  {t('actions.explore')}
+                </Button>
+                <LanguageSwitcher />
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setIsExploreMode(true)}
-                className="hidden md:flex"
-              >
-                <Compass className="h-4 w-4 mr-1.5" />
-                {t('actions.explore')}
-              </Button>
-              <LanguageSwitcher />
-            </div>
-          </div>
-          {/* Mobile only - category filters */}
-          <div className="md:hidden flex items-center gap-2 mt-3">
-            <CategoryFilter 
-              selectedCategories={selectedCategories} 
-              onToggleCategory={handleToggleCategory}
-              showFavoritesOnly={showFavoritesOnly}
-              onToggleFavoritesOnly={handleToggleFavoritesOnly}
-              favoritesCount={favoritesCount}
-            />
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Explore button - mobile only */}
-      <Button
-        variant="default"
-        size="icon"
-        onClick={() => setIsExploreMode(true)}
-        className="sm:hidden fixed bottom-20 right-4 z-[1000] h-12 w-12 rounded-full shadow-lg"
-      >
-        <Compass className="h-5 w-5" />
-      </Button>
+      {/* Mobile category filters - only when not embedded */}
+      {!embedded && (
+        <div className="md:hidden absolute top-20 left-0 right-0 z-[1000] px-3">
+          <CategoryFilter 
+            selectedCategories={selectedCategories} 
+            onToggleCategory={handleToggleCategory}
+            showFavoritesOnly={showFavoritesOnly}
+            onToggleFavoritesOnly={handleToggleFavoritesOnly}
+            favoritesCount={favoritesCount}
+          />
+        </div>
+      )}
+
+      {/* Explore button - mobile only, when not embedded */}
+      {!embedded && (
+        <Button
+          variant="default"
+          size="icon"
+          onClick={() => setIsExploreMode(true)}
+          className="sm:hidden fixed bottom-20 right-4 z-[1000] h-12 w-12 rounded-full shadow-lg"
+        >
+          <Compass className="h-5 w-5" />
+        </Button>
+      )}
 
       {/* Map */}
       <MapView 
@@ -217,8 +228,8 @@ export const KolaMap = () => {
         </div>
       </div>
 
-      {/* Cookie consent */}
-      <CookieConsent />
+      {/* Cookie consent - only when not embedded */}
+      {!embedded && <CookieConsent />}
     </div>
   );
 };
