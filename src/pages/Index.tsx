@@ -9,6 +9,7 @@ import { CookieConsent } from '@/components/CookieConsent';
 import { kolaPlaces, Place, PlaceCategory } from '@/data/kolaPlaces';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -26,7 +27,13 @@ const INITIAL_ZOOM = 7;
 
 const Index = () => {
   const { t } = useLanguage();
+  const { requireAuth } = useAuth();
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
+
+  // Wrap toggleFavorite with auth check
+  const handleToggleFavorite = useCallback((id: string) => {
+    requireAuth(() => toggleFavorite(id));
+  }, [requireAuth, toggleFavorite]);
   
   const [selectedCategory, setSelectedCategory] = useState<CategoryGroup | 'all'>('all');
   const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>([]);
@@ -89,9 +96,9 @@ const Index = () => {
 
   const handleToggleSelectedFavorite = useCallback(() => {
     if (selectedPlace) {
-      toggleFavorite(selectedPlace.id);
+      handleToggleFavorite(selectedPlace.id);
     }
-  }, [selectedPlace, toggleFavorite]);
+  }, [selectedPlace, handleToggleFavorite]);
 
   return (
     <div className="h-screen flex flex-col bg-background">
@@ -117,7 +124,7 @@ const Index = () => {
             places={filteredPlaces}
             favorites={favorites}
             selectedPlaceId={selectedPlace?.id}
-            onToggleFavorite={toggleFavorite}
+            onToggleFavorite={handleToggleFavorite}
             onPlaceClick={handlePlaceClick}
           />
         </aside>
