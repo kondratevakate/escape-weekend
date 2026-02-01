@@ -25,6 +25,14 @@ export const translations = {
       village: 'Сёла',
       city: 'Города',
       reserve: 'Заповедники',
+      history: 'История саамов',
+    },
+    
+    // History layer
+    historyLayer: {
+      title: 'Слой истории',
+      description: 'Территория и культура саамов',
+      attribution: 'Данные: Интерактивный атлас КМНС',
     },
     
     // Actions
@@ -145,6 +153,14 @@ export const translations = {
       village: 'Villages',
       city: 'Cities',
       reserve: 'Reserves',
+      history: 'Saami History',
+    },
+    
+    // History layer
+    historyLayer: {
+      title: 'History Layer',
+      description: 'Saami territory and culture',
+      attribution: 'Data: Indigenous Peoples Atlas',
     },
     
     // Actions

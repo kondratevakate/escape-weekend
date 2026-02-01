@@ -1,6 +1,6 @@
 import { PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
 import { cn } from '@/lib/utils';
-import { Heart } from 'lucide-react';
+import { Heart, Scroll } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CategoryFilterProps {
@@ -9,6 +9,8 @@ interface CategoryFilterProps {
   showFavoritesOnly: boolean;
   onToggleFavoritesOnly: () => void;
   favoritesCount: number;
+  showHistoryLayer: boolean;
+  onToggleHistoryLayer: () => void;
 }
 
 export const CategoryFilter = ({ 
@@ -17,9 +19,14 @@ export const CategoryFilter = ({
   showFavoritesOnly,
   onToggleFavoritesOnly,
   favoritesCount,
+  showHistoryLayer,
+  onToggleHistoryLayer,
 }: CategoryFilterProps) => {
   const { t } = useLanguage();
-  const categories = Object.entries(categoryConfig) as [PlaceCategory, typeof categoryConfig[PlaceCategory]][];
+  
+  // Filter out 'history' from regular categories - it's shown as a special layer toggle
+  const categories = (Object.entries(categoryConfig) as [PlaceCategory, typeof categoryConfig[PlaceCategory]][])
+    .filter(([key]) => key !== 'history');
 
   return (
     <div className="flex flex-col gap-1">
@@ -41,6 +48,27 @@ export const CategoryFilter = ({
             {favoritesCount}
           </span>
         )}
+      </button>
+
+      <div className="h-px bg-border my-1" />
+
+      {/* History layer toggle */}
+      <button
+        onClick={onToggleHistoryLayer}
+        className={cn(
+          "flex items-center justify-center p-2 rounded-lg text-lg transition-all duration-200",
+          "hover:scale-105 active:scale-95",
+          showHistoryLayer
+            ? "shadow-sm"
+            : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted"
+        )}
+        style={showHistoryLayer ? {
+          backgroundColor: categoryConfig.history.bgColor,
+          color: categoryConfig.history.color,
+        } : undefined}
+        title={t('historyLayer.title')}
+      >
+        <Scroll className="h-4 w-4" />
       </button>
 
       <div className="h-px bg-border my-1" />

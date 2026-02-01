@@ -5,7 +5,8 @@ export type PlaceCategory =
   | 'attraction' 
   | 'village' 
   | 'city' 
-  | 'reserve';
+  | 'reserve'
+  | 'history';
 
 export interface Place {
   id: string;
@@ -64,6 +65,12 @@ export const categoryConfig: Record<PlaceCategory, {
     icon: '🌲',
     color: 'hsl(160 84% 39%)',
     bgColor: 'hsl(160 84% 95%)',
+  },
+  history: {
+    label: 'История',
+    icon: '📜',
+    color: 'hsl(340 65% 45%)',
+    bgColor: 'hsl(340 65% 95%)',
   },
 };
 
