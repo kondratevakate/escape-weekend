@@ -86,6 +86,26 @@ export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: Plac
   
   // Like animation state
   const [isAnimating, setIsAnimating] = useState(false);
+  
+  // Double-tap state
+  const [showBigHeart, setShowBigHeart] = useState(false);
+  const lastTap = useRef(0);
+  const DOUBLE_TAP_DELAY = 300;
+
+  const handleImageTap = () => {
+    const now = Date.now();
+    if (now - lastTap.current < DOUBLE_TAP_DELAY) {
+      // Double tap detected!
+      setShowBigHeart(true);
+      if (!isFavorite) {
+        setIsAnimating(true);
+        setTimeout(() => setIsAnimating(false), 400);
+        onToggleFavorite();
+      }
+      setTimeout(() => setShowBigHeart(false), 800);
+    }
+    lastTap.current = now;
+  };
 
   // Swipe state
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -145,14 +165,23 @@ export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: Plac
         onTouchMove={(e) => handleMove(e.touches[0].clientX, e.touches[0].clientY)}
         onTouchEnd={handleEnd}
       >
-        {/* Image */}
-        <div className="relative h-40 overflow-hidden">
+        {/* Image with double-tap */}
+        <div 
+          className="relative h-40 overflow-hidden"
+          onClick={handleImageTap}
+        >
           <img 
             src={mockData.imageUrl} 
             alt={place.name}
             className="w-full h-full object-cover pointer-events-none"
             draggable={false}
           />
+          {/* Big heart animation on double-tap */}
+          {showBigHeart && (
+            <Heart 
+              className="absolute top-1/2 left-1/2 h-16 w-16 fill-red-500 text-red-500 animate-heart-pop pointer-events-none z-10" 
+            />
+          )}
           {/* Like button on photo */}
           <button 
             onClick={(e) => { 
@@ -221,17 +250,6 @@ export const PlaceCard = ({ place, isFavorite, onClose, onToggleFavorite }: Plac
             <p className="text-xs text-muted-foreground mb-2">{place.nameEn}</p>
           )}
 
-          {/* Social stats - minimalist */}
-          <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
-            <span className="flex items-center gap-1">
-              <span>❤️</span>
-              <span>{formatCount(stats.likesCount)}</span>
-            </span>
-            <span className="flex items-center gap-1">
-              <span>📤</span>
-              <span>{formatCount(stats.sharesCount)}</span>
-            </span>
-          </div>
 
           {/* AI Summary */}
           <div className="bg-muted/50 rounded-lg p-3 mb-3">
