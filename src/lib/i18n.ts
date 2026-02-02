@@ -26,6 +26,7 @@ export const translations = {
       city: 'Города',
       reserve: 'Заповедники',
       history: 'История саамов',
+      unesco: 'UNESCO',
     },
     
     // History layer
@@ -33,6 +34,13 @@ export const translations = {
       title: 'Слой истории',
       description: 'Территория и культура саамов',
       attribution: 'Данные: Интерактивный атлас КМНС',
+    },
+    
+    // UNESCO layer
+    unescoLayer: {
+      title: 'Объекты UNESCO',
+      description: 'Всемирное наследие',
+      attribution: 'UNESCO World Heritage Centre',
     },
     
     // Actions
@@ -154,6 +162,7 @@ export const translations = {
       city: 'Cities',
       reserve: 'Reserves',
       history: 'Saami History',
+      unesco: 'UNESCO',
     },
     
     // History layer
@@ -161,6 +170,13 @@ export const translations = {
       title: 'History Layer',
       description: 'Saami territory and culture',
       attribution: 'Data: Indigenous Peoples Atlas',
+    },
+    
+    // UNESCO layer
+    unescoLayer: {
+      title: 'UNESCO Sites',
+      description: 'World Heritage',
+      attribution: 'UNESCO World Heritage Centre',
     },
     
     // Actions

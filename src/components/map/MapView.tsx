@@ -14,9 +14,11 @@ interface MapViewProps {
   showFavoritesOnly: boolean;
   favoritesCount: number;
   showHistoryLayer: boolean;
+  showUnescoLayer: boolean;
   onToggleCategory: (category: PlaceCategory) => void;
   onToggleFavoritesOnly: () => void;
   onToggleHistoryLayer: () => void;
+  onToggleUnescoLayer: () => void;
   onMapReady?: () => void;
   onPlaceClick?: (place: Place) => void;
 }
@@ -36,9 +38,11 @@ export const MapView = ({
   showFavoritesOnly,
   favoritesCount,
   showHistoryLayer,
+  showUnescoLayer,
   onToggleCategory,
   onToggleFavoritesOnly,
   onToggleHistoryLayer,
+  onToggleUnescoLayer,
   onMapReady, 
   onPlaceClick 
 }: MapViewProps) => {
@@ -211,21 +215,35 @@ export const MapView = ({
             favoritesCount={favoritesCount}
             showHistoryLayer={showHistoryLayer}
             onToggleHistoryLayer={onToggleHistoryLayer}
+            showUnescoLayer={showUnescoLayer}
+            onToggleUnescoLayer={onToggleUnescoLayer}
           />
         </div>
       </div>
       
-      {/* History layer attribution */}
-      {showHistoryLayer && (
-        <div className="absolute bottom-2 left-2 z-[1000]">
-          <a 
-            href="https://atlaskmns.ru" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            📜 Данные: atlaskmns.ru
-          </a>
+      {/* Layer attributions */}
+      {(showHistoryLayer || showUnescoLayer) && (
+        <div className="absolute bottom-2 left-2 z-[1000] flex flex-col gap-1">
+          {showHistoryLayer && (
+            <a 
+              href="https://atlaskmns.ru" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              📜 Данные: atlaskmns.ru
+            </a>
+          )}
+          {showUnescoLayer && (
+            <a 
+              href="https://whc.unesco.org" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              🏛️ UNESCO World Heritage Centre
+            </a>
+          )}
         </div>
       )}
     </div>

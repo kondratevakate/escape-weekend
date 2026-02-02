@@ -8,6 +8,7 @@ import { ExploreMode } from '@/components/map/ExploreMode';
 import { CookieConsent } from '@/components/CookieConsent';
 import { kolaPlaces, Place, PlaceCategory } from '@/data/kolaPlaces';
 import { saamiHistoryPlaces } from '@/data/saamiHistoryLayer';
+import { unescoPlaces } from '@/data/unescoLayer';
 import { collections } from '@/data/collections';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useUserLists } from '@/hooks/useUserLists';
@@ -50,6 +51,7 @@ const Index = () => {
   const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [showHistoryLayer, setShowHistoryLayer] = useState(false);
+  const [showUnescoLayer, setShowUnescoLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -76,12 +78,21 @@ const Index = () => {
     setShowHistoryLayer(prev => !prev);
   }, []);
 
+  const handleToggleUnescoLayer = useCallback(() => {
+    setShowUnescoLayer(prev => !prev);
+  }, []);
+
   // Filter places based on header category group AND map category filter AND active collection
   const filteredPlaces = useMemo(() => {
-    // Combine base places with Saami history places when history layer is active
-    let allPlaces = showHistoryLayer 
-      ? [...kolaPlaces, ...saamiHistoryPlaces]
-      : kolaPlaces;
+    // Combine base places with special layers
+    let allPlaces = [...kolaPlaces];
+    
+    if (showHistoryLayer) {
+      allPlaces = [...allPlaces, ...saamiHistoryPlaces];
+    }
+    if (showUnescoLayer) {
+      allPlaces = [...allPlaces, ...unescoPlaces];
+    }
     
     let places = allPlaces;
     
@@ -102,10 +113,11 @@ const Index = () => {
     
     // Then filter by map category filter
     if (selectedCategories.length > 0) {
-      // When history layer is on, always include history places
+      // Always include history/unesco places when their layers are on
       places = places.filter(place => 
         selectedCategories.includes(place.category) || 
-        (showHistoryLayer && place.category === 'history')
+        (showHistoryLayer && place.category === 'history') ||
+        (showUnescoLayer && place.category === 'unesco')
       );
     }
     
@@ -115,7 +127,7 @@ const Index = () => {
     }
     
     return places;
-  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites, activeCollectionId, showHistoryLayer]);
+  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites, activeCollectionId, showHistoryLayer, showUnescoLayer]);
 
   const handlePlaceClick = useCallback((place: Place) => {
     setSelectedPlace(place);
@@ -192,9 +204,11 @@ const Index = () => {
             showFavoritesOnly={showFavoritesOnly}
             favoritesCount={favorites.length}
             showHistoryLayer={showHistoryLayer}
+            showUnescoLayer={showUnescoLayer}
             onToggleCategory={handleToggleCategory}
             onToggleFavoritesOnly={handleToggleFavoritesOnly}
             onToggleHistoryLayer={handleToggleHistoryLayer}
+            onToggleUnescoLayer={handleToggleUnescoLayer}
             onMapReady={handleMapReady}
             onPlaceClick={handlePlaceClick}
           />
