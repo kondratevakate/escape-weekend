@@ -10,6 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Place } from '@/data/kolaPlaces';
 import { useSharePostcard } from '@/hooks/useSharePostcard';
 import { toast } from 'sonner';
+import { track } from '@/lib/analytics';
 
 interface ShareButtonProps {
   place: Place;
@@ -33,6 +34,7 @@ export const ShareButton = ({ place, onShare, variant = 'default' }: ShareButton
           title: place.name,
           text: shareText,
         });
+        track({ event: 'share_place', placeId: place.id, method: 'native' });
         onShare?.();
         setIsOpen(false);
       } catch (err) {
@@ -46,6 +48,7 @@ export const ShareButton = ({ place, onShare, variant = 'default' }: ShareButton
   const handleTelegramShare = () => {
     const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(telegramDeepLink)}&text=${encodeURIComponent(shareText)}`;
     window.open(telegramUrl, '_blank');
+    track({ event: 'share_place', placeId: place.id, method: 'telegram' });
     onShare?.();
     setIsOpen(false);
   };
@@ -55,6 +58,7 @@ export const ShareButton = ({ place, onShare, variant = 'default' }: ShareButton
       await navigator.clipboard.writeText(shareText);
       setCopied(true);
       toast.success(t('social.linkCopied'));
+      track({ event: 'share_place', placeId: place.id, method: 'copy' });
       onShare?.();
       setTimeout(() => {
         setCopied(false);
