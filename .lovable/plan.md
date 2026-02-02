@@ -1,195 +1,243 @@
 
-# План: Расширить слои UNESCO и коренных народов на весь мир и Россию
+# План: Иконки народов и легенда с оптимизацией
 
-## Цель
+## Что добавляем
 
-Сделать карту более впечатляющей и значимой:
-1. **UNESCO** — добавить знаковые объекты по всему миру (Пирамиды, Мачу-Пикчу, Венеция и т.д.)
-2. **Коренные народы** — расширить с саамов до всех 40+ народов Севера, Сибири и Дальнего Востока России
+1. **SVG-иконки народов** — с atlaskmns.ru для каждого из 12 народов
+2. **Интерактивная легенда** — сворачиваемая панель со списком народов
+3. **Оптимизация кода** — lazy loading иконок, мемоизация, кэширование
 
 ## Как будет выглядеть
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           [КАРТА МИРА при zoom out]                         │
+│                              [КАРТА]                                        │
 │                                                                             │
-│   🏛️ Стоунхендж         🏛️ Кремль                      🏛️ Великая стена   │
+│   ┌─────────────────────────────────────────────────────────┐               │
+│   │   Территории коренных народов России                    │               │
+│   │     (полигоны с разными цветами)                        │               │
+│   └─────────────────────────────────────────────────────────┘               │
 │                                                                             │
-│   🏛️ Версаль      ┌─────────────────────────────────────┐                  │
-│                    │  Территории коренных народов        │                  │
-│   🏛️ Колизей      │  ═══════════════════════════════   │    🏛️ Фудзи      │
-│                    │  Ненцы  │ Ханты │ Эвенки │ Чукчи   │                  │
-│   🏛️ Альгамбра    │  Манси  │ Селькупы │ Юкагиры      │                   │
-│                    └─────────────────────────────────────┘                  │
-│   🏛️ Пирамиды                                              🏛️ Ангкор      │
-│                                                                             │
-│   🏛️ Петра                                      🏛️ Тадж Махал             │
-│                                                                             │
-│   🏛️ Мачу-Пикчу              🏛️ Виктория               🏛️ Сидней        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ [ЛЕГЕНДА — появляется при включении слоя]                                   │
+│ ┌──────────────────────────────────────┐                                    │
+│ │ 📜 Коренные народы          [−]      │  ← Сворачиваемая                  │
+│ ├──────────────────────────────────────┤                                    │
+│ │ [🧑‍🦰] Саамы           ~2 000   ███   │  ← Иконка + цвет + население      │
+│ │ [👤] Ненцы          ~45 000  ████   │                                    │
+│ │ [👤] Ханты          ~31 000  ███    │                                    │
+│ │ [👤] Эвенки         ~38 000  ████   │                                    │
+│ │ [👤] Чукчи          ~16 000  ██     │                                    │
+│ │ ...                                  │                                    │
+│ ├──────────────────────────────────────┤                                    │
+│ │ Источник: atlaskmns.ru               │                                    │
+│ └──────────────────────────────────────┘                                    │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Новые данные
+## URL-ы иконок с atlaskmns.ru
 
-### UNESCO — ~30 знаковых объектов по всему миру
-
-| Регион | Объекты |
-|--------|---------|
-| **Европа** | Стоунхендж, Версаль, Колизей, Венеция, Альгамбра, Акрополь, Прага |
-| **Россия** | Кремль, Байкал, Камчатка, Казанский Кремль, Ярославль |
-| **Азия** | Великая стена, Тадж Махал, Ангкор Ват, Фудзи, Петра |
-| **Африка** | Пирамиды Гизы, Водопад Виктория, Марракеш |
-| **Америка** | Мачу-Пикчу, Статуя Свободы, Гранд-Каньон, Галапагосы |
-| **Океания** | Сиднейский оперный театр, Большой Барьерный риф |
-
-### Коренные народы России — 10-15 крупнейших территорий
-
-| Народ | Регион | Численность |
-|-------|--------|-------------|
-| Ненцы | Ямал, НАО | ~45 000 |
-| Ханты | ХМАО | ~31 000 |
-| Эвенки | Сибирь, Якутия | ~38 000 |
-| Чукчи | Чукотка | ~16 000 |
-| Эвены | Якутия, Магадан | ~22 000 |
-| Манси | ХМАО | ~12 000 |
-| Коряки | Камчатка | ~8 000 |
-| Долганы | Таймыр | ~8 000 |
-| Нанайцы | Хабаровский край | ~12 000 |
-| Саамы | Кольский п-ов | ~2 000 |
+| Народ | ID | URL иконки |
+|-------|-----|------------|
+| Саамы | saami | `https://atlaskmns.ru/static/img/svg/peoples_1_saamy.svg` |
+| Ненцы | nenets | `https://atlaskmns.ru/static/img/svg/peoples_3_nentsy.svg` |
+| Ханты | khanty | `https://atlaskmns.ru/static/img/svg/peoples_4_hanty.svg` |
+| Манси | mansi | `https://atlaskmns.ru/static/img/svg/peoples_5_mansi.svg` |
+| Эвенки | evenki | `https://atlaskmns.ru/static/img/svg/peoples_18_evenki.svg` |
+| Эвены | evens | `https://atlaskmns.ru/static/img/svg/peoples_19_eveny.svg` |
+| Чукчи | chukchi | `https://atlaskmns.ru/static/img/svg/peoples_40_chukchi.svg` |
+| Коряки | koryak | `https://atlaskmns.ru/static/img/svg/peoples_33_koryaki.svg` |
+| Долганы | dolgan | `https://atlaskmns.ru/static/img/svg/peoples_17_dolgany.svg` |
+| Нанайцы | nanai | `https://atlaskmns.ru/static/img/svg/peoples_23_nanaicy.svg` |
+| Селькупы | selkup | `https://atlaskmns.ru/static/img/svg/peoples_7_selcupy.svg` |
+| Юкагиры | yukagir | `https://atlaskmns.ru/static/img/svg/peoples_31_yukagiry.svg` |
 
 ## Техническая реализация
 
-### 1. Расширенный файл UNESCO
+### 1. Обновить данные — добавить iconUrl
 
 ```typescript
-// src/data/unescoLayer.ts — расширенная версия
-export const unescoSites: UnescoSite[] = [
-  // Существующие российские объекты...
-  
-  // Европа
-  {
-    id: 'unesco-stonehenge',
-    name: 'Стоунхендж',
-    nameEn: 'Stonehenge',
-    description: 'Загадочный мегалитический комплекс бронзового века',
-    category: 'Cultural',
-    coordinates: [51.178882, -1.826215],
-    yearInscribed: 1986,
-    url: 'https://whc.unesco.org/en/list/373',
-  },
-  {
-    id: 'unesco-colosseum',
-    name: 'Колизей',
-    nameEn: 'Colosseum',
-    description: 'Амфитеатр Древнего Рима на 50 000 зрителей',
-    category: 'Cultural',
-    coordinates: [41.8902, 12.4922],
-    yearInscribed: 1980,
-    url: 'https://whc.unesco.org/en/list/91',
-  },
-  // ... ещё ~25 объектов
-];
-```
-
-### 2. Расширенный файл коренных народов
-
-```typescript
-// src/data/indigenousPeoplesLayer.ts (переименуем из saamiHistoryLayer.ts)
+// src/data/indigenousPeoplesLayer.ts
 export interface IndigenousPeople {
-  id: string;
-  name: string;
-  nameEn: string;
-  description: string;
-  population: number;
-  region: string;
-  territory: GeoJSON.Feature; // полигон территории
-  culturalCenters: Place[];   // культурные центры
+  // ... существующие поля
+  iconUrl: string;  // URL к SVG иконке
 }
 
 export const indigenousPeoples: IndigenousPeople[] = [
   {
     id: 'saami',
     name: 'Саамы',
-    nameEn: 'Saami',
-    description: 'Коренной народ Кольского полуострова',
-    population: 1991,
-    region: 'Мурманская область',
-    territory: saamiTerritoryGeoJSON,
-    culturalCenters: saamiHistoryPlaces,
+    iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_1_saamy.svg',
+    // ...
   },
-  {
-    id: 'nenets',
-    name: 'Ненцы',
-    nameEn: 'Nenets',
-    description: 'Крупнейший северный народ, оленеводы тундры',
-    population: 45000,
-    region: 'Ямал, НАО',
-    territory: nenetsTerritoryGeoJSON,
-    culturalCenters: [...],
-  },
-  // ... ещё ~10 народов
+  // ...
 ];
 ```
 
-### 3. Обновление MapView
+### 2. Создать компонент легенды
 
-```typescript
-// Добавить все полигоны территорий народов
-useEffect(() => {
-  if (showHistoryLayer) {
-    indigenousPeoples.forEach(people => {
-      const layer = L.geoJSON(people.territory, {
-        style: {
-          fillColor: getColorForPeople(people.id),
-          fillOpacity: 0.1,
-          color: getColorForPeople(people.id),
-          weight: 2,
-          dashArray: '6, 4',
-        },
-      });
-      layer.bindPopup(`<strong>${people.name}</strong><br/>
-        Численность: ~${people.population.toLocaleString()}`);
-      layer.addTo(map);
-    });
-  }
-}, [showHistoryLayer]);
+```tsx
+// src/components/map/IndigenousPeoplesLegend.tsx
+import { useState, memo } from 'react';
+import { Scroll, ChevronDown, ChevronUp } from 'lucide-react';
+import { indigenousPeoples } from '@/data/indigenousPeoplesLayer';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+
+interface Props {
+  isVisible: boolean;
+  onPeopleClick?: (peopleId: string, center: [number, number]) => void;
+}
+
+// Мемоизированный компонент строки легенды
+const LegendItem = memo(({ people, language, onClick }: {...}) => (
+  <button
+    onClick={onClick}
+    className="flex items-center gap-2 w-full p-1.5 rounded 
+               hover:bg-accent/50 transition-colors text-left"
+  >
+    <img 
+      src={people.iconUrl} 
+      alt=""
+      className="w-6 h-6 object-contain"
+      loading="lazy"  // Lazy loading для иконок
+    />
+    <div 
+      className="w-3 h-3 rounded-full shrink-0"
+      style={{ backgroundColor: people.color }}
+    />
+    <span className="text-xs flex-1 truncate">
+      {language === 'ru' ? people.name : people.nameEn}
+    </span>
+    <span className="text-[10px] text-muted-foreground tabular-nums">
+      ~{people.population.toLocaleString()}
+    </span>
+  </button>
+));
+
+export const IndigenousPeoplesLegend = memo(({ isVisible, onPeopleClick }: Props) => {
+  const { language } = useLanguage();
+  const [isOpen, setIsOpen] = useState(true);
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="absolute bottom-16 left-2 z-[1000] 
+                    bg-background/95 backdrop-blur-sm 
+                    rounded-lg shadow-lg border max-w-[200px]">
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CollapsibleTrigger className="flex items-center justify-between 
+                                        w-full p-2 hover:bg-accent/30">
+          <div className="flex items-center gap-2">
+            <Scroll className="h-4 w-4 text-primary" />
+            <span className="font-medium text-xs">
+              {language === 'ru' ? 'Коренные народы' : 'Indigenous Peoples'}
+            </span>
+          </div>
+          {isOpen ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+        </CollapsibleTrigger>
+        
+        <CollapsibleContent>
+          <div className="px-2 pb-2 space-y-0.5 max-h-[40vh] overflow-y-auto">
+            {indigenousPeoples.map(people => (
+              <LegendItem 
+                key={people.id}
+                people={people}
+                language={language}
+                onClick={() => onPeopleClick?.(people.id, getTerritoryCentroid(people.territory))}
+              />
+            ))}
+          </div>
+          
+          <div className="border-t px-2 py-1.5">
+            <a 
+              href="https://atlaskmns.ru" 
+              target="_blank"
+              className="text-[10px] text-muted-foreground hover:text-foreground"
+            >
+              Источник: atlaskmns.ru
+            </a>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    </div>
+  );
+});
 ```
 
-### 4. Адаптация начального зума
+### 3. Интегрировать в MapView
 
-При включении мировых слоёв — автоматически отдалять карту:
+```tsx
+// src/components/map/MapView.tsx
+import { IndigenousPeoplesLegend } from './IndigenousPeoplesLegend';
+
+// В JSX, рядом с атрибуциями:
+<IndigenousPeoplesLegend 
+  isVisible={showHistoryLayer}
+  onPeopleClick={(id, center) => {
+    mapInstanceRef.current?.flyTo(center, 6);
+  }}
+/>
+```
+
+## Оптимизации
+
+### Производительность иконок
+
+```tsx
+// Lazy loading — загружаем только видимые
+<img loading="lazy" src={people.iconUrl} />
+
+// Fallback при ошибке загрузки
+<img 
+  src={people.iconUrl}
+  onError={(e) => {
+    e.currentTarget.style.display = 'none';
+  }}
+/>
+```
+
+### Мемоизация компонентов
+
+```tsx
+// Мемоизируем LegendItem чтобы не перерендеривать все при открытии/закрытии
+const LegendItem = memo(({ people, language, onClick }) => {...});
+
+// Мемоизируем всю легенду
+export const IndigenousPeoplesLegend = memo(({ isVisible }) => {...});
+```
+
+### Вычисление центроида территории
 
 ```typescript
-// При включении UNESCO layer
-if (showUnescoLayer && zoom > 4) {
-  map.setView([30, 0], 2); // Показать весь мир
-}
+// Утилита для нахождения центра полигона (для flyTo)
+const getTerritoryCentroid = (territory: GeoJSON.Feature): [number, number] => {
+  const coords = (territory.geometry as GeoJSON.Polygon).coordinates[0];
+  const lat = coords.reduce((sum, c) => sum + c[1], 0) / coords.length;
+  const lng = coords.reduce((sum, c) => sum + c[0], 0) / coords.length;
+  return [lat, lng];
+};
 ```
 
 ## Изменяемые файлы
 
 | Файл | Изменения |
 |------|-----------|
-| `src/data/unescoLayer.ts` | Добавить ~25 мировых объектов UNESCO |
-| `src/data/saamiHistoryLayer.ts` | Переименовать в `indigenousPeoplesLayer.ts`, добавить ~10 народов с территориями |
-| `src/components/map/MapView.tsx` | Рендеринг нескольких полигонов народов |
-| `src/components/map/KolaMap.tsx` | Обновить импорты |
-| `src/pages/Index.tsx` | Обновить импорты |
-| `src/lib/i18n.ts` | Обновить названия слоёв |
+| `src/data/indigenousPeoplesLayer.ts` | Добавить поле `iconUrl` к 12 народам |
+| `src/components/map/IndigenousPeoplesLegend.tsx` | **Новый** — сворачиваемая легенда |
+| `src/components/map/MapView.tsx` | Импортировать и добавить легенду |
+| `src/lib/i18n.ts` | Переводы для легенды |
 
-## Особенности реализации
+## План проверки
 
-### Производительность
-- UNESCO маркеры загружаются лениво (показываем только видимые)
-- Полигоны народов упрощены для быстрой отрисовки
-- При zoom > 8 — скрываем далёкие объекты
+После реализации проверяем:
 
-### UX улучшения
-- При клике на "UNESCO" — кнопка "Показать всё" отдаляет карту на мировой масштаб
-- Легенда народов показывает цвета и численность
-- Tooltip при наведении на полигон — название народа
-
-## Источники данных
-
-- **UNESCO**: whc.unesco.org — официальный список с координатами
-- **Коренные народы**: atlaskmns.ru — интерактивный атлас КМНС России (40 народов с территориями)
+| Шаг | Что проверяем | Ожидаемый результат |
+|-----|---------------|---------------------|
+| 1 | Открыть карту, включить слой "Коренные народы" | Легенда появляется слева внизу |
+| 2 | Проверить иконки в легенде | Все 12 иконок загружаются с atlaskmns.ru |
+| 3 | Свернуть/развернуть легенду | Анимация работает, состояние сохраняется |
+| 4 | Кликнуть на народ в легенде | Карта плавно перемещается к его территории |
+| 5 | Выключить слой | Легенда исчезает |
+| 6 | Проверить на мобильном | Легенда не перекрывает важные элементы |
+| 7 | Открыть DevTools → Network | Иконки загружаются с lazy loading |
