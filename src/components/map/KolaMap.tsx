@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { kolaPlaces, PlaceCategory, categoryConfig, Place } from '@/data/kolaPlaces';
-import { saamiHistoryPlaces } from '@/data/saamiHistoryLayer';
+import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
 import { unescoPlaces } from '@/data/unescoLayer';
 import { CategoryFilter } from './CategoryFilter';
 import { MapView } from './MapView';
@@ -45,7 +45,7 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
     let allPlaces = [...kolaPlaces];
     
     if (showHistoryLayer) {
-      allPlaces = [...allPlaces, ...saamiHistoryPlaces];
+      allPlaces = [...allPlaces, ...getAllCulturalCenters()];
     }
     if (showUnescoLayer) {
       allPlaces = [...allPlaces, ...unescoPlaces];

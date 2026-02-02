@@ -7,7 +7,7 @@ import { PlaceCard } from '@/components/map/PlaceCard';
 import { ExploreMode } from '@/components/map/ExploreMode';
 import { CookieConsent } from '@/components/CookieConsent';
 import { kolaPlaces, Place, PlaceCategory } from '@/data/kolaPlaces';
-import { saamiHistoryPlaces } from '@/data/saamiHistoryLayer';
+import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
 import { unescoPlaces } from '@/data/unescoLayer';
 import { collections } from '@/data/collections';
 import { useFavorites } from '@/hooks/useFavorites';
@@ -88,7 +88,7 @@ const Index = () => {
     let allPlaces = [...kolaPlaces];
     
     if (showHistoryLayer) {
-      allPlaces = [...allPlaces, ...saamiHistoryPlaces];
+      allPlaces = [...allPlaces, ...getAllCulturalCenters()];
     }
     if (showUnescoLayer) {
       allPlaces = [...allPlaces, ...unescoPlaces];
