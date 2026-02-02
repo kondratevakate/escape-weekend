@@ -6,7 +6,8 @@ export type PlaceCategory =
   | 'village' 
   | 'city' 
   | 'reserve'
-  | 'history';
+  | 'history'
+  | 'unesco';
 
 export interface Place {
   id: string;
@@ -71,6 +72,12 @@ export const categoryConfig: Record<PlaceCategory, {
     icon: '📜',
     color: 'hsl(340 65% 45%)',
     bgColor: 'hsl(340 65% 95%)',
+  },
+  unesco: {
+    label: 'UNESCO',
+    icon: '🏛️',
+    color: 'hsl(210 100% 40%)',
+    bgColor: 'hsl(210 100% 95%)',
   },
 };
 

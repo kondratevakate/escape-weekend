@@ -1,6 +1,6 @@
 import { PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
 import { cn } from '@/lib/utils';
-import { Heart, Scroll } from 'lucide-react';
+import { Heart, Scroll, Landmark } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CategoryFilterProps {
@@ -11,6 +11,8 @@ interface CategoryFilterProps {
   favoritesCount: number;
   showHistoryLayer: boolean;
   onToggleHistoryLayer: () => void;
+  showUnescoLayer: boolean;
+  onToggleUnescoLayer: () => void;
 }
 
 export const CategoryFilter = ({ 
@@ -21,12 +23,14 @@ export const CategoryFilter = ({
   favoritesCount,
   showHistoryLayer,
   onToggleHistoryLayer,
+  showUnescoLayer,
+  onToggleUnescoLayer,
 }: CategoryFilterProps) => {
   const { t } = useLanguage();
   
-  // Filter out 'history' from regular categories - it's shown as a special layer toggle
+  // Filter out 'history' and 'unesco' from regular categories - they're shown as special layer toggles
   const categories = (Object.entries(categoryConfig) as [PlaceCategory, typeof categoryConfig[PlaceCategory]][])
-    .filter(([key]) => key !== 'history');
+    .filter(([key]) => key !== 'history' && key !== 'unesco');
 
   return (
     <div className="flex flex-col gap-1">
@@ -51,6 +55,25 @@ export const CategoryFilter = ({
       </button>
 
       <div className="h-px bg-border my-1" />
+
+      {/* UNESCO layer toggle */}
+      <button
+        onClick={onToggleUnescoLayer}
+        className={cn(
+          "flex items-center justify-center p-2 rounded-lg text-lg transition-all duration-200",
+          "hover:scale-105 active:scale-95",
+          showUnescoLayer
+            ? "shadow-sm"
+            : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted"
+        )}
+        style={showUnescoLayer ? {
+          backgroundColor: categoryConfig.unesco.bgColor,
+          color: categoryConfig.unesco.color,
+        } : undefined}
+        title={t('unescoLayer.title')}
+      >
+        <Landmark className="h-4 w-4" />
+      </button>
 
       {/* History layer toggle */}
       <button

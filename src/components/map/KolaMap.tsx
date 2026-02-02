@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import 'leaflet/dist/leaflet.css';
 import { kolaPlaces, PlaceCategory, categoryConfig, Place } from '@/data/kolaPlaces';
 import { saamiHistoryPlaces } from '@/data/saamiHistoryLayer';
+import { unescoPlaces } from '@/data/unescoLayer';
 import { CategoryFilter } from './CategoryFilter';
 import { MapView } from './MapView';
 import { PlaceCard } from './PlaceCard';
@@ -30,6 +31,7 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>(defaultCategories);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [showHistoryLayer, setShowHistoryLayer] = useState(false);
+  const [showUnescoLayer, setShowUnescoLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isExploreMode, setIsExploreMode] = useState(false);
@@ -39,21 +41,27 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   }, []);
 
   const filteredPlaces = useMemo(() => {
-    // Combine base places with Saami history places when history layer is active
-    const allPlaces = showHistoryLayer 
-      ? [...kolaPlaces, ...saamiHistoryPlaces]
-      : kolaPlaces;
+    // Combine base places with special layers
+    let allPlaces = [...kolaPlaces];
+    
+    if (showHistoryLayer) {
+      allPlaces = [...allPlaces, ...saamiHistoryPlaces];
+    }
+    if (showUnescoLayer) {
+      allPlaces = [...allPlaces, ...unescoPlaces];
+    }
     
     let places = allPlaces.filter(place => 
       selectedCategories.includes(place.category) ||
-      (showHistoryLayer && place.category === 'history')
+      (showHistoryLayer && place.category === 'history') ||
+      (showUnescoLayer && place.category === 'unesco')
     );
     
     if (showFavoritesOnly) {
       places = places.filter(place => favorites.includes(place.id));
     }
     return places;
-  }, [selectedCategories, showFavoritesOnly, favorites, showHistoryLayer]);
+  }, [selectedCategories, showFavoritesOnly, favorites, showHistoryLayer, showUnescoLayer]);
 
   const handleToggleCategory = (category: PlaceCategory) => {
     setSelectedCategories(prev => {
@@ -72,6 +80,10 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
 
   const handleToggleHistoryLayer = () => {
     setShowHistoryLayer(prev => !prev);
+  };
+
+  const handleToggleUnescoLayer = () => {
+    setShowUnescoLayer(prev => !prev);
   };
 
   const handlePlaceClick = useCallback((place: Place) => {
@@ -151,6 +163,8 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
             favoritesCount={favoritesCount}
             showHistoryLayer={showHistoryLayer}
             onToggleHistoryLayer={handleToggleHistoryLayer}
+            showUnescoLayer={showUnescoLayer}
+            onToggleUnescoLayer={handleToggleUnescoLayer}
           />
         </div>
       )}
@@ -177,9 +191,11 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         showFavoritesOnly={showFavoritesOnly}
         favoritesCount={favoritesCount}
         showHistoryLayer={showHistoryLayer}
+        showUnescoLayer={showUnescoLayer}
         onToggleCategory={handleToggleCategory}
         onToggleFavoritesOnly={handleToggleFavoritesOnly}
         onToggleHistoryLayer={handleToggleHistoryLayer}
+        onToggleUnescoLayer={handleToggleUnescoLayer}
         onMapReady={handleMapReady}
         onPlaceClick={handlePlaceClick}
       />
