@@ -1,173 +1,195 @@
 
+# План: Расширить слои UNESCO и коренных народов на весь мир и Россию
 
-# План: Добавить секцию "Ресурсы" в боковую панель
+## Цель
 
-## Что добавляем
-
-В боковую панель `DiscoverPanel` добавится новая секция **"Ресурсы"** с полезными ссылками на внешние гайды и сайты:
-
-1. **World Coffee Guide** — гайд по кофейням мира (notbadcoffee.com)
-2. **Русское географическое общество** — официальный сайт РГО (rgo.ru)
+Сделать карту более впечатляющей и значимой:
+1. **UNESCO** — добавить знаковые объекты по всему миру (Пирамиды, Мачу-Пикчу, Венеция и т.д.)
+2. **Коренные народы** — расширить с саамов до всех 40+ народов Севера, Сибири и Дальнего Востока России
 
 ## Как будет выглядеть
 
 ```text
-┌─────────────────────────────────────┐
-│  [Боковая панель DiscoverPanel]     │
-├─────────────────────────────────────┤
-│  🎯 Explore Mode Card               │
-│  📚 Подборки (коллекции)            │
-│  ✨ Скрытые жемчужины               │
-├─────────────────────────────────────┤
-│  📖 Ресурсы                    НОВОЕ│
-│  ┌───────────────────────────────┐  │
-│  │ ☕ World Coffee Guide         │  │
-│  │ Гид по кофейням мира          │  │
-│  └───────────────────────────────┘  │
-│  ┌───────────────────────────────┐  │
-│  │ 🌍 Русское географическое     │  │
-│  │ общество (РГО)                │  │
-│  └───────────────────────────────┘  │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           [КАРТА МИРА при zoom out]                         │
+│                                                                             │
+│   🏛️ Стоунхендж         🏛️ Кремль                      🏛️ Великая стена   │
+│                                                                             │
+│   🏛️ Версаль      ┌─────────────────────────────────────┐                  │
+│                    │  Территории коренных народов        │                  │
+│   🏛️ Колизей      │  ═══════════════════════════════   │    🏛️ Фудзи      │
+│                    │  Ненцы  │ Ханты │ Эвенки │ Чукчи   │                  │
+│   🏛️ Альгамбра    │  Манси  │ Селькупы │ Юкагиры      │                   │
+│                    └─────────────────────────────────────┘                  │
+│   🏛️ Пирамиды                                              🏛️ Ангкор      │
+│                                                                             │
+│   🏛️ Петра                                      🏛️ Тадж Махал             │
+│                                                                             │
+│   🏛️ Мачу-Пикчу              🏛️ Виктория               🏛️ Сидней        │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Структура данных
+## Новые данные
+
+### UNESCO — ~30 знаковых объектов по всему миру
+
+| Регион | Объекты |
+|--------|---------|
+| **Европа** | Стоунхендж, Версаль, Колизей, Венеция, Альгамбра, Акрополь, Прага |
+| **Россия** | Кремль, Байкал, Камчатка, Казанский Кремль, Ярославль |
+| **Азия** | Великая стена, Тадж Махал, Ангкор Ват, Фудзи, Петра |
+| **Африка** | Пирамиды Гизы, Водопад Виктория, Марракеш |
+| **Америка** | Мачу-Пикчу, Статуя Свободы, Гранд-Каньон, Галапагосы |
+| **Океания** | Сиднейский оперный театр, Большой Барьерный риф |
+
+### Коренные народы России — 10-15 крупнейших территорий
+
+| Народ | Регион | Численность |
+|-------|--------|-------------|
+| Ненцы | Ямал, НАО | ~45 000 |
+| Ханты | ХМАО | ~31 000 |
+| Эвенки | Сибирь, Якутия | ~38 000 |
+| Чукчи | Чукотка | ~16 000 |
+| Эвены | Якутия, Магадан | ~22 000 |
+| Манси | ХМАО | ~12 000 |
+| Коряки | Камчатка | ~8 000 |
+| Долганы | Таймыр | ~8 000 |
+| Нанайцы | Хабаровский край | ~12 000 |
+| Саамы | Кольский п-ов | ~2 000 |
+
+## Техническая реализация
+
+### 1. Расширенный файл UNESCO
 
 ```typescript
-interface Resource {
+// src/data/unescoLayer.ts — расширенная версия
+export const unescoSites: UnescoSite[] = [
+  // Существующие российские объекты...
+  
+  // Европа
+  {
+    id: 'unesco-stonehenge',
+    name: 'Стоунхендж',
+    nameEn: 'Stonehenge',
+    description: 'Загадочный мегалитический комплекс бронзового века',
+    category: 'Cultural',
+    coordinates: [51.178882, -1.826215],
+    yearInscribed: 1986,
+    url: 'https://whc.unesco.org/en/list/373',
+  },
+  {
+    id: 'unesco-colosseum',
+    name: 'Колизей',
+    nameEn: 'Colosseum',
+    description: 'Амфитеатр Древнего Рима на 50 000 зрителей',
+    category: 'Cultural',
+    coordinates: [41.8902, 12.4922],
+    yearInscribed: 1980,
+    url: 'https://whc.unesco.org/en/list/91',
+  },
+  // ... ещё ~25 объектов
+];
+```
+
+### 2. Расширенный файл коренных народов
+
+```typescript
+// src/data/indigenousPeoplesLayer.ts (переименуем из saamiHistoryLayer.ts)
+export interface IndigenousPeople {
   id: string;
   name: string;
   nameEn: string;
   description: string;
-  descriptionEn: string;
-  emoji: string;
-  url: string;
-  color: string;
+  population: number;
+  region: string;
+  territory: GeoJSON.Feature; // полигон территории
+  culturalCenters: Place[];   // культурные центры
 }
 
-const resources: Resource[] = [
+export const indigenousPeoples: IndigenousPeople[] = [
   {
-    id: 'coffee-guide',
-    name: 'World Coffee Guide',
-    nameEn: 'World Coffee Guide',
-    description: 'Гид по кофейням мира',
-    descriptionEn: 'Global coffee shop guide',
-    emoji: '☕',
-    url: 'https://notbadcoffee.com/world-coffee-guide/',
-    color: 'hsl(30 80% 50%)', // коричневый/кофейный
+    id: 'saami',
+    name: 'Саамы',
+    nameEn: 'Saami',
+    description: 'Коренной народ Кольского полуострова',
+    population: 1991,
+    region: 'Мурманская область',
+    territory: saamiTerritoryGeoJSON,
+    culturalCenters: saamiHistoryPlaces,
   },
   {
-    id: 'rgo',
-    name: 'Русское географическое общество',
-    nameEn: 'Russian Geographical Society',
-    description: 'Официальный сайт РГО',
-    descriptionEn: 'Official RGS website',
-    emoji: '🌍',
-    url: 'https://rgo.ru/',
-    color: 'hsl(140 60% 40%)', // зелёный
+    id: 'nenets',
+    name: 'Ненцы',
+    nameEn: 'Nenets',
+    description: 'Крупнейший северный народ, оленеводы тундры',
+    population: 45000,
+    region: 'Ямал, НАО',
+    territory: nenetsTerritoryGeoJSON,
+    culturalCenters: [...],
   },
+  // ... ещё ~10 народов
 ];
 ```
 
-## Что изменится
+### 3. Обновление MapView
 
-### Новые файлы
+```typescript
+// Добавить все полигоны территорий народов
+useEffect(() => {
+  if (showHistoryLayer) {
+    indigenousPeoples.forEach(people => {
+      const layer = L.geoJSON(people.territory, {
+        style: {
+          fillColor: getColorForPeople(people.id),
+          fillOpacity: 0.1,
+          color: getColorForPeople(people.id),
+          weight: 2,
+          dashArray: '6, 4',
+        },
+      });
+      layer.bindPopup(`<strong>${people.name}</strong><br/>
+        Численность: ~${people.population.toLocaleString()}`);
+      layer.addTo(map);
+    });
+  }
+}, [showHistoryLayer]);
+```
 
-| Файл | Описание |
-|------|----------|
-| `src/components/landing/ResourcesSection.tsx` | Компонент секции ресурсов с карточками-ссылками |
-| `src/data/resources.ts` | Данные о ресурсах (название, URL, описание) |
+### 4. Адаптация начального зума
 
-### Изменяемые файлы
+При включении мировых слоёв — автоматически отдалять карту:
+
+```typescript
+// При включении UNESCO layer
+if (showUnescoLayer && zoom > 4) {
+  map.setView([30, 0], 2); // Показать весь мир
+}
+```
+
+## Изменяемые файлы
 
 | Файл | Изменения |
 |------|-----------|
-| `src/components/landing/DiscoverPanel.tsx` | Добавить `<ResourcesSection />` после HiddenGems |
-| `src/lib/i18n.ts` | Добавить переводы для секции ресурсов |
+| `src/data/unescoLayer.ts` | Добавить ~25 мировых объектов UNESCO |
+| `src/data/saamiHistoryLayer.ts` | Переименовать в `indigenousPeoplesLayer.ts`, добавить ~10 народов с территориями |
+| `src/components/map/MapView.tsx` | Рендеринг нескольких полигонов народов |
+| `src/components/map/KolaMap.tsx` | Обновить импорты |
+| `src/pages/Index.tsx` | Обновить импорты |
+| `src/lib/i18n.ts` | Обновить названия слоёв |
 
-## Техническая реализация
+## Особенности реализации
 
-### 1. Компонент ResourcesSection
+### Производительность
+- UNESCO маркеры загружаются лениво (показываем только видимые)
+- Полигоны народов упрощены для быстрой отрисовки
+- При zoom > 8 — скрываем далёкие объекты
 
-```tsx
-// src/components/landing/ResourcesSection.tsx
-export const ResourcesSection = () => {
-  const { language } = useLanguage();
+### UX улучшения
+- При клике на "UNESCO" — кнопка "Показать всё" отдаляет карту на мировой масштаб
+- Легенда народов показывает цвета и численность
+- Tooltip при наведении на полигон — название народа
 
-  return (
-    <div className="space-y-2 overflow-hidden">
-      <div className="flex items-center gap-2 px-1">
-        <BookOpen className="h-3.5 w-3.5 text-primary shrink-0" />
-        <h3 className="text-xs font-semibold text-foreground">
-          {language === 'ru' ? 'Ресурсы' : 'Resources'}
-        </h3>
-      </div>
-      
-      <div className="space-y-1.5">
-        {resources.map((resource) => (
-          <a
-            key={resource.id}
-            href={resource.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full flex items-center gap-2.5 rounded-lg
-                       bg-card border border-border hover:border-primary/50
-                       transition-all duration-200 hover:shadow-sm p-2"
-          >
-            <span className="text-xl">{resource.emoji}</span>
-            <div className="flex-1 min-w-0">
-              <h4 className="font-medium text-xs text-foreground line-clamp-1">
-                {language === 'ru' ? resource.name : resource.nameEn}
-              </h4>
-              <p className="text-[10px] text-muted-foreground line-clamp-1">
-                {language === 'ru' ? resource.description : resource.descriptionEn}
-              </p>
-            </div>
-            <ExternalLink className="h-3 w-3 text-muted-foreground" />
-          </a>
-        ))}
-      </div>
-    </div>
-  );
-};
-```
+## Источники данных
 
-### 2. Интеграция в DiscoverPanel
-
-```tsx
-import { ResourcesSection } from './ResourcesSection';
-
-export const DiscoverPanel = (...) => {
-  return (
-    <ScrollArea className="h-full w-full">
-      <div className="p-3 md:p-4 space-y-4 md:space-y-5 overflow-hidden">
-        <ExploreCard onStart={onStartExplore} />
-        <CollectionsRow ... />
-        <HiddenGems onPlaceClick={onPlaceClick} />
-        <ResourcesSection />  {/* ← НОВОЕ */}
-      </div>
-    </ScrollArea>
-  );
-};
-```
-
-### 3. Локализация
-
-```typescript
-// В i18n.ts добавить:
-resources: {
-  title: 'Ресурсы',
-  coffeeGuide: 'Гид по кофейням мира',
-  rgo: 'Русское географическое общество',
-},
-```
-
-## Дизайн карточек
-
-Каждая карточка ресурса будет:
-- Иметь эмодзи слева (☕, 🌍)
-- Название и описание в центре
-- Иконку внешней ссылки (ExternalLink) справа
-- Открываться в новой вкладке при клике
-- Иметь hover-эффект как у HiddenGems
-
+- **UNESCO**: whc.unesco.org — официальный список с координатами
+- **Коренные народы**: atlaskmns.ru — интерактивный атлас КМНС России (40 народов с территориями)
