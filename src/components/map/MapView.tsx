@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Place, PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
 import { indigenousPeoples } from '@/data/indigenousPeoplesLayer';
 import { CategoryFilter } from './CategoryFilter';
+import { IndigenousPeoplesLegend } from './IndigenousPeoplesLegend';
 
 interface MapViewProps {
   places: Place[];
@@ -238,29 +239,25 @@ export const MapView = ({
         </div>
       </div>
       
-      {/* Layer attributions */}
-      {(showHistoryLayer || showUnescoLayer) && (
-        <div className="absolute bottom-2 left-2 z-[1000] flex flex-col gap-1">
-          {showHistoryLayer && (
-            <a 
-              href="https://atlaskmns.ru" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              📜 Данные: atlaskmns.ru
-            </a>
-          )}
-          {showUnescoLayer && (
-            <a 
-              href="https://whc.unesco.org" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              🏛️ UNESCO World Heritage Centre
-            </a>
-          )}
+      {/* Indigenous Peoples Legend */}
+      <IndigenousPeoplesLegend 
+        isVisible={showHistoryLayer}
+        onPeopleClick={(id, center) => {
+          mapInstanceRef.current?.flyTo(center, 5, { duration: 1.5 });
+        }}
+      />
+      
+      {/* UNESCO attribution */}
+      {showUnescoLayer && (
+        <div className="absolute bottom-2 left-2 z-[1000]">
+          <a 
+            href="https://whc.unesco.org" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            🏛️ UNESCO World Heritage Centre
+          </a>
         </div>
       )}
     </div>
