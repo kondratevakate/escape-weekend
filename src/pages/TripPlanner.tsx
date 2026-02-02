@@ -6,6 +6,7 @@ import { useTripBuilder } from '@/hooks/useTripBuilder';
 import { TripSidebar } from '@/components/trip/TripSidebar';
 import { DayColumn } from '@/components/trip/DayColumn';
 import { AITripResult } from '@/components/trip/AITripResult';
+import { MobileBottomNav } from '@/components/navigation/MobileBottomNav';
 import { Button } from '@/components/ui/button';
 import { kolaPlaces, Place } from '@/data/kolaPlaces';
 import { TripDay } from '@/types/trip';
@@ -126,7 +127,9 @@ const TripPlanner = () => {
   }, [aiResult, setDaysFromAI, isRu]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-14 md:pb-0">
+      {/* Mobile bottom navigation */}
+      <MobileBottomNav />
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border/50">
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
