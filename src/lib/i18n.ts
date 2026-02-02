@@ -31,15 +31,15 @@ export const translations = {
     
     // History layer
     historyLayer: {
-      title: 'Слой истории',
-      description: 'Территория и культура саамов',
+      title: 'Коренные народы',
+      description: 'Территории 12 народов России',
       attribution: 'Данные: Интерактивный атлас КМНС',
     },
     
     // UNESCO layer
     unescoLayer: {
-      title: 'Объекты UNESCO',
-      description: 'Всемирное наследие',
+      title: 'UNESCO',
+      description: '30+ объектов по всему миру',
       attribution: 'UNESCO World Heritage Centre',
     },
     
@@ -174,15 +174,15 @@ export const translations = {
     
     // History layer
     historyLayer: {
-      title: 'History Layer',
-      description: 'Saami territory and culture',
+      title: 'Indigenous Peoples',
+      description: '12 peoples of Russia',
       attribution: 'Data: Indigenous Peoples Atlas',
     },
     
     // UNESCO layer
     unescoLayer: {
-      title: 'UNESCO Sites',
-      description: 'World Heritage',
+      title: 'UNESCO',
+      description: '30+ sites worldwide',
       attribution: 'UNESCO World Heritage Centre',
     },
     

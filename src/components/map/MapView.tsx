@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Place, PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
-import { saamiTerritoryGeoJSON } from '@/data/saamiHistoryLayer';
+import { indigenousPeoples } from '@/data/indigenousPeoplesLayer';
 import { CategoryFilter } from './CategoryFilter';
 
 interface MapViewProps {
@@ -86,31 +86,48 @@ export const MapView = ({
     };
   }, [onMapReady]);
 
-  // Update history layer visibility
+  // Update history layer visibility - now shows all indigenous peoples
   useEffect(() => {
     if (!mapInstanceRef.current) return;
 
     if (showHistoryLayer && !historyLayerRef.current) {
-      // Add Saami territory polygon
-      historyLayerRef.current = L.geoJSON(saamiTerritoryGeoJSON as GeoJSON.Feature, {
-        style: {
-          fillColor: 'hsl(340, 65%, 45%)',
-          fillOpacity: 0.12,
-          color: 'hsl(340, 65%, 35%)',
+      // Create a feature collection from all indigenous peoples territories
+      const featureCollection: GeoJSON.FeatureCollection = {
+        type: 'FeatureCollection',
+        features: indigenousPeoples.map(people => ({
+          ...people.territory,
+          properties: {
+            ...people.territory.properties,
+            name: people.name,
+            nameEn: people.nameEn,
+            population: people.population,
+            color: people.color,
+          },
+        })),
+      };
+
+      historyLayerRef.current = L.geoJSON(featureCollection, {
+        style: (feature) => ({
+          fillColor: feature?.properties?.color || 'hsl(340, 65%, 45%)',
+          fillOpacity: 0.15,
+          color: feature?.properties?.color || 'hsl(340, 65%, 35%)',
           weight: 2,
           dashArray: '6, 4',
+        }),
+        onEachFeature: (feature, layer) => {
+          const props = feature.properties;
+          layer.bindPopup(`
+            <div style="text-align: center; padding: 4px; min-width: 150px;">
+              <strong>📜 ${props?.name || 'Территория'}</strong><br/>
+              <small style="color: #666;">
+                ${props?.nameEn || ''}<br/>
+                Численность: ~${props?.population?.toLocaleString() || '?'}
+              </small>
+            </div>
+          `);
         },
       }).addTo(mapInstanceRef.current);
-      
-      // Add popup to polygon
-      historyLayerRef.current.bindPopup(`
-        <div style="text-align: center; padding: 4px;">
-          <strong>📜 Территория саамов</strong><br/>
-          <small style="color: #666;">Историческое расселение<br/>саамского народа</small>
-        </div>
-      `);
     } else if (!showHistoryLayer && historyLayerRef.current) {
-      // Remove layer
       historyLayerRef.current.remove();
       historyLayerRef.current = null;
     }
