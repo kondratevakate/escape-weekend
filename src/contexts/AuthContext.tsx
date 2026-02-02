@@ -1,24 +1,12 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
-export type UserRole = 'tourist' | 'creator' | null;
-
-interface User {
-  email: string;
-  role: UserRole;
-  displayName?: string;
-  avatar?: string;
-}
-
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: User | null;
+  user: { email: string } | null;
   login: (email: string) => void;
   logout: () => void;
-  setUserRole: (role: UserRole) => void;
   showLoginModal: boolean;
   setShowLoginModal: (show: boolean) => void;
-  showRoleSelector: boolean;
-  setShowRoleSelector: (show: boolean) => void;
   requireAuth: (callback: () => void) => void;
 }
 
@@ -26,23 +14,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<{ email: string } | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showRoleSelector, setShowRoleSelector] = useState(false);
   const [pendingCallback, setPendingCallback] = useState<(() => void) | null>(null);
 
   const login = useCallback((email: string) => {
     setIsAuthenticated(true);
-    setUser({ email, role: null });
+    setUser({ email });
     setShowLoginModal(false);
-    // Show role selector after login
-    setShowRoleSelector(true);
-  }, []);
-
-  const setUserRole = useCallback((role: UserRole) => {
-    setUser(prev => prev ? { ...prev, role } : null);
-    setShowRoleSelector(false);
-    // Execute pending callback after role selection
+    // Execute pending callback after login
     if (pendingCallback) {
       pendingCallback();
       setPendingCallback(null);
@@ -55,16 +35,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const requireAuth = useCallback((callback: () => void) => {
-    if (isAuthenticated && user?.role) {
+    if (isAuthenticated) {
       callback();
-    } else if (isAuthenticated && !user?.role) {
-      setPendingCallback(() => callback);
-      setShowRoleSelector(true);
     } else {
       setPendingCallback(() => callback);
       setShowLoginModal(true);
     }
-  }, [isAuthenticated, user?.role]);
+  }, [isAuthenticated]);
 
   return (
     <AuthContext.Provider value={{
@@ -72,11 +49,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       user,
       login,
       logout,
-      setUserRole,
       showLoginModal,
       setShowLoginModal,
-      showRoleSelector,
-      setShowRoleSelector,
       requireAuth,
     }}>
       {children}

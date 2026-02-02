@@ -11,7 +11,6 @@ export interface IndigenousPeople {
   regionEn: string;
   color: string;
   iconUrl: string;
-  emoji: string;
   territory: GeoJSON.Feature;
   culturalCenters: Place[];
 }
@@ -285,7 +284,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Murmansk Oblast',
     color: 'hsl(340, 65%, 45%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_1_saamy.svg',
-    emoji: '🦌',
     territory: saamiTerritory,
     culturalCenters: saamiCenters,
   },
@@ -300,7 +298,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Yamal, Nenets Autonomous Okrug',
     color: 'hsl(200, 70%, 45%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_3_nentsy.svg',
-    emoji: '🏕️',
     territory: nenetsTerritory,
     culturalCenters: nenetsCenters,
   },
@@ -315,7 +312,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Khanty-Mansiysk Autonomous Okrug',
     color: 'hsl(45, 80%, 45%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_4_hanty.svg',
-    emoji: '🐻',
     territory: khantyTerritory,
     culturalCenters: khantyCenters,
   },
@@ -330,7 +326,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Khanty-Mansiysk Autonomous Okrug',
     color: 'hsl(30, 75%, 50%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_5_mansi.svg',
-    emoji: '🌲',
     territory: mansiTerritory,
     culturalCenters: [],
   },
@@ -345,7 +340,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Siberia, Yakutia',
     color: 'hsl(142, 60%, 40%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_18_evenki.svg',
-    emoji: '🫎',
     territory: evenkiTerritory,
     culturalCenters: evenkiCenters,
   },
@@ -360,7 +354,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Yakutia, Magadan',
     color: 'hsl(160, 55%, 45%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_19_eveny.svg',
-    emoji: '🏔️',
     territory: evensTerritory,
     culturalCenters: [],
   },
@@ -375,7 +368,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Chukotka',
     color: 'hsl(210, 70%, 50%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_40_chukchi.svg',
-    emoji: '🐋',
     territory: chukchiTerritory,
     culturalCenters: chukchiCenters,
   },
@@ -390,7 +382,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Kamchatka',
     color: 'hsl(280, 50%, 50%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_33_koryaki.svg',
-    emoji: '🌋',
     territory: koryakTerritory,
     culturalCenters: koryakCenters,
   },
@@ -405,7 +396,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Taymyr',
     color: 'hsl(15, 70%, 50%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_17_dolgany.svg',
-    emoji: '❄️',
     territory: dolganTerritory,
     culturalCenters: dolganCenters,
   },
@@ -420,7 +410,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Khabarovsk Krai',
     color: 'hsl(180, 60%, 40%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_23_nanaicy.svg',
-    emoji: '🐟',
     territory: nanaiTerritory,
     culturalCenters: nanaiCenters,
   },
@@ -435,7 +424,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Krasnoyarsk Krai, Yamalo-Nenets AO',
     color: 'hsl(60, 65%, 45%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_7_selcupy.svg',
-    emoji: '🛶',
     territory: selkupTerritory,
     culturalCenters: [],
   },
@@ -450,7 +438,6 @@ export const indigenousPeoples: IndigenousPeople[] = [
     regionEn: 'Yakutia',
     color: 'hsl(320, 55%, 50%)',
     iconUrl: 'https://atlaskmns.ru/static/img/svg/peoples_31_yukagiry.svg',
-    emoji: '🦅',
     territory: yukagirTerritory,
     culturalCenters: [],
   },
