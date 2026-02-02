@@ -137,6 +137,30 @@ export const translations = {
       rgo: 'Русское географическое общество',
     },
     
+    // Trip Planner
+    tripPlanner: {
+      title: 'Планировщик маршрута',
+      dates: 'Даты поездки',
+      selectDates: 'Выберите даты',
+      vehicle: 'Транспорт',
+      interests: 'Интересы',
+      placesAdded: 'Добавлено мест',
+      generateAI: 'AI: Собери маршрут',
+      generating: 'Генерирую...',
+      credit: 'кредит',
+      day: 'День',
+      places: 'мест',
+      dragHint: 'Перетащите места сюда',
+      addPlace: 'Добавить',
+      aiBuilt: 'AI собрал маршрут',
+      tips: 'Рекомендации',
+      accept: 'Принять',
+      edit: 'Редактировать',
+      selectDatesToStart: 'Выберите даты поездки',
+      selectDatesHint: 'Выберите даты слева, чтобы начать планирование',
+      routeAdded: 'Маршрут добавлен!',
+    },
+    
     // Legend
     legend: 'Легенда',
     
@@ -278,6 +302,30 @@ export const translations = {
       title: 'Resources',
       coffeeGuide: 'Global coffee shop guide',
       rgo: 'Russian Geographical Society',
+    },
+    
+    // Trip Planner
+    tripPlanner: {
+      title: 'Trip Planner',
+      dates: 'Trip dates',
+      selectDates: 'Select dates',
+      vehicle: 'Vehicle',
+      interests: 'Interests',
+      placesAdded: 'Places added',
+      generateAI: 'AI: Build route',
+      generating: 'Generating...',
+      credit: 'credit',
+      day: 'Day',
+      places: 'places',
+      dragHint: 'Drag places here',
+      addPlace: 'Add place',
+      aiBuilt: 'AI built your route',
+      tips: 'Tips',
+      accept: 'Accept',
+      edit: 'Edit',
+      selectDatesToStart: 'Select your trip dates',
+      selectDatesHint: 'Pick dates on the left to start planning',
+      routeAdded: 'Route added!',
     },
     
     // Legend
