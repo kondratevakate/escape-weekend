@@ -33,12 +33,12 @@ export const CategoryFilter = ({
     .filter(([key]) => key !== 'history' && key !== 'unesco');
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-0.5">
       {/* Favorites filter button */}
       <button
         onClick={onToggleFavoritesOnly}
         className={cn(
-          "flex items-center justify-center gap-1.5 p-2 rounded-lg text-sm font-medium transition-all duration-200",
+          "flex items-center justify-center gap-1 p-1.5 rounded-md text-sm font-medium transition-all duration-200",
           "hover:scale-105 active:scale-95",
           showFavoritesOnly
             ? "bg-accent/20 text-accent"
@@ -46,21 +46,21 @@ export const CategoryFilter = ({
         )}
         title={t('favorites.title')}
       >
-        <Heart className={cn("h-4 w-4", showFavoritesOnly && "fill-current")} />
+        <Heart className={cn("h-3.5 w-3.5", showFavoritesOnly && "fill-current")} />
         {favoritesCount > 0 && (
-          <span className="text-xs font-bold">
+          <span className="text-[10px] font-bold">
             {favoritesCount}
           </span>
         )}
       </button>
 
-      <div className="h-px bg-border my-1" />
+      <div className="h-px bg-border my-0.5" />
 
       {/* UNESCO layer toggle */}
       <button
         onClick={onToggleUnescoLayer}
         className={cn(
-          "flex items-center justify-center p-2 rounded-lg text-lg transition-all duration-200",
+          "flex items-center justify-center p-1.5 rounded-md text-base transition-all duration-200",
           "hover:scale-105 active:scale-95",
           showUnescoLayer
             ? "shadow-sm"
@@ -72,14 +72,14 @@ export const CategoryFilter = ({
         } : undefined}
         title={t('unescoLayer.title')}
       >
-        <Landmark className="h-4 w-4" />
+        <Landmark className="h-3.5 w-3.5" />
       </button>
 
       {/* History layer toggle */}
       <button
         onClick={onToggleHistoryLayer}
         className={cn(
-          "flex items-center justify-center p-2 rounded-lg text-lg transition-all duration-200",
+          "flex items-center justify-center p-1.5 rounded-md text-base transition-all duration-200",
           "hover:scale-105 active:scale-95",
           showHistoryLayer
             ? "shadow-sm"
@@ -91,10 +91,10 @@ export const CategoryFilter = ({
         } : undefined}
         title={t('historyLayer.title')}
       >
-        <Scroll className="h-4 w-4" />
+        <Scroll className="h-3.5 w-3.5" />
       </button>
 
-      <div className="h-px bg-border my-1" />
+      <div className="h-px bg-border my-0.5" />
 
       {/* Category buttons */}
       {categories.map(([key, config]) => {
@@ -105,7 +105,7 @@ export const CategoryFilter = ({
             onClick={() => onToggleCategory(key)}
             title={t(`categories.${key}`)}
             className={cn(
-              "flex items-center justify-center p-2 rounded-lg text-lg transition-all duration-200",
+              "flex items-center justify-center p-1.5 rounded-md text-sm transition-all duration-200",
               "hover:scale-105 active:scale-95",
               isSelected
                 ? "shadow-sm"
