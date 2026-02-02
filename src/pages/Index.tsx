@@ -7,6 +7,7 @@ import { PlaceCard } from '@/components/map/PlaceCard';
 import { ExploreMode } from '@/components/map/ExploreMode';
 import { TelegramBridgeSheet } from '@/components/telegram/TelegramBridgeSheet';
 import { CookieConsent } from '@/components/CookieConsent';
+import { MobileBottomNav } from '@/components/navigation/MobileBottomNav';
 import { kolaPlaces, Place, PlaceCategory } from '@/data/kolaPlaces';
 import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
 import { unescoPlaces } from '@/data/unescoLayer';
@@ -167,7 +168,7 @@ const Index = () => {
   }, [selectedPlace, handleToggleFavorite]);
 
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <div className="h-screen flex flex-col bg-background pb-14 md:pb-0">
       {/* Header with category tabs */}
       <Header 
         selectedCategory={selectedCategory}
@@ -256,8 +257,13 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <Footer />
+      {/* Footer - hide on mobile to make room for bottom nav */}
+      <div className="hidden md:block">
+        <Footer />
+      </div>
+
+      {/* Mobile bottom navigation */}
+      <MobileBottomNav />
 
       {/* Cookie consent */}
       <CookieConsent />
