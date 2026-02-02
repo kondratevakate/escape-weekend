@@ -3,11 +3,10 @@ import { Header, CategoryGroup } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
 import { DiscoverPanel } from '@/components/landing/DiscoverPanel';
 import { MapView } from '@/components/map/MapView';
-import { PlaceBottomSheet } from '@/components/map/PlaceBottomSheet';
+import { PlaceCard } from '@/components/map/PlaceCard';
 import { ExploreMode } from '@/components/map/ExploreMode';
 import { TelegramBridgeSheet } from '@/components/telegram/TelegramBridgeSheet';
 import { CookieConsent } from '@/components/CookieConsent';
-import { MobileBottomNav } from '@/components/navigation/MobileBottomNav';
 import { kolaPlaces, Place, PlaceCategory } from '@/data/kolaPlaces';
 import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
 import { unescoPlaces } from '@/data/unescoLayer';
@@ -78,7 +77,6 @@ const Index = () => {
   const [showUnescoLayer, setShowUnescoLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
-  const [selectedPlaceIndex, setSelectedPlaceIndex] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isExploreMode, setIsExploreMode] = useState(false);
   const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null);
@@ -155,14 +153,11 @@ const Index = () => {
   }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites, activeCollectionId, showHistoryLayer, showUnescoLayer]);
 
   const handlePlaceClick = useCallback((place: Place) => {
-    const index = filteredPlaces.findIndex(p => p.id === place.id);
     setSelectedPlace(place);
-    setSelectedPlaceIndex(index >= 0 ? index : 0);
-  }, [filteredPlaces]);
+  }, []);
 
   const handleCloseCard = useCallback(() => {
     setSelectedPlace(null);
-    setSelectedPlaceIndex(0);
   }, []);
 
   const handleToggleSelectedFavorite = useCallback(() => {
@@ -171,25 +166,8 @@ const Index = () => {
     }
   }, [selectedPlace, handleToggleFavorite]);
 
-  // Navigation between places
-  const handlePreviousPlace = useCallback(() => {
-    if (selectedPlaceIndex > 0) {
-      const newIndex = selectedPlaceIndex - 1;
-      setSelectedPlaceIndex(newIndex);
-      setSelectedPlace(filteredPlaces[newIndex]);
-    }
-  }, [selectedPlaceIndex, filteredPlaces]);
-
-  const handleNextPlace = useCallback(() => {
-    if (selectedPlaceIndex < filteredPlaces.length - 1) {
-      const newIndex = selectedPlaceIndex + 1;
-      setSelectedPlaceIndex(newIndex);
-      setSelectedPlace(filteredPlaces[newIndex]);
-    }
-  }, [selectedPlaceIndex, filteredPlaces]);
-
   return (
-    <div className="h-screen flex flex-col bg-background pb-14 md:pb-0">
+    <div className="h-screen flex flex-col bg-background">
       {/* Header with category tabs */}
       <Header 
         selectedCategory={selectedCategory}
@@ -258,36 +236,28 @@ const Index = () => {
             onPlaceClick={handlePlaceClick}
           />
 
+          {/* Place card overlay */}
+          {selectedPlace && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1001] max-w-[calc(100%-2rem)]">
+              <PlaceCard 
+                place={selectedPlace} 
+                isFavorite={isFavorite(selectedPlace.id)}
+                onClose={handleCloseCard}
+                onToggleFavorite={handleToggleSelectedFavorite}
+                userLists={userLists}
+                onToggleInList={toggleInList}
+                onCreateList={createList}
+                onDeleteList={deleteList}
+                isInList={isInList}
+                isInAnyList={isInAnyList}
+              />
+            </div>
+          )}
         </div>
       </main>
 
-      {/* Place Bottom Sheet */}
-      <PlaceBottomSheet
-        place={selectedPlace}
-        isFavorite={selectedPlace ? isFavorite(selectedPlace.id) : false}
-        onClose={handleCloseCard}
-        onToggleFavorite={handleToggleSelectedFavorite}
-        onPrevious={handlePreviousPlace}
-        onNext={handleNextPlace}
-        hasPrevious={selectedPlaceIndex > 0}
-        hasNext={selectedPlaceIndex < filteredPlaces.length - 1}
-        currentIndex={selectedPlaceIndex}
-        totalCount={filteredPlaces.length}
-        userLists={userLists}
-        onToggleInList={toggleInList}
-        onCreateList={createList}
-        onDeleteList={deleteList}
-        isInList={isInList}
-        isInAnyList={isInAnyList}
-      />
-
-      {/* Footer - hide on mobile to make room for bottom nav */}
-      <div className="hidden md:block">
-        <Footer />
-      </div>
-
-      {/* Mobile bottom navigation */}
-      <MobileBottomNav />
+      {/* Footer */}
+      <Footer />
 
       {/* Cookie consent */}
       <CookieConsent />

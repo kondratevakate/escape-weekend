@@ -1,7 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Heart } from 'lucide-react';
 import { Place, PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
 import { indigenousPeoples } from '@/data/indigenousPeoplesLayer';
 import { CategoryFilter } from './CategoryFilter';
@@ -223,9 +222,9 @@ export const MapView = ({
         style={{ background: 'hsl(var(--muted))' }}
       />
       
-      {/* Category filter overlay - bottom right, compact - hidden on mobile */}
-      <div className="absolute bottom-16 right-3 z-[1000] hidden md:block">
-        <div className="bg-background/90 backdrop-blur-sm rounded-lg p-1.5 shadow-md border border-border">
+      {/* Category filter overlay - right side, vertically centered */}
+      <div className="absolute top-1/2 -translate-y-1/2 right-3 z-[1000]">
+        <div className="bg-background/95 backdrop-blur-sm rounded-xl p-2 shadow-lg border border-border">
           <CategoryFilter
             selectedCategories={selectedCategories}
             onToggleCategory={onToggleCategory}
@@ -238,18 +237,6 @@ export const MapView = ({
             onToggleUnescoLayer={onToggleUnescoLayer}
           />
         </div>
-      </div>
-      
-      {/* Mobile compact filter toggle - top right */}
-      <div className="absolute top-3 right-3 z-[1000] md:hidden flex gap-2">
-        <button
-          onClick={onToggleFavoritesOnly}
-          className={`p-2 rounded-full bg-background/95 backdrop-blur-sm shadow-lg border border-border ${
-            showFavoritesOnly ? 'text-accent' : 'text-muted-foreground'
-          }`}
-        >
-          <Heart className={`h-5 w-5 ${showFavoritesOnly ? 'fill-current' : ''}`} />
-        </button>
       </div>
       
       {/* Indigenous Peoples Legend */}
