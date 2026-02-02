@@ -2,6 +2,7 @@ import { Place } from '@/data/kolaPlaces';
 import { ExploreCard } from './ExploreCard';
 import { CollectionsRow } from './CollectionsRow';
 import { HiddenGems } from './HiddenGems';
+import { ResourcesSection } from './ResourcesSection';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface DiscoverPanelProps {
@@ -31,6 +32,9 @@ export const DiscoverPanel = ({
         
         {/* Hidden Gems */}
         <HiddenGems onPlaceClick={onPlaceClick} />
+        
+        {/* Resources */}
+        <ResourcesSection />
       </div>
     </ScrollArea>
   );
