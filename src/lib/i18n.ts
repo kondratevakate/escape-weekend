@@ -108,6 +108,28 @@ export const translations = {
       learnMore: 'Подробнее',
     },
     
+    // Dashboard
+    dashboard: {
+      sources: 'Источники',
+      chat: 'Чат',
+      result: 'Результат',
+      myRoute: 'Мой маршрут',
+      statistics: 'Статистика',
+      addSource: 'Добавить источник',
+      createLayer: 'Создать слой',
+      exportPdf: 'Экспорт в PDF',
+      promoteLayer: 'Продвигать слой',
+    },
+    
+    // Roles
+    roles: {
+      tourist: 'Турист',
+      creator: 'Креатор',
+      switchRole: 'Сменить роль',
+      selectRole: 'Как вы хотите использовать WowAtlas?',
+      canChangeAnytime: 'Вы можете изменить роль в любое время',
+    },
+    
     // Auth
     auth: {
       login: 'Войти',
@@ -249,6 +271,28 @@ export const translations = {
       accept: 'Accept',
       decline: 'Decline',
       learnMore: 'Learn more',
+    },
+    
+    // Dashboard
+    dashboard: {
+      sources: 'Sources',
+      chat: 'Chat',
+      result: 'Result',
+      myRoute: 'My Route',
+      statistics: 'Statistics',
+      addSource: 'Add source',
+      createLayer: 'Create layer',
+      exportPdf: 'Export to PDF',
+      promoteLayer: 'Promote Layer',
+    },
+    
+    // Roles
+    roles: {
+      tourist: 'Tourist',
+      creator: 'Creator',
+      switchRole: 'Switch role',
+      selectRole: 'How would you like to use WowAtlas?',
+      canChangeAnytime: 'You can change your role anytime',
     },
     
     // Auth

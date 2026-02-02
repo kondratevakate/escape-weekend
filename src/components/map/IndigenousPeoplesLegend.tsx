@@ -18,15 +18,9 @@ const LegendItem = memo(({ people, language, onClick }: LegendItemProps) => (
     className="flex items-center gap-2 w-full p-1.5 rounded 
                hover:bg-accent/50 transition-colors text-left group"
   >
-    <img 
-      src={people.iconUrl} 
-      alt=""
-      className="w-6 h-6 object-contain shrink-0"
-      loading="lazy"
-      onError={(e) => {
-        e.currentTarget.style.display = 'none';
-      }}
-    />
+    <span className="text-lg w-6 text-center" role="img" aria-label={people.name}>
+      {people.emoji}
+    </span>
     <div 
       className="w-3 h-3 rounded-full shrink-0 border border-background/50"
       style={{ backgroundColor: people.color }}
