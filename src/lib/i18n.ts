@@ -130,6 +130,13 @@ export const translations = {
       places: 'мест',
     },
     
+    // Resources
+    resources: {
+      title: 'Ресурсы',
+      coffeeGuide: 'Гид по кофейням мира',
+      rgo: 'Русское географическое общество',
+    },
+    
     // Legend
     legend: 'Легенда',
     
@@ -264,6 +271,13 @@ export const translations = {
       wantToVisit: 'Want to visit',
       favorites: 'Favorites',
       places: 'places',
+    },
+    
+    // Resources
+    resources: {
+      title: 'Resources',
+      coffeeGuide: 'Global coffee shop guide',
+      rgo: 'Russian Geographical Society',
     },
     
     // Legend
