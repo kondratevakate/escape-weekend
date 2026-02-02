@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/popover';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Place } from '@/data/kolaPlaces';
+import { useSharePostcard } from '@/hooks/useSharePostcard';
 import { toast } from 'sonner';
 
 interface ShareButtonProps {
@@ -18,14 +19,12 @@ interface ShareButtonProps {
 
 export const ShareButton = ({ place, onShare, variant = 'default' }: ShareButtonProps) => {
   const { t, language } = useLanguage();
+  const { generateFullShareText, generateTelegramDeepLink } = useSharePostcard();
   const [copied, setCopied] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${place.coordinates[0]},${place.coordinates[1]}`;
-  
-  const shareText = language === 'ru' 
-    ? `📍 ${place.name} - Кольский полуостров`
-    : `📍 ${place.name} - Kola Peninsula`;
+  const shareText = generateFullShareText(place);
+  const telegramDeepLink = generateTelegramDeepLink(place);
 
   const handleNativeShare = async () => {
     if (navigator.share) {
@@ -33,12 +32,10 @@ export const ShareButton = ({ place, onShare, variant = 'default' }: ShareButton
         await navigator.share({
           title: place.name,
           text: shareText,
-          url: googleMapsUrl,
         });
         onShare?.();
         setIsOpen(false);
       } catch (err) {
-        // User cancelled or error
         if ((err as Error).name !== 'AbortError') {
           console.error('Share failed:', err);
         }
@@ -47,7 +44,7 @@ export const ShareButton = ({ place, onShare, variant = 'default' }: ShareButton
   };
 
   const handleTelegramShare = () => {
-    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(googleMapsUrl)}&text=${encodeURIComponent(shareText)}`;
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(telegramDeepLink)}&text=${encodeURIComponent(shareText)}`;
     window.open(telegramUrl, '_blank');
     onShare?.();
     setIsOpen(false);
@@ -55,7 +52,7 @@ export const ShareButton = ({ place, onShare, variant = 'default' }: ShareButton
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(`${shareText}\n${googleMapsUrl}`);
+      await navigator.clipboard.writeText(shareText);
       setCopied(true);
       toast.success(t('social.linkCopied'));
       onShare?.();

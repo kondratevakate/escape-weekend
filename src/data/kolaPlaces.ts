@@ -17,6 +17,13 @@ export interface Place {
   category: PlaceCategory;
   coordinates: [number, number]; // [lat, lng]
   region: string;
+  // Rich share fields
+  whenToVisit?: string;
+  whenToVisitEn?: string;
+  howToGet?: string;
+  howToGetEn?: string;
+  warning?: string;
+  warningEn?: string;
 }
 
 export const categoryConfig: Record<PlaceCategory, {
@@ -91,6 +98,12 @@ export const kolaPlaces: Place[] = [
     category: 'nature',
     coordinates: [69.1647, 35.1258],
     region: 'kola',
+    whenToVisit: 'Сентябрь–Март (сияние), Июнь–Июль (белые ночи)',
+    whenToVisitEn: 'Sep–Mar (aurora), Jun–Jul (white nights)',
+    howToGet: '2ч от Мурманска, дорога асфальт',
+    howToGetEn: '2h from Murmansk, paved road',
+    warning: 'Бронируй жильё заранее!',
+    warningEn: 'Book accommodation in advance!',
   },
   {
     id: 'seydozero',
@@ -100,6 +113,12 @@ export const kolaPlaces: Place[] = [
     category: 'nature',
     coordinates: [67.8167, 34.8500],
     region: 'kola',
+    whenToVisit: 'Июнь–Сентябрь',
+    whenToVisitEn: 'June–September',
+    howToGet: 'Трек 12 км от Ревды',
+    howToGetEn: '12km hike from Revda',
+    warning: 'Нужна физическая подготовка',
+    warningEn: 'Physical fitness required',
   },
   {
     id: 'dalnie-zelentsy',
@@ -109,6 +128,10 @@ export const kolaPlaces: Place[] = [
     category: 'nature',
     coordinates: [69.1167, 36.0667],
     region: 'kola',
+    whenToVisit: 'Май–Сентябрь',
+    whenToVisitEn: 'May–September',
+    howToGet: '3ч от Мурманска, грунтовка',
+    howToGetEn: '3h from Murmansk, gravel road',
   },
   {
     id: 'rybachy',
@@ -118,6 +141,12 @@ export const kolaPlaces: Place[] = [
     category: 'nature',
     coordinates: [69.9500, 32.5000],
     region: 'kola',
+    whenToVisit: 'Июль–Август',
+    whenToVisitEn: 'July–August',
+    howToGet: 'Только 4x4, 5–6ч от Мурманска',
+    howToGetEn: '4x4 only, 5–6h from Murmansk',
+    warning: 'Обязательно 4x4 с лебёдкой!',
+    warningEn: '4x4 with winch required!',
   },
   {
     id: 'sredny',
@@ -127,6 +156,10 @@ export const kolaPlaces: Place[] = [
     category: 'nature',
     coordinates: [69.7833, 31.8833],
     region: 'kola',
+    whenToVisit: 'Июль–Август',
+    whenToVisitEn: 'July–August',
+    howToGet: '4x4, 4ч от Мурманска',
+    howToGetEn: '4x4, 4h from Murmansk',
   },
   
   // Хайкинг
@@ -138,6 +171,12 @@ export const kolaPlaces: Place[] = [
     category: 'hiking',
     coordinates: [67.8333, 34.7500],
     region: 'kola',
+    whenToVisit: 'Июнь–Сентябрь',
+    whenToVisitEn: 'June–September',
+    howToGet: 'Старт из Ревды',
+    howToGetEn: 'Start from Revda',
+    warning: 'Возьми GPS-навигатор',
+    warningEn: 'Bring GPS navigator',
   },
   {
     id: 'alluayv',
@@ -147,6 +186,12 @@ export const kolaPlaces: Place[] = [
     category: 'hiking',
     coordinates: [67.8500, 34.6333],
     region: 'kola',
+    whenToVisit: 'Июль–Август',
+    whenToVisitEn: 'July–August',
+    howToGet: 'Трек 20 км из Ревды',
+    howToGetEn: '20km hike from Revda',
+    warning: 'Только опытным туристам',
+    warningEn: 'Experienced hikers only',
   },
   {
     id: 'khibiny',
@@ -156,6 +201,10 @@ export const kolaPlaces: Place[] = [
     category: 'hiking',
     coordinates: [67.7500, 33.7167],
     region: 'kola',
+    whenToVisit: 'Декабрь–Апрель (лыжи), Июнь–Сентябрь (хайкинг)',
+    whenToVisitEn: 'Dec–Apr (skiing), Jun–Sep (hiking)',
+    howToGet: 'Из Кировска, 3ч от Мурманска',
+    howToGetEn: 'From Kirovsk, 3h from Murmansk',
   },
   {
     id: 'volosyanaya',
@@ -165,6 +214,10 @@ export const kolaPlaces: Place[] = [
     category: 'hiking',
     coordinates: [67.6833, 34.1167],
     region: 'kola',
+    whenToVisit: 'Июнь–Сентябрь',
+    whenToVisitEn: 'June–September',
+    howToGet: '1 день из Мончегорска',
+    howToGetEn: '1 day from Monchegorsk',
   },
   
   // Музеи

@@ -1,10 +1,11 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Header, CategoryGroup } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
 import { DiscoverPanel } from '@/components/landing/DiscoverPanel';
 import { MapView } from '@/components/map/MapView';
 import { PlaceCard } from '@/components/map/PlaceCard';
 import { ExploreMode } from '@/components/map/ExploreMode';
+import { TelegramBridgeSheet } from '@/components/telegram/TelegramBridgeSheet';
 import { CookieConsent } from '@/components/CookieConsent';
 import { kolaPlaces, Place, PlaceCategory } from '@/data/kolaPlaces';
 import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
@@ -12,6 +13,7 @@ import { unescoPlaces } from '@/data/unescoLayer';
 import { collections } from '@/data/collections';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useUserLists } from '@/hooks/useUserLists';
+import { useTelegramCTA } from '@/hooks/useTelegramCTA';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, PanelLeftClose, PanelLeft } from 'lucide-react';
@@ -42,10 +44,31 @@ const Index = () => {
     isInAnyList 
   } = useUserLists();
 
-  // Wrap toggleFavorite with auth check
+  // Telegram CTA hook
+  const { 
+    shouldShow: shouldShowTelegramCTA, 
+    recordSave, 
+    dismissCTA: dismissTelegramCTA 
+  } = useTelegramCTA();
+  const [telegramSheetOpen, setTelegramSheetOpen] = useState(false);
+
+  // Show Telegram CTA when threshold reached
+  useEffect(() => {
+    if (shouldShowTelegramCTA) {
+      setTelegramSheetOpen(true);
+    }
+  }, [shouldShowTelegramCTA]);
+
+  // Wrap toggleFavorite with auth check and Telegram CTA tracking
   const handleToggleFavorite = useCallback((id: string) => {
-    requireAuth(() => toggleFavorite(id));
-  }, [requireAuth, toggleFavorite]);
+    requireAuth(() => {
+      toggleFavorite(id);
+      // Record save for Telegram CTA
+      if (!favorites.includes(id)) {
+        recordSave();
+      }
+    });
+  }, [requireAuth, toggleFavorite, favorites, recordSave]);
   
   const [selectedCategory, setSelectedCategory] = useState<CategoryGroup | 'all'>('all');
   const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>([]);
@@ -248,6 +271,16 @@ const Index = () => {
           onClose={() => setIsExploreMode(false)}
         />
       )}
+
+      {/* Telegram Bridge CTA */}
+      <TelegramBridgeSheet
+        isOpen={telegramSheetOpen}
+        onClose={() => {
+          setTelegramSheetOpen(false);
+          dismissTelegramCTA();
+        }}
+        trigger="save"
+      />
     </div>
   );
 };
