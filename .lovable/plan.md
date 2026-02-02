@@ -1,6 +1,34 @@
-
-
 # Growth Product Roadmap: WowAtlas
+
+## ✅ Прогресс реализации — Фаза 1 Quick Wins ВЫПОЛНЕНА
+
+### Что сделано:
+
+1. **Rich Share для мест** — добавлены поля `whenToVisit`, `howToGet`, `warning`
+   - Обновлён `src/data/kolaPlaces.ts` с данными для ключевых мест
+   - Создан `src/hooks/useSharePostcard.ts` для генерации structured postcard
+   - `ShareButton` использует rich формат: Когда/Как/Предупреждение
+
+2. **Share для коллекций** — кнопка шеринга в CollectionsRow
+   - Создан `src/components/share/CollectionShareButton.tsx`
+   - Появляется при активной коллекции
+
+3. **Telegram CTA триггер** — bottom sheet после 3 сохранений
+   - Создан `src/hooks/useTelegramCTA.ts` с localStorage
+   - Создан `src/components/telegram/TelegramBridgeSheet.tsx`
+   - Интегрировано в `Index.tsx`
+
+4. **Прогресс в Explore Mode** — счётчик "Открыто X из Y мест"
+
+### Новые файлы:
+```
+src/hooks/useSharePostcard.ts
+src/hooks/useTelegramCTA.ts
+src/components/share/CollectionShareButton.tsx
+src/components/telegram/TelegramBridgeSheet.tsx
+```
+
+---
 
 ## Текущее состояние vs. Growth-модель
 
@@ -11,36 +39,36 @@
 │                                                                             │
 │  ВИРУСНЫЕ ОБЪЕКТЫ                                                           │
 │  ───────────────────────────────────────────────────────────────           │
-│  ✅ Есть: Share отдельного места (Google Maps ссылка)                       │
-│  ❌ Нет: Share коллекции / Share плана / Postcard-формат для Telegram       │
+│  ✅ Rich Share для мест (Когда/Как/Предупреждение)                          │
+│  ✅ Share коллекций с deep link                                             │
+│  ❌ Share плана (Trip Planner) — Фаза 2                                     │
 │                                                                             │
 │  РЕТЕНШН                                                                    │
 │  ───────────────────────────────────────────────────────────────           │
-│  ✅ Есть: Favorites (localStorage), User Lists                              │
-│  ❌ Нет: Trip Planner, сезонные апдейты, прогресс/чеклист                   │
+│  ✅ Favorites (localStorage), User Lists                                    │
+│  ✅ Прогресс-счётчик в Explore Mode                                         │
+│  ❌ Trip Planner — Фаза 2                                                   │
 │                                                                             │
 │  МОСТ WEB → TELEGRAM                                                        │
 │  ───────────────────────────────────────────────────────────────           │
-│  ✅ Есть: Auth context (пустышка), Save to list drawer                      │
-│  ❌ Нет: "Продолжить в боте", deep link в TG, синхронизация данных          │
+│  ✅ TelegramBridgeSheet после 3 saves                                       │
+│  ✅ Deep links для мест и коллекций                                         │
+│  ❌ Синхронизация данных — требует бэкенд                                   │
 │                                                                             │
 │  МОНЕТИЗАЦИЯ                                                                │
 │  ───────────────────────────────────────────────────────────────           │
-│  ✅ Есть: AI summary placeholder в карточке                                 │
-│  ❌ Нет: Credits система, Trip Planner (платный), Go/No-Go фича             │
+│  ❌ Credits система — Фаза 4                                                │
 │                                                                             │
 │  АНАЛИТИКА                                                                  │
 │  ───────────────────────────────────────────────────────────────           │
-│  ❌ Нет: Трекинг событий (share/save/plan)                                  │
+│  ❌ Трекинг событий — Фаза 5                                                │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Фаза 1: Shareable Objects (Виральность)
-
-**Цель:** Создать 3 "вирусных объекта" которые решают конкретную проблему получателя
+## Фаза 1: Shareable Objects (Виральность) — ✅ ЗАВЕРШЕНА
 
 ### 1.1 Place Postcard — Rich Share для Telegram
 

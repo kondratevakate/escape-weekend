@@ -89,7 +89,23 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex items-center justify-center p-4">
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
+        {/* Progress indicator */}
+        {!isComplete && (
+          <div className="mb-4 text-center">
+            <p className="text-sm font-medium text-muted-foreground">
+              {language === 'ru' 
+                ? `Открыто ${viewedCount} из ${totalPlaces} мест` 
+                : `Discovered ${viewedCount} of ${totalPlaces} places`}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {language === 'ru'
+                ? `❤️ Сохранено: ${favorites.length}`
+                : `❤️ Saved: ${favorites.length}`}
+            </p>
+          </div>
+        )}
+
         {isComplete ? (
           <div className="text-center">
             <div className="text-6xl mb-4">🎉</div>
