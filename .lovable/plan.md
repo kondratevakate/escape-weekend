@@ -1,165 +1,173 @@
 
-# План: Добавить слой UNESCO на карту
+
+# План: Добавить секцию "Ресурсы" в боковую панель
 
 ## Что добавляем
 
-На карту добавится переключаемый **слой "UNESCO"** с:
-1. **Маркерами** объектов Всемирного наследия в радиусе видимости карты
-2. **Специальной иконкой** — логотип UNESCO или характерный синий маркер
-3. **Переключателем слоя** — кнопка в панели фильтров
+В боковую панель `DiscoverPanel` добавится новая секция **"Ресурсы"** с полезными ссылками на внешние гайды и сайты:
 
-## Объекты UNESCO около Кольского полуострова
-
-При зуме карты на весь регион видны следующие объекты:
-
-| Объект | Координаты | Категория | Год |
-|--------|------------|-----------|-----|
-| **Соловецкие острова** | 65.08°N, 35.67°E | Культурный | 1992 |
-| **Кижи** | 62.07°N, 35.22°E | Культурный | 1990 |
-| **Петроглифы Онежского озера и Белого моря** | 61.73°N, 36.01°E | Культурный | 2021 |
-| Культурный ландшафт Кенозера | 61.9°N, 38.2°E | Культурный | 2024 |
-| Новгород | 58.52°N, 31.28°E | Культурный | 1992 |
-| Санкт-Петербург | 59.92°N, 30.42°E | Культурный | 1990 |
+1. **World Coffee Guide** — гайд по кофейням мира (notbadcoffee.com)
+2. **Русское географическое общество** — официальный сайт РГО (rgo.ru)
 
 ## Как будет выглядеть
 
 ```text
-┌───────────────────────────────────────────────────────┐
-│                   [КАРТА]                             │
-│                                                       │
-│   ⭕ Соловецкие острова (UNESCO)                      │
-│                                                       │
-│   📜 [саамы]   🏔️ [места]                            │
-│                                                       │
-│   ⭕ Кижи (UNESCO)                                    │
-│                                                       │
-│                          ┌──────────────────┐         │
-│                          │ [Фильтры]        │         │
-│                          │ ────────────     │         │
-│                          │ 🏛️ UNESCO [ON]  │  ← НОВОЕ│
-│                          │ 📜 История       │         │
-│                          │ 🏔️ Природа      │         │
-│                          │ ...              │         │
-│                          └──────────────────┘         │
-└───────────────────────────────────────────────────────┘
+┌─────────────────────────────────────┐
+│  [Боковая панель DiscoverPanel]     │
+├─────────────────────────────────────┤
+│  🎯 Explore Mode Card               │
+│  📚 Подборки (коллекции)            │
+│  ✨ Скрытые жемчужины               │
+├─────────────────────────────────────┤
+│  📖 Ресурсы                    НОВОЕ│
+│  ┌───────────────────────────────┐  │
+│  │ ☕ World Coffee Guide         │  │
+│  │ Гид по кофейням мира          │  │
+│  └───────────────────────────────┘  │
+│  ┌───────────────────────────────┐  │
+│  │ 🌍 Русское географическое     │  │
+│  │ общество (РГО)                │  │
+│  └───────────────────────────────┘  │
+└─────────────────────────────────────┘
 ```
 
-## Данные объектов UNESCO
+## Структура данных
 
 ```typescript
-// src/data/unescoLayer.ts
-export interface UnescoSite {
+interface Resource {
   id: string;
   name: string;
   nameEn: string;
   description: string;
-  category: 'Cultural' | 'Natural' | 'Mixed';
-  coordinates: [number, number]; // [lat, lng]
-  yearInscribed: number;
+  descriptionEn: string;
+  emoji: string;
   url: string;
+  color: string;
 }
 
-export const unescoSites: UnescoSite[] = [
+const resources: Resource[] = [
   {
-    id: 'unesco-solovetsky',
-    name: 'Соловецкие острова',
-    nameEn: 'Cultural and Historic Ensemble of the Solovetsky Islands',
-    description: 'Архипелаг в Белом море с уникальным монастырём XV века',
-    category: 'Cultural',
-    coordinates: [65.08, 35.67],
-    yearInscribed: 1992,
-    url: 'https://whc.unesco.org/en/list/632',
+    id: 'coffee-guide',
+    name: 'World Coffee Guide',
+    nameEn: 'World Coffee Guide',
+    description: 'Гид по кофейням мира',
+    descriptionEn: 'Global coffee shop guide',
+    emoji: '☕',
+    url: 'https://notbadcoffee.com/world-coffee-guide/',
+    color: 'hsl(30 80% 50%)', // коричневый/кофейный
   },
   {
-    id: 'unesco-kizhi',
-    name: 'Кижский погост',
-    nameEn: 'Kizhi Pogost',
-    description: 'Деревянная церковь с 22 куполами на острове Онежского озера',
-    category: 'Cultural',
-    coordinates: [62.07, 35.22],
-    yearInscribed: 1990,
-    url: 'https://whc.unesco.org/en/list/544',
+    id: 'rgo',
+    name: 'Русское географическое общество',
+    nameEn: 'Russian Geographical Society',
+    description: 'Официальный сайт РГО',
+    descriptionEn: 'Official RGS website',
+    emoji: '🌍',
+    url: 'https://rgo.ru/',
+    color: 'hsl(140 60% 40%)', // зелёный
   },
-  // ... ещё объекты
 ];
 ```
 
-## Новая категория
-
-Добавим новую категорию `unesco` в `kolaPlaces.ts`:
-
-```typescript
-unesco: {
-  label: 'UNESCO',
-  icon: '🏛️',  // или специальный SVG
-  color: 'hsl(210 100% 40%)',     // синий UNESCO
-  bgColor: 'hsl(210 100% 95%)',
-}
-```
-
-## Техническая реализация
-
-### 1. Новый файл данных
-
-**src/data/unescoLayer.ts**
-- Интерфейс `UnescoSite`
-- Массив объектов UNESCO в радиусе карты
-- Конвертер в формат `Place` для совместимости
-
-### 2. Изменения в MapView.tsx
-
-- Добавить `showUnescoLayer` prop
-- При включении — показывать маркеры UNESCO с особым стилем:
-  - Синий цвет (официальный цвет UNESCO)
-  - Чуть крупнее обычных маркеров
-  - Белый фон с синей границей
-
-### 3. Изменения в CategoryFilter.tsx
-
-- Добавить кнопку переключателя UNESCO между избранным и историей
-- Иконка: специальный логотип или 🏛️
-
-### 4. Изменения в Index.tsx и KolaMap.tsx
-
-- Добавить state `showUnescoLayer`
-- Добавить обработчик `handleToggleUnescoLayer`
-- Включить UNESCO места в `filteredPlaces`
-
-### 5. Локализация в i18n.ts
-
-```typescript
-unescoLayer: {
-  title: 'Объекты UNESCO',
-  description: 'Всемирное наследие',
-  attribution: 'Данные: UNESCO World Heritage Centre',
-},
-```
-
-## Файлы для создания/изменения
+## Что изменится
 
 ### Новые файлы
 
 | Файл | Описание |
 |------|----------|
-| `src/data/unescoLayer.ts` | Данные объектов UNESCO с координатами |
+| `src/components/landing/ResourcesSection.tsx` | Компонент секции ресурсов с карточками-ссылками |
+| `src/data/resources.ts` | Данные о ресурсах (название, URL, описание) |
 
 ### Изменяемые файлы
 
 | Файл | Изменения |
 |------|-----------|
-| `src/data/kolaPlaces.ts` | Добавить категорию `unesco` |
-| `src/components/map/CategoryFilter.tsx` | Добавить переключатель UNESCO |
-| `src/components/map/MapView.tsx` | Добавить рендеринг маркеров UNESCO |
-| `src/pages/Index.tsx` | Добавить state и handler для UNESCO layer |
-| `src/components/map/KolaMap.tsx` | Добавить state и handler для UNESCO layer |
-| `src/lib/i18n.ts` | Добавить переводы |
+| `src/components/landing/DiscoverPanel.tsx` | Добавить `<ResourcesSection />` после HiddenGems |
+| `src/lib/i18n.ts` | Добавить переводы для секции ресурсов |
 
-## Источник данных
+## Техническая реализация
 
-Официальные данные: UNESCO World Heritage Centre (whc.unesco.org)
-- При клике на маркер — ссылка на официальную страницу объекта
+### 1. Компонент ResourcesSection
 
-## Атрибуция
+```tsx
+// src/components/landing/ResourcesSection.tsx
+export const ResourcesSection = () => {
+  const { language } = useLanguage();
 
-При активации слоя добавится подпись:
-> 🏛️ UNESCO World Heritage Centre (whc.unesco.org)
+  return (
+    <div className="space-y-2 overflow-hidden">
+      <div className="flex items-center gap-2 px-1">
+        <BookOpen className="h-3.5 w-3.5 text-primary shrink-0" />
+        <h3 className="text-xs font-semibold text-foreground">
+          {language === 'ru' ? 'Ресурсы' : 'Resources'}
+        </h3>
+      </div>
+      
+      <div className="space-y-1.5">
+        {resources.map((resource) => (
+          <a
+            key={resource.id}
+            href={resource.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center gap-2.5 rounded-lg
+                       bg-card border border-border hover:border-primary/50
+                       transition-all duration-200 hover:shadow-sm p-2"
+          >
+            <span className="text-xl">{resource.emoji}</span>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-medium text-xs text-foreground line-clamp-1">
+                {language === 'ru' ? resource.name : resource.nameEn}
+              </h4>
+              <p className="text-[10px] text-muted-foreground line-clamp-1">
+                {language === 'ru' ? resource.description : resource.descriptionEn}
+              </p>
+            </div>
+            <ExternalLink className="h-3 w-3 text-muted-foreground" />
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+};
+```
+
+### 2. Интеграция в DiscoverPanel
+
+```tsx
+import { ResourcesSection } from './ResourcesSection';
+
+export const DiscoverPanel = (...) => {
+  return (
+    <ScrollArea className="h-full w-full">
+      <div className="p-3 md:p-4 space-y-4 md:space-y-5 overflow-hidden">
+        <ExploreCard onStart={onStartExplore} />
+        <CollectionsRow ... />
+        <HiddenGems onPlaceClick={onPlaceClick} />
+        <ResourcesSection />  {/* ← НОВОЕ */}
+      </div>
+    </ScrollArea>
+  );
+};
+```
+
+### 3. Локализация
+
+```typescript
+// В i18n.ts добавить:
+resources: {
+  title: 'Ресурсы',
+  coffeeGuide: 'Гид по кофейням мира',
+  rgo: 'Русское географическое общество',
+},
+```
+
+## Дизайн карточек
+
+Каждая карточка ресурса будет:
+- Иметь эмодзи слева (☕, 🌍)
+- Название и описание в центре
+- Иконку внешней ссылки (ExternalLink) справа
+- Открываться в новой вкладке при клике
+- Иметь hover-эффект как у HiddenGems
+
