@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import { Send, Check, Bell, MessageCircle, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,6 +9,7 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { track } from '@/lib/analytics';
 
 const BOT_USERNAME = 'KolaGuideBot';
 
@@ -43,6 +44,13 @@ export const TelegramBridgeSheet = memo(({
   const { language } = useLanguage();
   const isRu = language === 'ru';
 
+  // Track when sheet is shown
+  useEffect(() => {
+    if (isOpen) {
+      track({ event: 'telegram_cta_shown', trigger });
+    }
+  }, [isOpen, trigger]);
+
   const titles = {
     save: isRu ? 'Не потеряй сохранённое!' : "Don't lose your saves!",
     plan: isRu ? 'Получай апдейты к плану' : 'Get plan updates',
@@ -66,6 +74,7 @@ export const TelegramBridgeSheet = memo(({
     : `https://t.me/${BOT_USERNAME}`;
 
   const handleOpenBot = () => {
+    track({ event: 'telegram_cta_clicked', trigger });
     window.open(deepLink, '_blank');
     onClose();
   };

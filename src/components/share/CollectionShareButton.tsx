@@ -10,6 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Collection } from '@/data/collections';
 import { kolaPlaces } from '@/data/kolaPlaces';
 import { toast } from 'sonner';
+import { track } from '@/lib/analytics';
 
 const BOT_USERNAME = 'KolaGuideBot';
 
@@ -64,6 +65,7 @@ export const CollectionShareButton = memo(({
     const text = generateShareText();
     const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(telegramDeepLink)}&text=${encodeURIComponent(text)}`;
     window.open(telegramUrl, '_blank');
+    track({ event: 'share_collection', collectionId: collection.id, method: 'telegram' });
     onShare?.();
     setIsOpen(false);
   };
@@ -74,6 +76,7 @@ export const CollectionShareButton = memo(({
       await navigator.clipboard.writeText(`${text}\n\n${telegramDeepLink}`);
       setCopied(true);
       toast.success(t('social.linkCopied'));
+      track({ event: 'share_collection', collectionId: collection.id, method: 'copy' });
       onShare?.();
       setTimeout(() => {
         setCopied(false);
