@@ -173,7 +173,7 @@ export const PlaceCard = ({
     <div className="relative">
       <div
         className={cn(
-          "bg-card rounded-xl shadow-2xl border overflow-hidden max-w-sm w-full touch-none select-none",
+          "bg-card rounded-xl shadow-2xl border overflow-hidden w-[340px] md:w-[380px] touch-none select-none",
           isDragging ? "cursor-grabbing" : "cursor-grab"
         )}
         style={{
