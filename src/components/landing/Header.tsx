@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
-import { Search, Sparkles, User, LogOut, Heart, Menu } from 'lucide-react';
+import { Search, Sparkles, User, LogOut, Heart, Menu, Map } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -138,6 +139,12 @@ export const Header = ({ selectedCategory, onCategoryChange, onSearch }: HeaderP
                     {user?.email}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/trip-planner" className="flex items-center">
+                      <Map className="h-4 w-4 mr-2" />
+                      {language === 'ru' ? 'Планировщик' : 'Trip Planner'}
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem>
                     <Heart className="h-4 w-4 mr-2" />
                     {language === 'ru' ? 'Избранное' : 'Favorites'}
@@ -150,6 +157,13 @@ export const Header = ({ selectedCategory, onCategoryChange, onSearch }: HeaderP
                 </>
               ) : (
                 <>
+                  <DropdownMenuItem asChild>
+                    <Link to="/trip-planner" className="flex items-center">
+                      <Map className="h-4 w-4 mr-2" />
+                      {language === 'ru' ? 'Планировщик' : 'Trip Planner'}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => setShowLoginModal(true)}>
                     <User className="h-4 w-4 mr-2" />
                     {t('auth.login')}
