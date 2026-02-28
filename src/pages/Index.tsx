@@ -1,17 +1,16 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Header, CategoryGroup } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
-import { DiscoverPanel } from '@/components/landing/DiscoverPanel';
+import { DiscoverPanel, TagFilter, TAG_FILTERS } from '@/components/landing/DiscoverPanel';
 import { MapView } from '@/components/map/MapView';
 import { PlaceCard } from '@/components/map/PlaceCard';
 import { ExploreMode } from '@/components/map/ExploreMode';
 import { TelegramBridgeSheet } from '@/components/telegram/TelegramBridgeSheet';
 import { CookieConsent } from '@/components/CookieConsent';
 import { Place, PlaceCategory } from '@/data/kolaPlaces';
-import { kolaPlaces } from '@/data/locations';
+import { kolaPlaces, locations } from '@/data/locations';
 import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
 import { unescoPlaces } from '@/data/unescoLayer';
-import { collections } from '@/data/collections';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useUserLists } from '@/hooks/useUserLists';
 import { useTelegramCTA } from '@/hooks/useTelegramCTA';
@@ -45,7 +44,6 @@ const Index = () => {
     isInAnyList 
   } = useUserLists();
 
-  // Telegram CTA hook
   const { 
     shouldShow: shouldShowTelegramCTA, 
     recordSave, 
@@ -53,18 +51,15 @@ const Index = () => {
   } = useTelegramCTA();
   const [telegramSheetOpen, setTelegramSheetOpen] = useState(false);
 
-  // Show Telegram CTA when threshold reached
   useEffect(() => {
     if (shouldShowTelegramCTA) {
       setTelegramSheetOpen(true);
     }
   }, [shouldShowTelegramCTA]);
 
-  // Wrap toggleFavorite with auth check and Telegram CTA tracking
   const handleToggleFavorite = useCallback((id: string) => {
     requireAuth(() => {
       toggleFavorite(id);
-      // Record save for Telegram CTA
       if (!favorites.includes(id)) {
         recordSave();
       }
@@ -80,7 +75,7 @@ const Index = () => {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isExploreMode, setIsExploreMode] = useState(false);
-  const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null);
+  const [activeTagFilter, setActiveTagFilter] = useState<TagFilter>('all');
 
   const handleMapReady = useCallback(() => {
     setIsMapReady(true);
@@ -106,9 +101,8 @@ const Index = () => {
     setShowUnescoLayer(prev => !prev);
   }, []);
 
-  // Filter places based on header category group AND map category filter AND active collection
+  // Filter places based on tag filter + header category + map category filter
   const filteredPlaces = useMemo(() => {
-    // Combine base places with special layers
     let allPlaces = [...kolaPlaces];
     
     if (showHistoryLayer) {
@@ -119,25 +113,27 @@ const Index = () => {
     }
     
     let places = allPlaces;
-    
-    // If a collection is active, filter by collection placeIds
-    if (activeCollectionId) {
-      const collection = collections.find(c => c.id === activeCollectionId);
-      if (collection) {
-        places = places.filter(place => collection.placeIds.includes(place.id));
-        return places; // Skip other filters when collection is active
+
+    // Apply tag filter from left panel
+    if (activeTagFilter !== 'all') {
+      const filterDef = TAG_FILTERS.find(f => f.id === activeTagFilter);
+      if (filterDef) {
+        places = places.filter(place => {
+          const loc = locations.find(l => l.id === place.id);
+          if (!loc) return false;
+          return loc.tags.some(tag => filterDef.matchTags.includes(tag));
+        });
       }
     }
     
-    // First filter by header category group
+    // Header category group
     if (selectedCategory !== 'all') {
       const allowedCategories = categoryGroupMap[selectedCategory];
       places = places.filter(place => allowedCategories.includes(place.category));
     }
     
-    // Then filter by map category filter
+    // Map category filter (right sidebar icons)
     if (selectedCategories.length > 0) {
-      // Always include history/unesco places when their layers are on
       places = places.filter(place => 
         selectedCategories.includes(place.category) || 
         (showHistoryLayer && place.category === 'history') ||
@@ -145,13 +141,12 @@ const Index = () => {
       );
     }
     
-    // Filter by favorites if enabled
     if (showFavoritesOnly) {
       places = places.filter(place => favorites.includes(place.id));
     }
     
     return places;
-  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites, activeCollectionId, showHistoryLayer, showUnescoLayer]);
+  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites, showHistoryLayer, showUnescoLayer, activeTagFilter]);
 
   const handlePlaceClick = useCallback((place: Place) => {
     setSelectedPlace(place);
@@ -161,43 +156,31 @@ const Index = () => {
     setSelectedPlace(null);
   }, []);
 
-  const handleToggleSelectedFavorite = useCallback(() => {
-    if (selectedPlace) {
-      handleToggleFavorite(selectedPlace.id);
-    }
-  }, [selectedPlace, handleToggleFavorite]);
-
   return (
     <div className="h-screen flex flex-col bg-background">
-      {/* Header with category tabs */}
       <Header 
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
       />
       
-      {/* Main content - Split layout */}
       <main className="flex-1 pt-14 md:pt-16 flex flex-col md:flex-row overflow-hidden">
-        {/* Left panel - Places list (desktop) / Bottom drawer (mobile) */}
         <aside 
           className={cn(
             "order-2 md:order-1 overflow-y-auto border-t md:border-t-0 md:border-r border-border bg-background transition-all duration-300",
-            // Mobile: always show bottom panel
             "h-[40vh] md:h-full",
-            // Desktop: collapsible
             isSidebarOpen ? "md:w-[320px]" : "md:w-0 md:overflow-hidden"
           )}
         >
           <DiscoverPanel
-            activeCollectionId={activeCollectionId}
-            onStartExplore={() => setIsExploreMode(true)}
-            onSelectCollection={setActiveCollectionId}
+            activeFilter={activeTagFilter}
+            onFilterChange={setActiveTagFilter}
             onPlaceClick={handlePlaceClick}
+            onStartExplore={() => setIsExploreMode(true)}
+            filteredCount={filteredPlaces.length}
           />
         </aside>
         
-        {/* Right panel - Map */}
         <div className="order-1 md:order-2 flex-1 relative h-[60vh] md:h-full">
-          {/* Sidebar toggle button - desktop only */}
           <Button
             variant="outline"
             size="icon"
@@ -211,7 +194,6 @@ const Index = () => {
             )}
           </Button>
 
-          {/* Loading overlay */}
           {!isMapReady && (
             <div className="absolute inset-0 z-[2000] bg-background flex flex-col items-center justify-center gap-4">
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -237,7 +219,6 @@ const Index = () => {
             onPlaceClick={handlePlaceClick}
           />
 
-          {/* Place card overlay */}
           {selectedPlace && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1001] max-w-[calc(100%-2rem)]">
               <PlaceCard 
@@ -249,13 +230,9 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Footer */}
       <Footer />
-
-      {/* Cookie consent */}
       <CookieConsent />
 
-      {/* Explore Mode */}
       {isExploreMode && (
         <ExploreMode
           places={filteredPlaces}
@@ -265,7 +242,6 @@ const Index = () => {
         />
       )}
 
-      {/* Telegram Bridge CTA */}
       <TelegramBridgeSheet
         isOpen={telegramSheetOpen}
         onClose={() => {
