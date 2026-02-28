@@ -1,460 +1,111 @@
-# Growth Product Roadmap: WowAtlas
 
-## ✅ Прогресс реализации — Фаза 1 Quick Wins ВЫПОЛНЕНА
 
-### Что сделано:
+# Plan: Migrate to `locations.json` and Remove Fake Content
 
-1. **Rich Share для мест** — добавлены поля `whenToVisit`, `howToGet`, `warning`
-   - Обновлён `src/data/kolaPlaces.ts` с данными для ключевых мест
-   - Создан `src/hooks/useSharePostcard.ts` для генерации structured postcard
-   - `ShareButton` использует rich формат: Когда/Как/Предупреждение
+## Scope of Changes
 
-2. **Share для коллекций** — кнопка шеринга в CollectionsRow
-   - Создан `src/components/share/CollectionShareButton.tsx`
-   - Появляется при активной коллекции
+This is a significant refactor touching the data layer and the PlaceCard UI. Two main goals:
+1. **New data source**: `src/data/locations.json` with the user's schema
+2. **Remove fake content** from PlaceCard: mock images, AI summary, reviews, ratings, like counts
 
-3. **Telegram CTA триггер** — bottom sheet после 3 сохранений
-   - Создан `src/hooks/useTelegramCTA.ts` с localStorage
-   - Создан `src/components/telegram/TelegramBridgeSheet.tsx`
-   - Интегрировано в `Index.tsx`
+## Files to Create
 
-4. **Прогресс в Explore Mode** — счётчик "Открыто X из Y мест"
+### `src/data/locations.json`
+- JSON array with all 25 existing `kolaPlaces` entries, mapped to the new schema
+- New fields: `tags`, `season`, `what_to_do`, `pairing`, `permit_required`, `hidden_gem`, `photo_url`
+- `photo_url` will be `""` (empty) for all entries — user fills manually
+- `description` kept from existing data
+- Placeholder text for `what_to_do` and `pairing` (e.g., "TODO: fill in")
 
-### Новые файлы:
-```
-src/hooks/useSharePostcard.ts
-src/hooks/useTelegramCTA.ts
-src/components/share/CollectionShareButton.tsx
-src/components/telegram/TelegramBridgeSheet.tsx
-```
+### `src/data/locations.ts` (adapter)
+- Import from `locations.json`
+- Export `Location` TypeScript interface matching the JSON schema
+- Export `locations` array (typed)
+- Export a `toPlace()` converter function that maps `Location` → existing `Place` type for backward compatibility with map/trip/share components
+- Export `kolaPlaces` (converted) so all existing imports still work without changing 20 files
+- Re-export `Place`, `PlaceCategory`, `categoryConfig` from existing `kolaPlaces.ts`
 
----
+## Files to Modify
 
-## Текущее состояние vs. Growth-модель
+### `src/data/kolaPlaces.ts`
+- Keep `Place` interface, `PlaceCategory`, `categoryConfig` (types + config only)
+- **Remove** the `kolaPlaces` array — data now lives in `locations.json`
+- Components that import `kolaPlaces` will get it from the adapter instead
 
-```text
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        СЕЙЧАС → НУЖНО                                       │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  ВИРУСНЫЕ ОБЪЕКТЫ                                                           │
-│  ───────────────────────────────────────────────────────────────           │
-│  ✅ Rich Share для мест (Когда/Как/Предупреждение)                          │
-│  ✅ Share коллекций с deep link                                             │
-│  ❌ Share плана (Trip Planner) — Фаза 2                                     │
-│                                                                             │
-│  РЕТЕНШН                                                                    │
-│  ───────────────────────────────────────────────────────────────           │
-│  ✅ Favorites (localStorage), User Lists                                    │
-│  ✅ Прогресс-счётчик в Explore Mode                                         │
-│  ❌ Trip Planner — Фаза 2                                                   │
-│                                                                             │
-│  МОСТ WEB → TELEGRAM                                                        │
-│  ───────────────────────────────────────────────────────────────           │
-│  ✅ TelegramBridgeSheet после 3 saves                                       │
-│  ✅ Deep links для мест и коллекций                                         │
-│  ❌ Синхронизация данных — требует бэкенд                                   │
-│                                                                             │
-│  МОНЕТИЗАЦИЯ                                                                │
-│  ───────────────────────────────────────────────────────────────           │
-│  ❌ Credits система — Фаза 4                                                │
-│                                                                             │
-│  АНАЛИТИКА                                                                  │
-│  ───────────────────────────────────────────────────────────────           │
-│  ❌ Трекинг событий — Фаза 5                                                │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+### `src/components/map/PlaceCard.tsx` — Major cleanup
+- **Remove**: `getMockPlaceData()`, `getMockReviews()`, all mock image/rating/review data
+- **Remove**: Rating badge (Star 4.7, 167 reviews)
+- **Remove**: AI Summary block (lines 294-302)
+- **Remove**: Collapsible Reviews section (lines 304-370)
+- **Remove**: Like button on photo with fake count (lines 226-243)
+- **Remove**: Double-tap heart animation logic
+- **Remove**: `usePlaceStats` import and usage
+- **Keep**: Close button, Bookmark button, category badge, title, description, Share button
+- **Add**: Show `photo_url` if available (from Location data), otherwise show category icon placeholder
+- **Add**: Show new fields from Location if available: tags, season, what_to_do
 
----
+### `src/components/map/ExploreMode.tsx`
+- **Remove**: `getPlaceImage()` mock function
+- **Remove**: Star rating badge (line 144-147)
+- **Remove**: Social stats (likes/shares count, lines 183-192)
+- **Remove**: `useAllPlaceStats` import
+- Use `photo_url` from location data or show placeholder
 
-## Фаза 1: Shareable Objects (Виральность) — ✅ ЗАВЕРШЕНА
+### `src/components/landing/PlaceListCard.tsx`
+- **Remove**: Heart count from `usePlaceStats` (line 59-62)
+- **Remove**: `usePlaceStats` import
+- Keep category label and favorite button
 
-### 1.1 Place Postcard — Rich Share для Telegram
+### `src/hooks/usePlaceStats.ts`
+- **Delete** this file entirely — all fake stats removed
 
-```text
-┌────────────────────────────────────────┐
-│  📍 Териберка                          │
-│  ──────────────────────────────────    │
-│  [ФОТО: placeholder image]             │
-│                                         │
-│  🎯 Зачем: Северное сияние, Левиафан   │
-│  📅 Когда: Сентябрь–Март               │
-│  🚗 Как: 2ч от Мурманска, дорога ОК    │
-│  ⚠️ Важно: Бронируй жильё заранее      │
-│                                         │
-│  [🔗 Открыть на карте]                  │
-│  [🤖 Сохранить в боте]                  │
-└────────────────────────────────────────┘
-```
+### `src/data/collections.ts`
+- Keep as-is (references place IDs which remain the same)
+- The unsplash images in collections are fine — they're collection cover images, not place photos
 
-**Файлы:**
-- `src/components/share/PlacePostcard.tsx` — новый компонент
-- `src/hooks/useSharePostcard.ts` — генерация текста + deep link
-- `src/data/kolaPlaces.ts` — добавить поля `whenToVisit`, `howToGet`, `warning`
+## Import Migration Strategy
 
-### 1.2 Collection Share
-
-```text
-┌────────────────────────────────────────┐
-│  🏔️ Коллекция: Кольский без 4x4       │
-│  ──────────────────────────────────    │
-│  5 мест • собрал @username             │
-│                                         │
-│  1. Териберка — ★ 4.7                   │
-│  2. Хибины — ★ 4.8                      │
-│  3. Кировск — ★ 4.5                     │
-│  ...                                    │
-│                                         │
-│  [📥 Сохранить себе]                    │
-└────────────────────────────────────────┘
-```
-
-**Файлы:**
-- `src/components/share/CollectionShare.tsx`
-- `src/hooks/useShareCollection.ts`
-- Обновить `src/components/landing/CollectionsRow.tsx` — добавить Share button
-
-### 1.3 Mini-Itinerary Share (Trip Plan)
-
-```text
-┌────────────────────────────────────────┐
-│  🗺️ План: Кольский на выходные        │
-│  ──────────────────────────────────    │
-│  📅 12–14 января • 🚗 без 4x4          │
-│                                         │
-│  День 1: Мурманск → Териберка          │
-│  День 2: Териберка (сияние!)           │
-│  День 3: Териберка → Мурманск          │
-│                                         │
-│  ⚠️ Прогноз: ветер 15м/с, оденься      │
-│                                         │
-│  [📲 Получать апдейты в Telegram]       │
-└────────────────────────────────────────┘
-```
-
-**Файлы:**
-- `src/components/trip/TripPlanCard.tsx` — новый
-- `src/hooks/useTripPlan.ts` — логика плана
-- `src/types/trip.ts` — типы для плана
-
----
-
-## Фаза 2: Trip Planner (Ретеншн + Монетизация)
-
-**Цель:** Дать пользователю причину вернуться ("мой план") + точка монетизации
-
-### 2.1 Интерфейс планировщика
-
-```text
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  🗺️ Собери свой маршрут                                                    │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  📅 Даты: [12 янв] → [14 янв]     🚗 Машина: [Кроссовер ▼]                  │
-│                                                                             │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                          │
-│  │ День 1      │  │ День 2      │  │ День 3      │                          │
-│  │ ──────────  │  │ ──────────  │  │ ──────────  │                          │
-│  │ + Добавить  │  │ + Добавить  │  │ + Добавить  │                          │
-│  │   место     │  │   место     │  │   место     │                          │
-│  └─────────────┘  └─────────────┘  └─────────────┘                          │
-│                                                                             │
-│  ───────────────────────────────────────────────────────────────           │
-│  ✨ [AI: Собери маршрут за меня]  ← 1 кредит                                │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-**Файлы:**
-- `src/pages/TripPlanner.tsx` — новая страница
-- `src/components/trip/DayColumn.tsx` — колонка дня
-- `src/components/trip/TripSidebar.tsx` — параметры поездки
-- `src/hooks/useTripBuilder.ts` — логика drag-n-drop
-
-### 2.2 AI Trip Generator (платная фича)
-
-```text
-┌────────────────────────────────────────┐
-│  ✨ AI собрал маршрут                   │
-│  ──────────────────────────────────    │
-│                                         │
-│  На основе:                             │
-│  • 3 дня, 12–14 января                  │
-│  • Кроссовер (не 4x4)                   │
-│  • Интересы: природа, северное сияние  │
-│                                         │
-│  ───────────────────────────────       │
-│  День 1: Мурманск → Териберка          │
-│    📍 Выезд в 10:00 (2ч пути)           │
-│    📍 Обед в Териберке                  │
-│    📍 Закат на побережье                │
-│                                         │
-│  ⚠️ Рекомендация: забронируй "Север"   │
-│                                         │
-│  [💾 Сохранить план]  [✏️ Редактировать]│
-└────────────────────────────────────────┘
-```
-
-**Файлы:**
-- `src/components/trip/AITripResult.tsx`
-- `src/hooks/useAITrip.ts` — интеграция с AI
-- `src/lib/tripPrompts.ts` — промпты для AI
-
----
-
-## Фаза 3: Telegram Bridge (Мост Web → Bot)
-
-**Цель:** Конвертировать high-intent действия в подписку на бота
-
-### 3.1 Точки входа в Telegram
-
-| Момент | Триггер | CTA |
-|--------|---------|-----|
-| Сохранил 3+ места | "Не потеряй!" | "Сохранить в Telegram" |
-| Создал план | "Получай апдейты" | "Подключить бота" |
-| AI запрос | "Продолжить диалог" | "Открыть в боте" |
-| Share в Telegram | Получатель открыл | "Сохранить себе" |
-
-### 3.2 Компонент моста
-
-```text
-┌────────────────────────────────────────┐
-│  🤖 Продолжить в Telegram              │
-│  ──────────────────────────────────    │
-│                                         │
-│  ✓ Сохранится навсегда                 │
-│  ✓ Апдейты погоды и дорог              │
-│  ✓ AI-помощник в диалоге               │
-│  ✓ Шеринг одним тапом                  │
-│                                         │
-│  [📲 Открыть @KolaGuideBot]             │
-└────────────────────────────────────────┘
-```
-
-**Файлы:**
-- `src/components/telegram/TelegramBridge.tsx` — bottom sheet
-- `src/hooks/useTelegramDeepLink.ts` — генерация deep link с payload
-- `src/contexts/TelegramContext.tsx` — состояние связи с ботом
-
-### 3.3 Deep Link формат
-
-```
-https://t.me/KolaGuideBot?start=plan_abc123
-https://t.me/KolaGuideBot?start=place_teriberka
-https://t.me/KolaGuideBot?start=collection_seaside
-```
-
----
-
-## Фаза 4: Credits System (Монетизация)
-
-**Цель:** Монетизировать момент "я почти решил ехать"
-
-### 4.1 Что платно, что бесплатно
-
-```text
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        БЕСПЛАТНО              ПЛАТНО (кредиты)              │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  Карта и все места                 ✓                                        │
-│  Сохранение в списки               ✓                                        │
-│  Шеринг мест/коллекций             ✓                                        │
-│  Ручное создание плана             ✓                                        │
-│  3 AI-вопроса в неделю             ✓                                        │
-│  ───────────────────────────────────────────────────────────────           │
-│  AI Trip Planner (генерация)                           1 кредит             │
-│  Go/No-Go (ехать ли завтра?)                           1 кредит             │
-│  Персональные апдейты (погода/дороги)                  подписка             │
-│  Расширенный AI (без лимита)                           подписка             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-### 4.2 Интерфейс кредитов
-
-```text
-┌────────────────────────────────────────┐
-│  💎 Кредиты                            │
-│  ──────────────────────────────────    │
-│  У вас: 2 кредита                      │
-│                                         │
-│  ┌────────────────────────────────┐    │
-│  │  5 кредитов         99 ₽       │    │
-│  │  Для 5 AI-планов               │    │
-│  └────────────────────────────────┘    │
-│                                         │
-│  ┌────────────────────────────────┐    │
-│  │  20 кредитов        299 ₽      │    │
-│  │  + 5 бонусных                  │    │
-│  └────────────────────────────────┘    │
-│                                         │
-│  🎁 Пригласи друга = +3 кредита         │
-└────────────────────────────────────────┘
-```
-
-**Файлы:**
-- `src/contexts/CreditsContext.tsx` — состояние кредитов
-- `src/components/credits/CreditsDisplay.tsx` — показ баланса
-- `src/components/credits/BuyCreditsSheet.tsx` — покупка
-- `src/hooks/useCredits.ts` — логика списания
-
----
-
-## Фаза 5: Analytics Events
-
-**Цель:** Измерять то, что влияет на рост
-
-### 5.1 Ключевые события
+Since ~20 files import from `@/data/kolaPlaces`, the adapter in `locations.ts` will re-export everything needed:
 
 ```typescript
-// src/lib/analytics.ts
-type AnalyticsEvent = 
-  // Вирусность
-  | { event: 'share_place'; placeId: string; method: 'telegram' | 'copy' | 'native' }
-  | { event: 'share_collection'; collectionId: string }
-  | { event: 'share_plan'; planId: string }
-  
-  // Ретеншн
-  | { event: 'save_to_list'; placeId: string; listId: string }
-  | { event: 'create_plan'; planId: string; days: number }
-  | { event: 'edit_plan'; planId: string }
-  
-  // Telegram bridge
-  | { event: 'telegram_cta_shown'; trigger: string }
-  | { event: 'telegram_cta_clicked'; trigger: string }
-  | { event: 'telegram_bot_started'; source: string }
-  
-  // Монетизация
-  | { event: 'ai_request'; type: 'free' | 'paid' }
-  | { event: 'credits_purchased'; amount: number; price: number }
-  | { event: 'referral_sent' }
-  | { event: 'referral_completed' };
+// src/data/locations.ts
+import locationsData from './locations.json';
+export { Place, PlaceCategory, categoryConfig } from './kolaPlaces';
+
+export interface Location { /* new schema */ }
+export const locations: Location[] = locationsData;
+export const kolaPlaces: Place[] = locations.map(toPlace);
 ```
 
-### 5.2 Продуктовые метрики (Dashboard)
+Then update imports in files that use `kolaPlaces` array to import from `@/data/locations` instead. Files that only import types (`Place`, `categoryConfig`) can stay pointing at `kolaPlaces.ts`.
 
-```text
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  📊 Growth Dashboard                                                        │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  NORTH STAR: Weekly Plan/Share Actions                                      │
-│  ═══════════════════════════════════════════════════════════════           │
-│  [████████████████░░░░] 1,234 actions (+12% vs prev week)                  │
-│                                                                             │
-│  ───────────────────────────────────────────────────────────────           │
-│                                                                             │
-│  Share Rate         Plan Rate          TG Conversion       ARPU            │
-│  ───────────        ───────────        ───────────         ───────────     │
-│  8.3%               4.1%               12%                 45 ₽            │
-│  (+0.5%)            (+0.3%)            (+2%)               (+8 ₽)          │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
+## Technical Details
+
+### Location → Place mapping
+```typescript
+function toPlace(loc: Location): Place {
+  return {
+    id: loc.id,
+    name: loc.name,
+    nameEn: loc.name_en,
+    description: loc.description,
+    category: inferCategory(loc.tags), // map tags to PlaceCategory
+    coordinates: loc.coordinates as [number, number],
+    region: loc.region,
+    whenToVisit: loc.season.join(', '),
+    howToGet: loc.what_to_do, // approximate mapping
+    warning: loc.permit_required ? 'Permit required' : undefined,
+  };
+}
 ```
 
-**Файлы:**
-- `src/lib/analytics.ts` — обёртка над аналитикой
-- `src/hooks/useAnalytics.ts` — хук для компонентов
-
----
-
-## Дорожная карта по фазам
-
-```text
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  ФАЗА 1: Shareable Objects                              ~2 недели          │
-│  ───────────────────────────────────────────────────────────────           │
-│  • PlacePostcard компонент + rich text для TG                              │
-│  • Collection Share с deep link                                             │
-│  • Обновить ShareButton для всех форматов                                   │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  ФАЗА 2: Trip Planner                                   ~3 недели          │
-│  ───────────────────────────────────────────────────────────────           │
-│  • Новая страница /trip-planner                                             │
-│  • Drag-n-drop интерфейс для дней                                          │
-│  • AI генерация маршрута (интеграция)                                       │
-│  • Share плана                                                              │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  ФАЗА 3: Telegram Bridge                                ~1 неделя          │
-│  ───────────────────────────────────────────────────────────────           │
-│  • TelegramBridge компонент                                                 │
-│  • Deep link генерация                                                      │
-│  • Триггеры показа (after save, after plan, after AI)                      │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  ФАЗА 4: Credits                                        ~2 недели          │
-│  ───────────────────────────────────────────────────────────────           │
-│  • CreditsContext + Supabase таблица                                        │
-│  • Stripe интеграция для оплаты                                             │
-│  • Реферальная система                                                      │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  ФАЗА 5: Analytics                                      ~1 неделя          │
-│  ───────────────────────────────────────────────────────────────           │
-│  • Event tracking на все ключевые действия                                  │
-│  • Простой dashboard (или интеграция с Amplitude/Mixpanel)                 │
-└─────────────────────────────────────────────────────────────────────────────┘
+### Tag → Category mapping
+```
+villages → village, nature → nature, hiking → hiking,
+museums → museum, cities → city, reserves → reserve,
+attractions → attraction
 ```
 
----
-
-## Новые файлы и структура
-
-```text
-src/
-├── components/
-│   ├── share/
-│   │   ├── PlacePostcard.tsx        # Rich share для места
-│   │   ├── CollectionShare.tsx      # Share коллекции
-│   │   └── PlanShare.tsx            # Share плана
-│   ├── trip/
-│   │   ├── TripPlanCard.tsx         # Карточка плана
-│   │   ├── DayColumn.tsx            # Колонка дня
-│   │   ├── TripSidebar.tsx          # Параметры поездки
-│   │   └── AITripResult.tsx         # Результат AI
-│   ├── telegram/
-│   │   └── TelegramBridge.tsx       # Мост в Telegram
-│   └── credits/
-│       ├── CreditsDisplay.tsx       # Показ баланса
-│       └── BuyCreditsSheet.tsx      # Покупка кредитов
-├── contexts/
-│   ├── TelegramContext.tsx          # Связь с ботом
-│   └── CreditsContext.tsx           # Кредиты пользователя
-├── hooks/
-│   ├── useSharePostcard.ts          # Генерация postcard
-│   ├── useShareCollection.ts        # Share коллекции
-│   ├── useTripPlan.ts               # Логика плана
-│   ├── useAITrip.ts                 # AI генерация
-│   ├── useTelegramDeepLink.ts       # Deep links
-│   ├── useCredits.ts                # Кредиты
-│   └── useAnalytics.ts              # Аналитика
-├── pages/
-│   └── TripPlanner.tsx              # Страница планировщика
-├── types/
-│   └── trip.ts                      # Типы для плана
-└── lib/
-    ├── analytics.ts                 # Трекинг событий
-    └── tripPrompts.ts               # AI промпты
-```
-
----
-
-## Quick Wins (можно сделать сразу)
-
-1. **Улучшить Share текст** — добавить в `ShareButton.tsx` структурированный текст с "Зачем/Когда/Как"
-
-2. **Добавить Share для коллекций** — в `CollectionsRow.tsx` добавить кнопку шеринга
-
-3. **Telegram CTA после 3 saves** — простой bottom sheet после третьего сохранения
-
-4. **Прогресс-бар в Explore Mode** — "Вы открыли 8 из 25 мест" для геймификации
-
----
-
-## Позиционирование
-
-> **"Кольский без ошибок: куда ехать, когда ехать и как доехать."**
-
-Это сразу:
-- Объясняет ценность (снижение риска)
-- Подводит к AI как "страховке от тупняка"
-- Даёт понятный promise для шеринга
+### Files that need import path updates (from `kolaPlaces` to `locations`)
+Only files importing the `kolaPlaces` **array**: Index.tsx, KolaMap.tsx, TripPlanner.tsx, DayColumn.tsx, CollectionShareButton.tsx, HiddenGems.tsx, ExploreMode.tsx (7 files)
 
