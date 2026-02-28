@@ -5,7 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { UserProvider, useUser } from "@/contexts/UserContext";
 import { LoginModal } from "@/components/auth/LoginModal";
+import { LockedScreen } from "@/components/LockedScreen";
 import Index from "./pages/Index";
 import TripPlanner from "./pages/TripPlanner";
 import CookiePolicy from "./pages/CookiePolicy";
@@ -13,25 +15,40 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const AppContent = () => {
+  const { accessMode } = useUser();
+
+  if (accessMode === 'locked') {
+    return <LockedScreen />;
+  }
+
+  return (
+    <>
+      <Toaster />
+      <Sonner />
+      <LoginModal />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/trip-planner" element={<TripPlanner />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <LoginModal />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/trip-planner" element={<TripPlanner />} />
-              <Route path="/cookie-policy" element={<CookiePolicy />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
+      <UserProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <AppContent />
+          </TooltipProvider>
+        </AuthProvider>
+      </UserProvider>
     </LanguageProvider>
   </QueryClientProvider>
 );
