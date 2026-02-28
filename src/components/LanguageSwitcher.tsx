@@ -40,7 +40,7 @@ export const LanguageSwitcher = ({ variant = 'default' }: LanguageSwitcherProps)
             <Globe className="h-5 w-5 text-muted-foreground" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-40 p-1" align="end">
+        <PopoverContent className="w-40 p-1 z-[2000]" align="end">
           <button
             onClick={() => setLanguage('ru')}
             className={cn(

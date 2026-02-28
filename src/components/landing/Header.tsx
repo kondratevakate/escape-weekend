@@ -46,7 +46,7 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-[1500] bg-background/95 backdrop-blur-md border-b border-border">
       <div className="h-14 md:h-16 px-4 md:px-6 flex items-center gap-4">
         {/* Logo */}
         <div className="flex items-center gap-2 shrink-0">
