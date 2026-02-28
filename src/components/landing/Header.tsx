@@ -16,27 +16,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 export type CategoryGroup = 'nature' | 'hiking' | 'top';
 
-interface CategoryTab {
-  id: CategoryGroup;
-  emoji: string;
-  labelRu: string;
-  labelEn: string;
-}
-
-const categoryTabs: CategoryTab[] = [
-  { id: 'nature', emoji: '🏔️', labelRu: 'Природа', labelEn: 'Nature' },
-  { id: 'hiking', emoji: '🥾', labelRu: 'Походы', labelEn: 'Hiking' },
-  { id: 'top', emoji: '⭐', labelRu: 'Топ-места', labelEn: 'Top Places' },
-];
-
 interface HeaderProps {
-  selectedCategory: CategoryGroup | 'all';
-  onCategoryChange: (category: CategoryGroup | 'all') => void;
   onSearch?: (query: string) => void;
   stashCount?: number;
 }
 
-export const Header = ({ selectedCategory, onCategoryChange, onSearch, stashCount = 0 }: HeaderProps) => {
+export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
   const { language, t } = useLanguage();
   const { isAuthenticated, user, logout, setShowLoginModal } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
@@ -83,29 +68,6 @@ export const Header = ({ selectedCategory, onCategoryChange, onSearch, stashCoun
           </div>
         </form>
         
-        {/* Category Tabs - Right of search on desktop */}
-        <nav className="hidden md:flex items-center gap-1 shrink-0">
-          {categoryTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => onCategoryChange(
-                selectedCategory === tab.id ? 'all' : tab.id
-              )}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-2 rounded-full text-sm transition-all",
-                "hover:bg-muted",
-                selectedCategory === tab.id
-                  ? "bg-primary text-primary-foreground font-medium"
-                  : "text-muted-foreground"
-              )}
-            >
-              <span className="text-base">{tab.emoji}</span>
-              <span className="hidden lg:inline">
-                {language === 'ru' ? tab.labelRu : tab.labelEn}
-              </span>
-            </button>
-          ))}
-        </nav>
         
         {/* Stash icon */}
         <div className="shrink-0">
@@ -193,27 +155,6 @@ export const Header = ({ selectedCategory, onCategoryChange, onSearch, stashCoun
         </div>
       </div>
       
-      {/* Mobile category tabs - below header */}
-      <div className="md:hidden flex items-center justify-center gap-1 pb-2 px-4">
-        {categoryTabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => onCategoryChange(
-              selectedCategory === tab.id ? 'all' : tab.id
-            )}
-            className={cn(
-              "flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs transition-all",
-              "hover:bg-muted",
-              selectedCategory === tab.id
-                ? "bg-primary text-primary-foreground font-medium"
-                : "text-muted-foreground"
-            )}
-          >
-            <span>{tab.emoji}</span>
-            <span>{language === 'ru' ? tab.labelRu : tab.labelEn}</span>
-          </button>
-        ))}
-      </div>
     </header>
   );
 };

@@ -11,17 +11,14 @@ interface MapViewProps {
   center: [number, number];
   zoom: number;
   favorites?: string[];
-  selectedCategories: PlaceCategory[];
   showFavoritesOnly: boolean;
   favoritesCount: number;
   showHistoryLayer: boolean;
   showUnescoLayer: boolean;
   showRestaurantLayer: boolean;
-  onToggleCategory: (category: PlaceCategory) => void;
   onToggleFavoritesOnly: () => void;
   onToggleHistoryLayer: () => void;
   onToggleUnescoLayer: () => void;
-  onToggleRestaurantLayer: () => void;
   onMapReady?: () => void;
   onPlaceClick?: (place: Place) => void;
 }
@@ -37,17 +34,14 @@ export const MapView = ({
   center, 
   zoom, 
   favorites = [], 
-  selectedCategories,
   showFavoritesOnly,
   favoritesCount,
   showHistoryLayer,
   showUnescoLayer,
   showRestaurantLayer,
-  onToggleCategory,
   onToggleFavoritesOnly,
   onToggleHistoryLayer,
   onToggleUnescoLayer,
-  onToggleRestaurantLayer,
   onMapReady, 
   onPlaceClick 
 }: MapViewProps) => {
@@ -230,8 +224,6 @@ export const MapView = ({
       <div className="absolute top-1/2 -translate-y-1/2 right-3 z-[1000]">
         <div className="bg-background/95 backdrop-blur-sm rounded-xl p-2 shadow-lg border border-border">
           <CategoryFilter
-            selectedCategories={selectedCategories}
-            onToggleCategory={onToggleCategory}
             showFavoritesOnly={showFavoritesOnly}
             onToggleFavoritesOnly={onToggleFavoritesOnly}
             favoritesCount={favoritesCount}
@@ -239,8 +231,6 @@ export const MapView = ({
             onToggleHistoryLayer={onToggleHistoryLayer}
             showUnescoLayer={showUnescoLayer}
             onToggleUnescoLayer={onToggleUnescoLayer}
-            showRestaurantLayer={showRestaurantLayer}
-            onToggleRestaurantLayer={onToggleRestaurantLayer}
           />
         </div>
       </div>

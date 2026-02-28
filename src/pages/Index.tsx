@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { Header, CategoryGroup } from '@/components/landing/Header';
+import { useNavigate } from 'react-router-dom';
+import { Header } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
 import { DiscoverPanel, TagFilter, TAG_FILTERS } from '@/components/landing/DiscoverPanel';
 import { MapView } from '@/components/map/MapView';
@@ -8,7 +9,8 @@ import { RestaurantCard } from '@/components/map/RestaurantCard';
 import { ExploreMode } from '@/components/map/ExploreMode';
 import { TelegramBridgeSheet } from '@/components/telegram/TelegramBridgeSheet';
 import { CookieConsent } from '@/components/CookieConsent';
-import { Place, PlaceCategory } from '@/data/kolaPlaces';
+import { WelcomeModal } from '@/components/WelcomeModal';
+import { Place } from '@/data/kolaPlaces';
 import { kolaPlaces, locations } from '@/data/locations';
 import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
 import { unescoPlaces } from '@/data/unescoLayer';
@@ -22,19 +24,13 @@ import { Loader2, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-// Category group mappings
-const categoryGroupMap: Record<CategoryGroup, PlaceCategory[]> = {
-  nature: ['nature', 'reserve'],
-  hiking: ['hiking'],
-  top: ['attraction', 'museum', 'village', 'city'],
-};
-
 const KOLA_CENTER: [number, number] = [68.0, 34.0];
 const INITIAL_ZOOM = 7;
 
 const Index = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { requireAuth } = useAuth();
+  const navigate = useNavigate();
   const { items: stashItems, addToStash, removeFromStash, isInStash, count: stashCount } = useStash();
   const stashedIds = stashItems.map(i => i.id);
   const { 
@@ -64,8 +60,6 @@ const Index = () => {
     recordSave();
   }, [addToStash, recordSave]);
   
-  const [selectedCategory, setSelectedCategory] = useState<CategoryGroup | 'all'>('all');
-  const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [showHistoryLayer, setShowHistoryLayer] = useState(false);
   const [showUnescoLayer, setShowUnescoLayer] = useState(false);
@@ -75,17 +69,10 @@ const Index = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isExploreMode, setIsExploreMode] = useState(false);
   const [activeTagFilter, setActiveTagFilter] = useState<TagFilter>('all');
+  const [highlightCollections, setHighlightCollections] = useState(false);
 
   const handleMapReady = useCallback(() => {
     setIsMapReady(true);
-  }, []);
-
-  const handleToggleCategory = useCallback((category: PlaceCategory) => {
-    setSelectedCategories(prev => 
-      prev.includes(category)
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
-    );
   }, []);
 
   const handleToggleFavoritesOnly = useCallback(() => {
@@ -130,26 +117,12 @@ const Index = () => {
       }
     }
     
-    if (selectedCategory !== 'all') {
-      const allowedCategories = categoryGroupMap[selectedCategory];
-      places = places.filter(place => allowedCategories.includes(place.category));
-    }
-    
-    if (selectedCategories.length > 0) {
-      places = places.filter(place => 
-        selectedCategories.includes(place.category) || 
-        (showHistoryLayer && place.category === 'history') ||
-        (showUnescoLayer && place.category === 'unesco') ||
-        (showRestaurantLayer && place.category === 'restaurant')
-      );
-    }
-    
     if (showFavoritesOnly) {
       places = places.filter(place => stashedIds.includes(place.id));
     }
     
     return places;
-  }, [selectedCategory, selectedCategories, showFavoritesOnly, stashedIds, showHistoryLayer, showUnescoLayer, showRestaurantLayer, activeTagFilter]);
+  }, [showFavoritesOnly, stashedIds, showHistoryLayer, showUnescoLayer, showRestaurantLayer, activeTagFilter]);
 
   const handlePlaceClick = useCallback((place: Place) => {
     setSelectedPlace(place);
@@ -159,11 +132,23 @@ const Index = () => {
     setSelectedPlace(null);
   }, []);
 
+  // Welcome modal actions
+  const handleWelcomeExplore = useCallback(() => {}, []);
+  const handleWelcomeSwipe = useCallback(() => {
+    setIsExploreMode(true);
+  }, []);
+  const handleWelcomeCollections = useCallback(() => {
+    setIsSidebarOpen(true);
+    setHighlightCollections(true);
+    setTimeout(() => setHighlightCollections(false), 3000);
+  }, []);
+  const handleWelcomeStash = useCallback(() => {
+    navigate('/stash');
+  }, [navigate]);
+
   return (
     <div className="h-screen flex flex-col bg-background">
       <Header 
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
         stashCount={stashCount}
       />
       
@@ -181,6 +166,7 @@ const Index = () => {
             onPlaceClick={handlePlaceClick}
             onStartExplore={() => setIsExploreMode(true)}
             filteredCount={filteredPlaces.length}
+            highlightCollections={highlightCollections}
           />
         </aside>
         
@@ -210,17 +196,14 @@ const Index = () => {
             center={KOLA_CENTER}
             zoom={INITIAL_ZOOM}
             favorites={stashedIds}
-            selectedCategories={selectedCategories}
             showFavoritesOnly={showFavoritesOnly}
             favoritesCount={stashCount}
             showHistoryLayer={showHistoryLayer}
             showUnescoLayer={showUnescoLayer}
             showRestaurantLayer={showRestaurantLayer}
-            onToggleCategory={handleToggleCategory}
             onToggleFavoritesOnly={handleToggleFavoritesOnly}
             onToggleHistoryLayer={handleToggleHistoryLayer}
             onToggleUnescoLayer={handleToggleUnescoLayer}
-            onToggleRestaurantLayer={handleToggleRestaurantLayer}
             onMapReady={handleMapReady}
             onPlaceClick={handlePlaceClick}
           />
@@ -240,11 +223,33 @@ const Index = () => {
               )}
             </div>
           )}
+
+          {/* Empty state when filter returns 0 */}
+          {isMapReady && filteredPlaces.length === 0 && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1001] bg-background/95 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-border text-center">
+              <p className="text-muted-foreground text-sm mb-2">
+                {language === 'ru' ? 'Нет мест' : 'No places found'}
+              </p>
+              <button
+                onClick={() => setActiveTagFilter('all')}
+                className="text-sm text-primary hover:underline"
+              >
+                {language === 'ru' ? 'Сбросить фильтр →' : 'Reset filter →'}
+              </button>
+            </div>
+          )}
         </div>
       </main>
 
       <Footer />
       <CookieConsent />
+
+      <WelcomeModal
+        onExploreMap={handleWelcomeExplore}
+        onSwipeMode={handleWelcomeSwipe}
+        onHighlightCollections={handleWelcomeCollections}
+        onOpenStash={handleWelcomeStash}
+      />
 
       {isExploreMode && (
         <ExploreMode

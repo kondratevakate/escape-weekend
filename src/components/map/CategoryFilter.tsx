@@ -1,11 +1,14 @@
-import { PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
+import { categoryConfig } from '@/data/kolaPlaces';
 import { cn } from '@/lib/utils';
-import { Heart, Scroll, Landmark, UtensilsCrossed } from 'lucide-react';
+import { Bookmark, Scroll, Landmark, Map } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface CategoryFilterProps {
-  selectedCategories: PlaceCategory[];
-  onToggleCategory: (category: PlaceCategory) => void;
   showFavoritesOnly: boolean;
   onToggleFavoritesOnly: () => void;
   favoritesCount: number;
@@ -13,13 +16,9 @@ interface CategoryFilterProps {
   onToggleHistoryLayer: () => void;
   showUnescoLayer: boolean;
   onToggleUnescoLayer: () => void;
-  showRestaurantLayer: boolean;
-  onToggleRestaurantLayer: () => void;
 }
 
 export const CategoryFilter = ({ 
-  selectedCategories, 
-  onToggleCategory,
   showFavoritesOnly,
   onToggleFavoritesOnly,
   favoritesCount,
@@ -27,122 +26,70 @@ export const CategoryFilter = ({
   onToggleHistoryLayer,
   showUnescoLayer,
   onToggleUnescoLayer,
-  showRestaurantLayer,
-  onToggleRestaurantLayer,
 }: CategoryFilterProps) => {
-  const { t } = useLanguage();
-  
-  // Filter out 'history' and 'unesco' from regular categories - they're shown as special layer toggles
-  const categories = (Object.entries(categoryConfig) as [PlaceCategory, typeof categoryConfig[PlaceCategory]][])
-    .filter(([key]) => key !== 'history' && key !== 'unesco' && key !== 'restaurant');
+  const { language, t } = useLanguage();
+
+  const items = [
+    {
+      key: 'stash',
+      active: showFavoritesOnly,
+      onClick: onToggleFavoritesOnly,
+      icon: <Bookmark className={cn("h-4 w-4", showFavoritesOnly && "fill-current")} />,
+      label: language === 'ru' ? 'Тайник' : 'Secret Stash',
+      badge: favoritesCount > 0 ? favoritesCount : undefined,
+    },
+    {
+      key: 'unesco',
+      active: showUnescoLayer,
+      onClick: onToggleUnescoLayer,
+      icon: <Landmark className="h-4 w-4" />,
+      label: t('unescoLayer.title'),
+      style: showUnescoLayer ? { backgroundColor: categoryConfig.unesco.bgColor, color: categoryConfig.unesco.color } : undefined,
+    },
+    {
+      key: 'indigenous',
+      active: showHistoryLayer,
+      onClick: onToggleHistoryLayer,
+      icon: <Scroll className="h-4 w-4" />,
+      label: t('historyLayer.title'),
+      style: showHistoryLayer ? { backgroundColor: categoryConfig.history.bgColor, color: categoryConfig.history.color } : undefined,
+    },
+    {
+      key: 'mapstyle',
+      active: false,
+      onClick: () => {},
+      icon: <Map className="h-4 w-4" />,
+      label: language === 'ru' ? 'Стиль карты' : 'Map style',
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-1">
-      {/* Favorites filter button */}
-      <button
-        onClick={onToggleFavoritesOnly}
-        className={cn(
-          "flex items-center justify-center gap-1.5 p-2 rounded-lg text-sm font-medium transition-all duration-200",
-          "hover:scale-105 active:scale-95",
-          showFavoritesOnly
-            ? "bg-accent/20 text-accent"
-            : "hover:bg-muted text-muted-foreground"
-        )}
-        title={t('favorites.title')}
-      >
-        <Heart className={cn("h-4 w-4", showFavoritesOnly && "fill-current")} />
-        {favoritesCount > 0 && (
-          <span className="text-xs font-bold">
-            {favoritesCount}
-          </span>
-        )}
-      </button>
-
-      <div className="h-px bg-border my-1" />
-
-      {/* UNESCO layer toggle */}
-      <button
-        onClick={onToggleUnescoLayer}
-        className={cn(
-          "flex items-center justify-center p-2 rounded-lg text-lg transition-all duration-200",
-          "hover:scale-105 active:scale-95",
-          showUnescoLayer
-            ? "shadow-sm"
-            : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted"
-        )}
-        style={showUnescoLayer ? {
-          backgroundColor: categoryConfig.unesco.bgColor,
-          color: categoryConfig.unesco.color,
-        } : undefined}
-        title={t('unescoLayer.title')}
-      >
-        <Landmark className="h-4 w-4" />
-      </button>
-
-      {/* History layer toggle */}
-      <button
-        onClick={onToggleHistoryLayer}
-        className={cn(
-          "flex items-center justify-center p-2 rounded-lg text-lg transition-all duration-200",
-          "hover:scale-105 active:scale-95",
-          showHistoryLayer
-            ? "shadow-sm"
-            : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted"
-        )}
-        style={showHistoryLayer ? {
-          backgroundColor: categoryConfig.history.bgColor,
-          color: categoryConfig.history.color,
-        } : undefined}
-        title={t('historyLayer.title')}
-      >
-        <Scroll className="h-4 w-4" />
-      </button>
-
-      {/* Restaurant layer toggle */}
-      <button
-        onClick={onToggleRestaurantLayer}
-        className={cn(
-          "flex items-center justify-center p-2 rounded-lg text-lg transition-all duration-200",
-          "hover:scale-105 active:scale-95",
-          showRestaurantLayer
-            ? "shadow-sm"
-            : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted"
-        )}
-        style={showRestaurantLayer ? {
-          backgroundColor: categoryConfig.restaurant.bgColor,
-          color: categoryConfig.restaurant.color,
-        } : undefined}
-        title={t('categories.restaurant')}
-      >
-        <UtensilsCrossed className="h-4 w-4" />
-      </button>
-
-      <div className="h-px bg-border my-1" />
-
-      {/* Category buttons */}
-      {categories.map(([key, config]) => {
-        const isSelected = selectedCategories.includes(key);
-        return (
-          <button
-            key={key}
-            onClick={() => onToggleCategory(key)}
-            title={t(`categories.${key}`)}
-            className={cn(
-              "flex items-center justify-center p-2 rounded-lg text-lg transition-all duration-200",
-              "hover:scale-105 active:scale-95",
-              isSelected
-                ? "shadow-sm"
-                : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted"
-            )}
-            style={isSelected ? {
-              backgroundColor: config.bgColor,
-              color: config.color,
-            } : undefined}
-          >
-            {config.icon}
-          </button>
-        );
-      })}
+      {items.map((item) => (
+        <Tooltip key={item.key}>
+          <TooltipTrigger asChild>
+            <button
+              onClick={item.onClick}
+              className={cn(
+                "flex items-center justify-center gap-1.5 p-2 rounded-lg text-sm font-medium transition-all duration-200",
+                "hover:scale-105 active:scale-95",
+                item.active
+                  ? "bg-primary/15 text-primary shadow-sm"
+                  : "hover:bg-muted text-muted-foreground"
+              )}
+              style={item.style}
+            >
+              {item.icon}
+              {item.badge != null && (
+                <span className="text-xs font-bold">{item.badge}</span>
+              )}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="left" className="text-xs">
+            {item.label}
+          </TooltipContent>
+        </Tooltip>
+      ))}
     </div>
   );
 };
