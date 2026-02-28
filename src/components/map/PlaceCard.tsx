@@ -3,6 +3,7 @@ import { getLocationById } from '@/data/locations';
 import { X, MapPin, UtensilsCrossed, AlertTriangle, ExternalLink } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
+import { SeasonPills } from '@/components/SeasonPills';
 
 interface PlaceCardProps {
   place: Place;
@@ -44,11 +45,6 @@ export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
       <div className="p-4 space-y-3">
         {/* 2. Tags row */}
         <div className="flex flex-wrap gap-1.5">
-          {location && location.season.length > 0 && location.season.length < 12 && (
-            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-secondary/15 text-secondary">
-              📅 {location.season.join(', ')}
-            </span>
-          )}
           <span
             className="text-xs font-medium px-2 py-0.5 rounded-full"
             style={{ background: config.bgColor, color: config.color }}
@@ -61,6 +57,16 @@ export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
             </span>
           ))}
         </div>
+
+        {/* Best time to visit — month pills */}
+        {location && location.season.length > 0 && (
+          <div>
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
+              {language === 'ru' ? 'Лучшее время' : 'Best time'}
+            </p>
+            <SeasonPills season={location.season} language={language} />
+          </div>
+        )}
 
         {/* 3. Location name */}
         <div>
