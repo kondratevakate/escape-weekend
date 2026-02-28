@@ -111,7 +111,7 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64 p-0">
+            <DropdownMenuContent align="end" className="w-64 p-0 z-[2000]">
               {hasAccess ? (
                 <>
                   <div className="px-4 py-3">
