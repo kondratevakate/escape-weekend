@@ -4,6 +4,7 @@ import { X, MapPin, UtensilsCrossed, AlertTriangle, ExternalLink } from 'lucide-
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { SeasonPills } from '@/components/SeasonPills';
+import { WarningsSection } from './WarningsSection';
 
 interface PlaceCardProps {
   place: Place;
@@ -99,14 +100,9 @@ export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
           </div>
         )}
 
-        {/* 6. Permit warning */}
-        {location?.permit_required && (
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[hsl(25_95%_95%)] border border-[hsl(25_95%_80%)]">
-            <AlertTriangle className="h-4 w-4 text-[hsl(25_95%_53%)] shrink-0" />
-            <span className="text-xs font-medium text-[hsl(25_80%_35%)]">
-              {language === 'ru' ? 'Нужен пропуск у погранцов' : 'Border permit required'}
-            </span>
-          </div>
+        {/* 6. Важно знать — warnings */}
+        {location?.warnings && Object.keys(location.warnings).length > 0 && (
+          <WarningsSection warnings={location.warnings} language={language} />
         )}
 
         {/* 7. External link */}
