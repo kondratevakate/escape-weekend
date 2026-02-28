@@ -206,9 +206,7 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1001] max-w-[calc(100%-2rem)]">
           <PlaceCard 
             place={selectedPlace} 
-            isFavorite={isFavorite(selectedPlace.id)}
             onClose={handleCloseCard}
-            onToggleFavorite={handleToggleSelectedFavorite}
           />
         </div>
       )}
