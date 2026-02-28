@@ -1,6 +1,6 @@
 import { categoryConfig } from '@/data/kolaPlaces';
 import { cn } from '@/lib/utils';
-import { Bookmark, Scroll, Landmark, UtensilsCrossed, Map } from 'lucide-react';
+import { Bookmark, Scroll, Landmark, UtensilsCrossed, Plus } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Tooltip,
@@ -67,11 +67,11 @@ export const CategoryFilter = ({
       style: showRestaurantLayer ? { backgroundColor: categoryConfig.restaurant.bgColor, color: categoryConfig.restaurant.color } : undefined,
     },
     {
-      key: 'mapstyle',
+      key: 'addmap',
       active: false,
-      onClick: () => {},
-      icon: <Map className="h-4 w-4" />,
-      label: language === 'ru' ? 'Стиль карты' : 'Map style',
+      onClick: () => window.open('https://t.me/dvushka_bot?start=custom_map', '_blank'),
+      icon: <Plus className="h-4 w-4" />,
+      label: language === 'ru' ? 'Добавить свою карту' : 'Add your map',
     },
   ];
 
