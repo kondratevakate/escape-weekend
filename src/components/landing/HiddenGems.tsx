@@ -1,5 +1,6 @@
 import { hiddenGems } from '@/data/collections';
-import { kolaPlaces, Place } from '@/data/kolaPlaces';
+import { kolaPlaces } from '@/data/locations';
+import { Place } from '@/data/kolaPlaces';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { Sparkles } from 'lucide-react';
