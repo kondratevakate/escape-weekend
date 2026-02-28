@@ -5,6 +5,14 @@ import { Place, PlaceCategory } from './kolaPlaces';
 export type { Place, PlaceCategory } from './kolaPlaces';
 export { categoryConfig } from './kolaPlaces';
 
+export interface LocationWarnings {
+  permit?: { required: boolean; description: string; link: string };
+  road?: { seasonal_closure: boolean; description: string; bad_months: string[] };
+  crowds?: { peak_months: string[]; description: string };
+  closures?: { sanitary_days: string; seasonal: string };
+  traveler_issues?: string[];
+}
+
 export interface Location {
   id: string;
   name: string;
@@ -19,6 +27,7 @@ export interface Location {
   permit_required: boolean;
   hidden_gem: boolean;
   photo_url: string;
+  warnings?: LocationWarnings;
 }
 
 const tagToCategoryMap: Record<string, PlaceCategory> = {

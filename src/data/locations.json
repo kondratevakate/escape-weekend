@@ -12,7 +12,12 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "road": { "seasonal_closure": true, "description": "Дорога может быть закрыта из-за метелей", "bad_months": ["november", "december", "january", "february", "march"] },
+      "crowds": { "peak_months": ["january", "february", "march"], "description": "Много туристов в сезон северного сияния" },
+      "traveler_issues": ["Нет банкоматов", "Слабый мобильный сигнал", "Мало мест для ночлега"]
+    }
   },
   {
     "id": "seydozero",
@@ -27,7 +32,11 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": true,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "road": { "seasonal_closure": false, "description": "Пеший подход 10 км от Ловозера", "bad_months": [] },
+      "traveler_issues": ["Нет связи", "Нет магазинов", "Нужна палатка"]
+    }
   },
   {
     "id": "dalnie-zelentsy",
@@ -42,7 +51,11 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": true,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "road": { "seasonal_closure": true, "description": "Грунтовая дорога, только внедорожник", "bad_months": ["october", "november", "december", "january", "february", "march", "april"] },
+      "traveler_issues": ["Нет инфраструктуры", "Нет связи"]
+    }
   },
   {
     "id": "rybachy",
@@ -57,7 +70,13 @@
     "pairing": "TODO: fill in",
     "permit_required": true,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "permit": { "required": true, "description": "Пограничная зона. Пропуск оформляется за 15 дней через Госуслуги или погрануправление", "link": "https://gosuslugi.ru" },
+      "road": { "seasonal_closure": true, "description": "Проезд только на подготовленном внедорожнике", "bad_months": ["september", "october", "november", "december", "january", "february", "march", "april", "may", "june"] },
+      "crowds": { "peak_months": ["july", "august"], "description": "Очереди на КПП в выходные" },
+      "traveler_issues": ["Нет заправок", "Нет связи", "Нет медпунктов"]
+    }
   },
   {
     "id": "sredny",
@@ -72,7 +91,12 @@
     "pairing": "TODO: fill in",
     "permit_required": true,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "permit": { "required": true, "description": "Пограничная зона. Пропуск оформляется за 15 дней", "link": "https://gosuslugi.ru" },
+      "road": { "seasonal_closure": true, "description": "Требуется полноприводный автомобиль", "bad_months": ["september", "october", "november", "december", "january", "february", "march", "april", "may", "june"] },
+      "traveler_issues": ["Нет заправок", "Нет связи"]
+    }
   },
   {
     "id": "lovozero-tundra",
@@ -87,7 +111,10 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "traveler_issues": ["Нет связи в горах", "Медведи — брать фальшфейер"]
+    }
   },
   {
     "id": "alluayv",
@@ -102,7 +129,11 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": true,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "road": { "seasonal_closure": false, "description": "Сложный подъём, нужна физическая подготовка", "bad_months": [] },
+      "traveler_issues": ["Резкая смена погоды", "Нет троп наверху"]
+    }
   },
   {
     "id": "khibiny",
@@ -117,7 +148,11 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "crowds": { "peak_months": ["january", "february", "march"], "description": "Горнолыжный сезон, много людей на склонах" },
+      "traveler_issues": ["Лавинная опасность зимой"]
+    }
   },
   {
     "id": "volosyanaya",
@@ -132,7 +167,8 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": true,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {}
   },
   {
     "id": "murmansk-museum",
@@ -147,7 +183,10 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "closures": { "sanitary_days": "Последний понедельник месяца", "seasonal": "" }
+    }
   },
   {
     "id": "sneznaya-derevnya",
@@ -162,7 +201,10 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "closures": { "sanitary_days": "", "seasonal": "Открыта только с декабря по март" }
+    }
   },
   {
     "id": "tonya-tetrina",
@@ -177,7 +219,11 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": true,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "road": { "seasonal_closure": false, "description": "Грунтовая дорога, легковой автомобиль проедет в сухую погоду", "bad_months": [] },
+      "traveler_issues": ["Нужно бронировать заранее"]
+    }
   },
   {
     "id": "prichal-11",
@@ -192,7 +238,8 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {}
   },
   {
     "id": "sunken-ships",
@@ -207,7 +254,10 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "traveler_issues": ["Скользкие камни у воды"]
+    }
   },
   {
     "id": "pasvik",
@@ -222,7 +272,11 @@
     "pairing": "TODO: fill in",
     "permit_required": true,
     "hidden_gem": true,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "permit": { "required": true, "description": "Пограничная зона. Пропуск обязателен", "link": "https://gosuslugi.ru" },
+      "traveler_issues": ["Ограниченные часы посещения"]
+    }
   },
   {
     "id": "umba",
@@ -237,7 +291,8 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": true,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {}
   },
   {
     "id": "varzuga",
@@ -252,7 +307,10 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": true,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "road": { "seasonal_closure": true, "description": "Паромная переправа, может не работать в межсезонье", "bad_months": ["april", "may", "october", "november"] }
+    }
   },
   {
     "id": "chavanga",
@@ -267,7 +325,11 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": true,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "road": { "seasonal_closure": true, "description": "Только вездеход или вертолёт", "bad_months": ["october", "november", "december", "january", "february", "march", "april", "may"] },
+      "traveler_issues": ["Нет дороги", "Нет магазинов", "Нет связи"]
+    }
   },
   {
     "id": "kuzomen",
@@ -282,7 +344,11 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": true,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "road": { "seasonal_closure": true, "description": "Песчаная дорога, нужен внедорожник", "bad_months": ["october", "november", "december", "january", "february", "march", "april"] },
+      "traveler_issues": ["Песок засыпает дорогу"]
+    }
   },
   {
     "id": "ura-guba",
@@ -297,7 +363,8 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {}
   },
   {
     "id": "murmansk",
@@ -312,7 +379,10 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "crowds": { "peak_months": ["december", "january", "february", "march"], "description": "Пик туристов на северное сияние" }
+    }
   },
   {
     "id": "kirovsk",
@@ -327,7 +397,10 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {
+      "crowds": { "peak_months": ["january", "february", "march"], "description": "Горнолыжный сезон, бронируйте жильё заранее" }
+    }
   },
   {
     "id": "monchegorsk",
@@ -342,7 +415,8 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {}
   },
   {
     "id": "kandalaksha",
@@ -357,7 +431,8 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {}
   },
   {
     "id": "apatity",
@@ -372,6 +447,7 @@
     "pairing": "TODO: fill in",
     "permit_required": false,
     "hidden_gem": false,
-    "photo_url": ""
+    "photo_url": "",
+    "warnings": {}
   }
 ]
