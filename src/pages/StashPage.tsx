@@ -42,10 +42,10 @@ const StashPage = () => {
 
       <main className="max-w-lg mx-auto p-4 space-y-6">
         {items.length === 0 && (
-          <div className="text-center py-16">
-            <Bookmark className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="text-muted-foreground">
-              {language === 'ru' ? 'Тайник пуст. Сохраняйте места с карты!' : 'Stash is empty. Save places from the map!'}
+          <div className="text-center py-16 space-y-3">
+            <Bookmark className="h-12 w-12 text-muted-foreground/30 mx-auto" />
+            <p className="text-muted-foreground text-sm">
+              {language === 'ru' ? 'Нажми 🔖 на любом месте чтобы сохранить' : 'Tap 🔖 on any place to save it'}
             </p>
           </div>
         )}

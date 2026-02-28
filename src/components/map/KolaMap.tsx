@@ -169,8 +169,6 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
       {!embedded && (
         <div className="md:hidden absolute top-20 left-0 right-0 z-[1000] px-3">
           <CategoryFilter 
-            selectedCategories={selectedCategories} 
-            onToggleCategory={handleToggleCategory}
             showFavoritesOnly={showFavoritesOnly}
             onToggleFavoritesOnly={handleToggleFavoritesOnly}
             favoritesCount={stashCount}
@@ -178,8 +176,6 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
             onToggleHistoryLayer={handleToggleHistoryLayer}
             showUnescoLayer={showUnescoLayer}
             onToggleUnescoLayer={handleToggleUnescoLayer}
-            showRestaurantLayer={showRestaurantLayer}
-            onToggleRestaurantLayer={handleToggleRestaurantLayer}
           />
         </div>
       )}
@@ -202,17 +198,14 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         center={KOLA_CENTER}
         zoom={INITIAL_ZOOM}
         favorites={stashedIds}
-        selectedCategories={selectedCategories}
         showFavoritesOnly={showFavoritesOnly}
         favoritesCount={stashCount}
         showHistoryLayer={showHistoryLayer}
         showUnescoLayer={showUnescoLayer}
         showRestaurantLayer={showRestaurantLayer}
-        onToggleCategory={handleToggleCategory}
         onToggleFavoritesOnly={handleToggleFavoritesOnly}
         onToggleHistoryLayer={handleToggleHistoryLayer}
         onToggleUnescoLayer={handleToggleUnescoLayer}
-        onToggleRestaurantLayer={handleToggleRestaurantLayer}
         onMapReady={handleMapReady}
         onPlaceClick={handlePlaceClick}
       />

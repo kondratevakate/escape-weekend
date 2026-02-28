@@ -34,6 +34,7 @@ interface DiscoverPanelProps {
   onPlaceClick: (place: Place) => void;
   onStartExplore: () => void;
   filteredCount: number;
+  highlightCollections?: boolean;
 }
 
 export const DiscoverPanel = ({
@@ -42,6 +43,7 @@ export const DiscoverPanel = ({
   onPlaceClick,
   onStartExplore,
   filteredCount,
+  highlightCollections,
 }: DiscoverPanelProps) => {
   const { language } = useLanguage();
 
@@ -105,7 +107,10 @@ export const DiscoverPanel = ({
         <ExploreCard onStart={onStartExplore} />
 
         {/* 1. Коллекции — filter buttons */}
-        <div className="space-y-2">
+        <div className={cn(
+          "space-y-2 transition-all duration-500",
+          highlightCollections && "ring-2 ring-primary/50 rounded-lg p-2 bg-primary/5"
+        )}>
           <h3 className="text-sm font-semibold text-foreground px-1">
             {language === 'ru' ? '📚 Коллекции' : '📚 Collections'}
           </h3>
