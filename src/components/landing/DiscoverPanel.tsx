@@ -6,7 +6,8 @@ import { ResourcesSection } from './ResourcesSection';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
-import { AlertTriangle, Sparkles } from 'lucide-react';
+import { AlertTriangle, Sparkles, Sun } from 'lucide-react';
+import { getCurrentMonthKey } from '@/components/SeasonPills';
 
 export type TagFilter = 'all' | 'whales' | 'aurora' | 'hiking' | 'kayak' | 'history' | 'nature';
 
@@ -52,6 +53,54 @@ export const DiscoverPanel = ({
   return (
     <ScrollArea className="h-full w-full">
       <div className="p-3 md:p-4 space-y-4 md:space-y-5 overflow-hidden">
+        {/* "Сейчас хорошо ехать" banner */}
+        {(() => {
+          const currentMonth = getCurrentMonthKey();
+          const inSeasonNow = locations
+            .filter(loc => loc.season.includes(currentMonth) && locationMatchesFilter(loc, activeFilter));
+          if (inSeasonNow.length === 0) return null;
+          
+          const monthLabel = language === 'ru' 
+            ? ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'][new Date().getMonth()]
+            : new Date().toLocaleString('en', { month: 'long' });
+
+          return (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-accent/15 border border-accent/30">
+                <Sun className="h-4 w-4 text-accent shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-foreground">
+                    {language === 'ru' ? 'Сейчас хорошо ехать' : 'Good to visit now'}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {monthLabel} • {inSeasonNow.length} {language === 'ru' ? 'мест' : 'places'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {inSeasonNow.slice(0, 8).map(loc => {
+                  const place = findPlace(loc.id);
+                  if (!place) return null;
+                  return (
+                    <button
+                      key={loc.id}
+                      onClick={() => onPlaceClick(place)}
+                      className="text-[10px] px-2 py-1 rounded-full bg-accent/10 text-accent-foreground hover:bg-accent/20 transition-colors truncate max-w-[140px]"
+                    >
+                      {loc.name}
+                    </button>
+                  );
+                })}
+                {inSeasonNow.length > 8 && (
+                  <span className="text-[10px] px-2 py-1 text-muted-foreground">
+                    +{inSeasonNow.length - 8}
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Explore Mode Card */}
         <ExploreCard onStart={onStartExplore} />
 
