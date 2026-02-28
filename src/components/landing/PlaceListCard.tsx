@@ -1,7 +1,6 @@
 import { Heart } from 'lucide-react';
 import { Place, categoryConfig } from '@/data/kolaPlaces';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { usePlaceStats } from '@/hooks/usePlaceStats';
 import { cn } from '@/lib/utils';
 
 interface PlaceListCardProps {
@@ -20,7 +19,6 @@ export const PlaceListCard = ({
   onClick,
 }: PlaceListCardProps) => {
   const { language, t } = useLanguage();
-  const { stats, formatCount } = usePlaceStats(place.id);
   const config = categoryConfig[place.category];
 
   const displayName = language === 'en' && place.nameEn ? place.nameEn : place.name;
@@ -36,7 +34,6 @@ export const PlaceListCard = ({
           : "border-border hover:border-primary/30"
       )}
     >
-      {/* Compact horizontal layout */}
       <div className="flex items-center gap-3 p-2.5">
         {/* Category icon */}
         <div 
@@ -55,11 +52,6 @@ export const PlaceListCard = ({
           </h3>
           <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
             <span>{t(`categories.${place.category}`)}</span>
-            <span className="opacity-50">•</span>
-            <span className="flex items-center gap-0.5">
-              <Heart className="h-3 w-3" />
-              {formatCount(stats.likesCount)}
-            </span>
           </div>
         </div>
         

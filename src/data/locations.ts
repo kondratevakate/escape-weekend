@@ -1,0 +1,64 @@
+import locationsData from './locations.json';
+import { Place, PlaceCategory } from './kolaPlaces';
+
+// Re-export types and config for backward compatibility
+export type { Place, PlaceCategory } from './kolaPlaces';
+export { categoryConfig } from './kolaPlaces';
+
+export interface Location {
+  id: string;
+  name: string;
+  name_en: string;
+  description: string;
+  coordinates: [number, number];
+  region: string;
+  tags: string[];
+  season: string[];
+  what_to_do: string;
+  pairing: string;
+  permit_required: boolean;
+  hidden_gem: boolean;
+  photo_url: string;
+}
+
+const tagToCategoryMap: Record<string, PlaceCategory> = {
+  nature: 'nature',
+  hiking: 'hiking',
+  museums: 'museum',
+  attractions: 'attraction',
+  villages: 'village',
+  cities: 'city',
+  reserves: 'reserve',
+  history: 'history',
+  unesco: 'unesco',
+};
+
+function inferCategory(tags: string[]): PlaceCategory {
+  for (const tag of tags) {
+    if (tagToCategoryMap[tag]) return tagToCategoryMap[tag];
+  }
+  return 'nature';
+}
+
+function toPlace(loc: Location): Place {
+  return {
+    id: loc.id,
+    name: loc.name,
+    nameEn: loc.name_en,
+    description: loc.description,
+    category: inferCategory(loc.tags),
+    coordinates: loc.coordinates,
+    region: loc.region,
+    whenToVisit: loc.season.join(', '),
+    howToGet: loc.what_to_do !== 'TODO: fill in' ? loc.what_to_do : undefined,
+    warning: loc.permit_required ? 'Permit required' : undefined,
+  };
+}
+
+export const locations: Location[] = locationsData as Location[];
+export const kolaPlaces: Place[] = locations.map(toPlace);
+
+/** Get Location data by place ID */
+export function getLocationById(id: string): Location | undefined {
+  return locations.find(loc => loc.id === id);
+}

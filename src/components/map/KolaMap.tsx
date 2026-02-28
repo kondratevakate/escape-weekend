@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import 'leaflet/dist/leaflet.css';
-import { kolaPlaces, PlaceCategory, categoryConfig, Place } from '@/data/kolaPlaces';
+import { PlaceCategory, categoryConfig, Place } from '@/data/kolaPlaces';
+import { kolaPlaces } from '@/data/locations';
 import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
 import { unescoPlaces } from '@/data/unescoLayer';
 import { CategoryFilter } from './CategoryFilter';

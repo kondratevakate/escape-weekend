@@ -7,7 +7,8 @@ import { TripSidebar } from '@/components/trip/TripSidebar';
 import { DayColumn } from '@/components/trip/DayColumn';
 import { AITripResult } from '@/components/trip/AITripResult';
 import { Button } from '@/components/ui/button';
-import { kolaPlaces, Place } from '@/data/kolaPlaces';
+import { Place } from '@/data/kolaPlaces';
+import { kolaPlaces } from '@/data/locations';
 import { TripDay } from '@/types/trip';
 import { toast } from 'sonner';
 

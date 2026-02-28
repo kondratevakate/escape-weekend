@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
 import { Place, categoryConfig } from '@/data/kolaPlaces';
+import { getLocationById } from '@/data/locations';
 import { SwipeableCard } from './SwipeableCard';
 import { Button } from '@/components/ui/button';
-import { X, MapPin, Star, RotateCcw, Map, Share2 } from 'lucide-react';
+import { X, MapPin, RotateCcw, Map } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useAllPlaceStats, formatCount } from '@/hooks/usePlaceStats';
 import { ShareButton } from './ShareButton';
 
 interface ExploreModeProps {
@@ -14,27 +14,11 @@ interface ExploreModeProps {
   onClose: () => void;
 }
 
-// Mock data for images
-const getPlaceImage = (place: Place) => {
-  const images = [
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop',
-    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&h=400&fit=crop',
-    'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&h=400&fit=crop',
-    'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=600&h=400&fit=crop',
-    'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&h=400&fit=crop',
-  ];
-  // Deterministic image based on place id
-  const index = place.id.charCodeAt(0) % images.length;
-  return images[index];
-};
-
 export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: ExploreModeProps) => {
   const { t, language } = useLanguage();
-  const { getStats, recordShare } = useAllPlaceStats();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [viewedIds, setViewedIds] = useState<Set<string>>(new Set());
 
-  // Filter out already viewed places
   const remainingPlaces = useMemo(() => {
     return places.filter(place => !viewedIds.has(place.id));
   }, [places, viewedIds]);
@@ -64,6 +48,7 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
   };
 
   const isComplete = !currentPlace;
+  const location = currentPlace ? getLocationById(currentPlace.id) : undefined;
 
   return (
     <div className="fixed inset-0 z-[2000] bg-background flex flex-col">
@@ -90,7 +75,6 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
 
       {/* Content */}
       <div className="flex-1 flex flex-col items-center justify-center p-4">
-        {/* Progress indicator */}
         {!isComplete && (
           <div className="mb-4 text-center">
             <p className="text-sm font-medium text-muted-foreground">
@@ -134,17 +118,22 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
             className="w-full max-w-sm"
           >
             <div className="bg-card rounded-xl shadow-2xl border overflow-hidden">
-              {/* Image */}
+              {/* Photo or placeholder */}
               <div className="relative h-56">
-                <img
-                  src={getPlaceImage(currentPlace)}
-                  alt={currentPlace.name}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-3 left-3 flex items-center gap-1.5 px-2.5 py-1 bg-background/80 backdrop-blur-sm rounded-full text-xs">
-                  <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                  <span className="font-medium">{(4.5 + Math.random() * 0.4).toFixed(1)}</span>
-                </div>
+                {location?.photo_url ? (
+                  <img
+                    src={location.photo_url}
+                    alt={currentPlace.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div 
+                    className="w-full h-full flex items-center justify-center"
+                    style={{ background: categoryConfig[currentPlace.category].bgColor }}
+                  >
+                    <span className="text-6xl">{categoryConfig[currentPlace.category].icon}</span>
+                  </div>
+                )}
                 {favorites.includes(currentPlace.id) && (
                   <div className="absolute top-3 right-3 p-1.5 bg-accent/90 rounded-full">
                     <span className="text-sm">❤️</span>
@@ -179,18 +168,6 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
                   <p className="text-sm text-muted-foreground mb-2">{currentPlace.nameEn}</p>
                 )}
 
-                {/* Social stats - minimalist */}
-                <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
-                  <span className="flex items-center gap-1">
-                    <span>❤️</span>
-                    <span>{formatCount(getStats(currentPlace.id).likesCount)}</span>
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span>📤</span>
-                    <span>{formatCount(getStats(currentPlace.id).sharesCount)}</span>
-                  </span>
-                </div>
-
                 {/* Description */}
                 {currentPlace.description && (
                   <p className="text-sm text-muted-foreground leading-relaxed">
@@ -206,7 +183,7 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
                   </div>
                   <ShareButton 
                     place={currentPlace} 
-                    onShare={() => recordShare(currentPlace.id)} 
+                    onShare={() => {}} 
                     variant="icon"
                   />
                 </div>

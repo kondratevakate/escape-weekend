@@ -2,6 +2,7 @@ import { memo, useState } from 'react';
 import { Plus, X, GripVertical, MapPin } from 'lucide-react';
 import { TripDay } from '@/types/trip';
 import { Place, categoryConfig } from '@/data/kolaPlaces';
+import { kolaPlaces } from '@/data/locations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -11,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { kolaPlaces } from '@/data/kolaPlaces';
+
 import { cn } from '@/lib/utils';
 
 interface DayColumnProps {

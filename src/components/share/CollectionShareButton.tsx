@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/popover';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Collection } from '@/data/collections';
-import { kolaPlaces } from '@/data/kolaPlaces';
+import { kolaPlaces } from '@/data/locations';
 import { toast } from 'sonner';
 import { track } from '@/lib/analytics';
 
