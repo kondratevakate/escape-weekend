@@ -3,20 +3,18 @@ import { Place, categoryConfig } from '@/data/kolaPlaces';
 import { getLocationById } from '@/data/locations';
 import { SwipeableCard } from './SwipeableCard';
 import { Button } from '@/components/ui/button';
-import { X, MapPin, RotateCcw, Map } from 'lucide-react';
+import { X, MapPin, RotateCcw, Map, Bookmark } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ShareButton } from './ShareButton';
 
 interface ExploreModeProps {
   places: Place[];
-  favorites: string[];
-  onToggleFavorite: (id: string) => void;
+  stashedIds: string[];
+  onSaveToStash: (id: string, name: string) => void;
   onClose: () => void;
 }
 
-export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: ExploreModeProps) => {
+export const ExploreMode = ({ places, stashedIds, onSaveToStash, onClose }: ExploreModeProps) => {
   const { t, language } = useLanguage();
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [viewedIds, setViewedIds] = useState<Set<string>>(new Set());
 
   const remainingPlaces = useMemo(() => {
@@ -35,8 +33,8 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
 
   const handleSwipeRight = () => {
     if (currentPlace) {
-      if (!favorites.includes(currentPlace.id)) {
-        onToggleFavorite(currentPlace.id);
+      if (!stashedIds.includes(currentPlace.id)) {
+        onSaveToStash(currentPlace.id, currentPlace.name);
       }
       setViewedIds(prev => new Set([...prev, currentPlace.id]));
     }
@@ -44,7 +42,6 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
 
   const handleRestart = () => {
     setViewedIds(new Set());
-    setCurrentIndex(0);
   };
 
   const isComplete = !currentPlace;
@@ -84,8 +81,8 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               {language === 'ru'
-                ? `❤️ Сохранено: ${favorites.length}`
-                : `❤️ Saved: ${favorites.length}`}
+                ? `🔖 В тайнике: ${stashedIds.length}`
+                : `🔖 Stashed: ${stashedIds.length}`}
             </p>
           </div>
         )}
@@ -107,7 +104,7 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
             </div>
             <div className="mt-6">
               <p className="text-sm text-muted-foreground">
-                ❤️ {favorites.length} {t('favorites.count')}
+                🔖 {stashedIds.length} {language === 'ru' ? 'в тайнике' : 'stashed'}
               </p>
             </div>
           </div>
@@ -118,7 +115,6 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
             className="w-full max-w-sm"
           >
             <div className="bg-card rounded-xl shadow-2xl border overflow-hidden">
-              {/* Photo or placeholder */}
               <div className="relative h-56">
                 {location?.photo_url ? (
                   <img
@@ -134,16 +130,14 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
                     <span className="text-6xl">{categoryConfig[currentPlace.category].icon}</span>
                   </div>
                 )}
-                {favorites.includes(currentPlace.id) && (
-                  <div className="absolute top-3 right-3 p-1.5 bg-accent/90 rounded-full">
-                    <span className="text-sm">❤️</span>
+                {stashedIds.includes(currentPlace.id) && (
+                  <div className="absolute top-3 right-3 p-1.5 bg-primary/90 rounded-full">
+                    <Bookmark className="h-4 w-4 text-primary-foreground fill-current" />
                   </div>
                 )}
               </div>
 
-              {/* Content */}
               <div className="p-5">
-                {/* Category */}
                 <div className="flex items-center gap-2 mb-3">
                   <span 
                     className="text-lg w-7 h-7 flex items-center justify-center rounded-full"
@@ -162,30 +156,20 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
                   </span>
                 </div>
 
-                {/* Title */}
                 <h3 className="font-bold text-xl mb-1">{currentPlace.name}</h3>
                 {currentPlace.nameEn && language === 'ru' && (
                   <p className="text-sm text-muted-foreground mb-2">{currentPlace.nameEn}</p>
                 )}
 
-                {/* Description */}
                 {currentPlace.description && (
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {currentPlace.description}
                   </p>
                 )}
 
-                {/* Location hint */}
-                <div className="flex items-center justify-between mt-4">
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <MapPin className="h-3.5 w-3.5" />
-                    <span>{currentPlace.region}</span>
-                  </div>
-                  <ShareButton 
-                    place={currentPlace} 
-                    onShare={() => {}} 
-                    variant="icon"
-                  />
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-4">
+                  <MapPin className="h-3.5 w-3.5" />
+                  <span>{currentPlace.region}</span>
                 </div>
               </div>
             </div>
@@ -196,7 +180,7 @@ export const ExploreMode = ({ places, favorites, onToggleFavorite, onClose }: Ex
       {/* Hint */}
       {!isComplete && (
         <div className="p-4 text-center text-sm text-muted-foreground">
-          ← {t('actions.skip')} | {t('actions.like')} →
+          ← {t('actions.skip')} | {language === 'ru' ? 'В тайник' : 'Stash'} →
         </div>
       )}
     </div>

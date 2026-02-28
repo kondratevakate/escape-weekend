@@ -10,6 +10,7 @@ import { LoginModal } from "@/components/auth/LoginModal";
 import { LockedScreen } from "@/components/LockedScreen";
 import Index from "./pages/Index";
 import TripPlanner from "./pages/TripPlanner";
+import StashPage from "./pages/StashPage";
 import CookiePolicy from "./pages/CookiePolicy";
 import NotFound from "./pages/NotFound";
 
@@ -31,6 +32,7 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/trip-planner" element={<TripPlanner />} />
+          <Route path="/stash" element={<StashPage />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

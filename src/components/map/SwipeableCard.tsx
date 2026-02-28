@@ -1,5 +1,5 @@
 import { useState, useRef, ReactNode } from 'react';
-import { Heart, X } from 'lucide-react';
+import { Bookmark, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SwipeableCardProps {
@@ -33,14 +33,13 @@ export const SwipeableCard = ({
   const handleMove = (clientX: number, clientY: number) => {
     if (!isDragging) return;
     const deltaX = clientX - startPos.current.x;
-    const deltaY = (clientY - startPos.current.y) * 0.3; // Reduced vertical movement
+    const deltaY = (clientY - startPos.current.y) * 0.3;
     setOffset({ x: deltaX, y: deltaY });
   };
 
   const handleEnd = () => {
     if (!isDragging) return;
     setIsDragging(false);
-
     if (offset.x > SWIPE_THRESHOLD) {
       exitRight();
     } else if (offset.x < -SWIPE_THRESHOLD) {
@@ -75,24 +74,20 @@ export const SwipeableCard = ({
 
   const rotation = offset.x * ROTATION_FACTOR;
   const opacity = Math.max(0, 1 - Math.abs(offset.x) / 500);
-
-  // Swipe indicator colors
   const leftIndicatorOpacity = Math.min(1, Math.abs(Math.min(0, offset.x)) / SWIPE_THRESHOLD);
   const rightIndicatorOpacity = Math.min(1, Math.max(0, offset.x) / SWIPE_THRESHOLD);
 
   return (
     <div className="relative">
-      {/* Swipe indicators */}
       <div 
         className="absolute inset-0 rounded-xl border-4 border-destructive pointer-events-none z-10"
         style={{ opacity: leftIndicatorOpacity }}
       />
       <div 
-        className="absolute inset-0 rounded-xl border-4 border-accent pointer-events-none z-10"
+        className="absolute inset-0 rounded-xl border-4 border-primary pointer-events-none z-10"
         style={{ opacity: rightIndicatorOpacity }}
       />
 
-      {/* Card */}
       <div
         className={cn(
           "touch-none select-none",
@@ -116,7 +111,6 @@ export const SwipeableCard = ({
         {children}
       </div>
 
-      {/* Action buttons */}
       {showButtons && (
         <div className="flex justify-center gap-4 mt-4">
           <button
@@ -127,9 +121,9 @@ export const SwipeableCard = ({
           </button>
           <button
             onClick={exitRight}
-            className="flex items-center justify-center w-14 h-14 rounded-full bg-accent/20 text-accent hover:bg-accent/30 transition-colors active:scale-95"
+            className="flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors active:scale-95"
           >
-            <Heart className="h-6 w-6" />
+            <Bookmark className="h-6 w-6" />
           </button>
         </div>
       )}

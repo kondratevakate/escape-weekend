@@ -1,19 +1,22 @@
 import { Place } from '@/data/kolaPlaces';
 import { PlaceListCard } from './PlaceListCard';
+import { PlannedSeason } from '@/hooks/useStash';
 
 interface PlacesListProps {
   places: Place[];
-  favorites: string[];
+  stashedIds: string[];
   selectedPlaceId?: string | null;
-  onToggleFavorite: (placeId: string) => void;
+  onSaveToStash: (placeId: string, placeName: string, season: PlannedSeason) => void;
+  onRemoveFromStash: (placeId: string) => void;
   onPlaceClick: (place: Place) => void;
 }
 
 export const PlacesList = ({
   places,
-  favorites,
+  stashedIds,
   selectedPlaceId,
-  onToggleFavorite,
+  onSaveToStash,
+  onRemoveFromStash,
   onPlaceClick,
 }: PlacesListProps) => {
   return (
@@ -22,9 +25,10 @@ export const PlacesList = ({
         <PlaceListCard
           key={place.id}
           place={place}
-          isFavorite={favorites.includes(place.id)}
+          isStashed={stashedIds.includes(place.id)}
           isSelected={selectedPlaceId === place.id}
-          onToggleFavorite={() => onToggleFavorite(place.id)}
+          onSaveToStash={(season) => onSaveToStash(place.id, place.name, season)}
+          onRemoveFromStash={() => onRemoveFromStash(place.id)}
           onClick={() => onPlaceClick(place)}
         />
       ))}
