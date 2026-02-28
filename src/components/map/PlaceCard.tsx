@@ -1,222 +1,124 @@
-import { useState, useRef } from 'react';
 import { Place, categoryConfig } from '@/data/kolaPlaces';
 import { getLocationById } from '@/data/locations';
-import { X, Bookmark, MapPin } from 'lucide-react';
+import { X, MapPin, UtensilsCrossed, AlertTriangle, ExternalLink } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
-import { ShareButton } from './ShareButton';
-import { SaveToListDrawer } from './SaveToListDrawer';
-import { UserList } from '@/hooks/useUserLists';
 
 interface PlaceCardProps {
   place: Place;
-  isFavorite: boolean;
   onClose: () => void;
-  onToggleFavorite: () => void;
-  userLists?: UserList[];
-  onToggleInList?: (listId: string, placeId: string) => void;
-  onCreateList?: (name: string, emoji: string) => string;
-  onDeleteList?: (id: string) => void;
-  isInList?: (listId: string, placeId: string) => boolean;
-  isInAnyList?: (placeId: string) => boolean;
 }
 
-const SWIPE_THRESHOLD = 80;
-
-export const PlaceCard = ({ 
-  place, 
-  isFavorite, 
-  onClose, 
-  onToggleFavorite,
-  userLists = [],
-  onToggleInList,
-  onCreateList,
-  onDeleteList,
-  isInList,
-  isInAnyList,
-}: PlaceCardProps) => {
+export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
   const { t, language } = useLanguage();
   const config = categoryConfig[place.category];
   const location = getLocationById(place.id);
-  
-  const [showSaveDrawer, setShowSaveDrawer] = useState(false);
-
-  // Swipe state
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const startPos = useRef({ x: 0, y: 0 });
-
-  const handleStart = (clientX: number, clientY: number) => {
-    setIsDragging(true);
-    startPos.current = { x: clientX, y: clientY };
-  };
-
-  const handleMove = (clientX: number, clientY: number) => {
-    if (!isDragging) return;
-    const deltaX = clientX - startPos.current.x;
-    const deltaY = (clientY - startPos.current.y) * 0.2;
-    setOffset({ x: deltaX, y: deltaY });
-  };
-
-  const handleEnd = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    if (offset.x > SWIPE_THRESHOLD) {
-      if (!isFavorite) onToggleFavorite();
-      setOffset({ x: 0, y: 0 });
-    } else if (offset.x < -SWIPE_THRESHOLD) {
-      onClose();
-    } else {
-      setOffset({ x: 0, y: 0 });
-    }
-  };
-
-  const rotation = offset.x * 0.05;
 
   return (
-    <div className="relative">
-      <div
-        className={cn(
-          "bg-card rounded-xl shadow-2xl border overflow-hidden max-w-sm w-full touch-none select-none",
-          isDragging ? "cursor-grabbing" : "cursor-grab"
-        )}
-        style={{
-          transform: `translateX(${offset.x}px) translateY(${offset.y}px) rotate(${rotation}deg)`,
-          transition: isDragging ? 'none' : 'all 0.3s ease-out',
-        }}
-        onMouseDown={(e) => handleStart(e.clientX, e.clientY)}
-        onMouseMove={(e) => handleMove(e.clientX, e.clientY)}
-        onMouseUp={handleEnd}
-        onMouseLeave={handleEnd}
-        onTouchStart={(e) => handleStart(e.touches[0].clientX, e.touches[0].clientY)}
-        onTouchMove={(e) => handleMove(e.touches[0].clientX, e.touches[0].clientY)}
-        onTouchEnd={handleEnd}
-      >
-        {/* Photo or placeholder */}
-        <div className="relative h-40 overflow-hidden">
-          {location?.photo_url ? (
-            <img 
-              src={location.photo_url} 
-              alt={place.name}
-              className="w-full h-full object-cover pointer-events-none"
-              draggable={false}
-            />
-          ) : (
-            <div 
-              className="w-full h-full flex items-center justify-center"
-              style={{ background: config.bgColor }}
-            >
-              <span className="text-5xl">{config.icon}</span>
-            </div>
-          )}
-          {/* Bookmark button */}
-          {onToggleInList && onCreateList && onDeleteList && isInList && (
-            <button 
-              onClick={(e) => { e.stopPropagation(); setShowSaveDrawer(true); }}
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-              className="absolute top-2 right-12 flex items-center gap-1 px-2 py-1.5 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background transition-colors active:scale-95"
-            >
-              <Bookmark className={cn(
-                "h-4 w-4 transition-colors", 
-                isInAnyList?.(place.id) ? "fill-primary text-primary" : ""
-              )} />
-            </button>
-          )}
-          {/* Close button */}
-          <button 
-            onClick={(e) => { e.stopPropagation(); onClose(); }}
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-            className="absolute top-2 right-2 p-1.5 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background transition-colors active:scale-95"
+    <div className="bg-card rounded-xl shadow-2xl border border-border overflow-hidden w-[320px]">
+      {/* 1. Photo */}
+      <div className="relative h-[200px] overflow-hidden">
+        {location?.photo_url ? (
+          <img
+            src={location.photo_url}
+            alt={place.name}
+            className="w-full h-full object-cover"
+            draggable={false}
+          />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{ background: config.bgColor }}
           >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-4">
-          {/* Category badge */}
-          <div className="flex items-center gap-2 mb-2">
-            <span 
-              className="text-lg"
-              style={{ 
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 28,
-                height: 28,
-                borderRadius: '50%',
-                background: config.bgColor,
-              }}
-            >
-              {config.icon}
-            </span>
-            <span 
-              className="text-xs font-medium px-2 py-0.5 rounded-full"
-              style={{ background: config.bgColor, color: config.color }}
-            >
-              {t(`categories.${place.category}`)}
-            </span>
-            {location?.permit_required && (
-              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-destructive/10 text-destructive">
-                ⚠️ {language === 'ru' ? 'Нужен пропуск' : 'Permit required'}
-              </span>
-            )}
+            <span className="text-6xl">{config.icon}</span>
           </div>
-
-          {/* Title */}
-          <h3 className="font-bold text-lg leading-tight mb-1">{place.name}</h3>
-          {place.nameEn && language === 'ru' && (
-            <p className="text-xs text-muted-foreground mb-2">{place.nameEn}</p>
-          )}
-
-          {/* Description */}
-          {place.description && (
-            <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-              {place.description}
-            </p>
-          )}
-
-          {/* Tags */}
-          {location && location.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-3">
-              {location.tags.map(tag => (
-                <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Season */}
-          {location && location.season.length > 0 && location.season.length < 12 && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
-              <span>📅</span>
-              <span>{location.season.join(', ')}</span>
-            </div>
-          )}
-
-          {/* Actions - only Share */}
-          <div className="flex justify-center">
-            <ShareButton place={place} onShare={() => {}} />
-          </div>
-        </div>
+        )}
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 p-1.5 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background transition-colors active:scale-95"
+        >
+          <X className="h-4 w-4" />
+        </button>
       </div>
 
-      {/* Save to List Drawer */}
-      {onToggleInList && onCreateList && onDeleteList && isInList && (
-        <SaveToListDrawer
-          open={showSaveDrawer}
-          onOpenChange={setShowSaveDrawer}
-          placeId={place.id}
-          lists={userLists}
-          onToggleInList={onToggleInList}
-          onCreateList={onCreateList}
-          onDeleteList={onDeleteList}
-          isInList={isInList}
-        />
-      )}
+      <div className="p-4 space-y-3">
+        {/* 2. Tags row */}
+        <div className="flex flex-wrap gap-1.5">
+          {location && location.season.length > 0 && location.season.length < 12 && (
+            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-secondary/15 text-secondary">
+              📅 {location.season.join(', ')}
+            </span>
+          )}
+          <span
+            className="text-xs font-medium px-2 py-0.5 rounded-full"
+            style={{ background: config.bgColor, color: config.color }}
+          >
+            {config.icon} {t(`categories.${place.category}`)}
+          </span>
+          {location && location.tags.filter(tag => !['nature', 'hiking', 'museums', 'attractions', 'villages', 'cities', 'reserves', 'history', 'unesco'].includes(tag)).map(tag => (
+            <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* 3. Location name */}
+        <div>
+          <h3 className="font-bold text-lg leading-tight text-foreground">{place.name}</h3>
+          {place.nameEn && language === 'ru' && (
+            <p className="text-xs text-muted-foreground mt-0.5">{place.nameEn}</p>
+          )}
+        </div>
+
+        {/* 4. Что делать */}
+        {location?.what_to_do && location.what_to_do !== 'TODO: fill in' && (
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+              {language === 'ru' ? 'Что делать' : 'What to do'}
+            </p>
+            <p className="text-sm text-foreground leading-relaxed">{location.what_to_do}</p>
+          </div>
+        )}
+
+        {/* 5. Пэйринг */}
+        {location?.pairing && location.pairing !== 'TODO: fill in' && (
+          <div className="flex gap-2">
+            <UtensilsCrossed className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                {language === 'ru' ? 'Пэйринг' : 'Pairing'}
+              </p>
+              <p className="text-sm text-foreground leading-relaxed">{location.pairing}</p>
+            </div>
+          </div>
+        )}
+
+        {/* 6. Permit warning */}
+        {location?.permit_required && (
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[hsl(25_95%_95%)] border border-[hsl(25_95%_80%)]">
+            <AlertTriangle className="h-4 w-4 text-[hsl(25_95%_53%)] shrink-0" />
+            <span className="text-xs font-medium text-[hsl(25_80%_35%)]">
+              {language === 'ru' ? 'Нужен пропуск у погранцов' : 'Border permit required'}
+            </span>
+          </div>
+        )}
+
+        {/* 7. External link */}
+        <a
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            "flex items-center justify-center gap-2 w-full py-2.5 rounded-lg",
+            "bg-primary text-primary-foreground text-sm font-medium",
+            "hover:bg-primary/90 transition-colors active:scale-[0.98]"
+          )}
+        >
+          <MapPin className="h-4 w-4" />
+          {language === 'ru' ? 'Открыть на карте' : 'Open on map'}
+          <ExternalLink className="h-3.5 w-3.5" />
+        </a>
+      </div>
     </div>
   );
 };
