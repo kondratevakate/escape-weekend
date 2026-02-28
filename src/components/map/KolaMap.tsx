@@ -12,7 +12,7 @@ import { RestaurantCard } from './RestaurantCard';
 import { ExploreMode } from './ExploreMode';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { CookieConsent } from '@/components/CookieConsent';
-import { useFavorites } from '@/hooks/useFavorites';
+import { useStash } from '@/hooks/useStash';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Loader2, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -27,7 +27,8 @@ interface KolaMapProps {
 
 export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   const { t } = useLanguage();
-  const { favorites, toggleFavorite, isFavorite, favoritesCount } = useFavorites();
+  const { items: stashItems, addToStash, isInStash, count: stashCount } = useStash();
+  const stashedIds = stashItems.map(i => i.id);
   
   // Filter out 'history' from default selected categories - it's controlled by history layer toggle
   const defaultCategories = (Object.keys(categoryConfig) as PlaceCategory[]).filter(c => c !== 'history');
@@ -66,10 +67,10 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
     );
     
     if (showFavoritesOnly) {
-      places = places.filter(place => favorites.includes(place.id));
+      places = places.filter(place => stashedIds.includes(place.id));
     }
     return places;
-  }, [selectedCategories, showFavoritesOnly, favorites, showHistoryLayer, showUnescoLayer, showRestaurantLayer]);
+  }, [selectedCategories, showFavoritesOnly, stashedIds, showHistoryLayer, showUnescoLayer, showRestaurantLayer]);
 
   const handleToggleCategory = (category: PlaceCategory) => {
     setSelectedCategories(prev => {
@@ -108,17 +109,17 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
 
   const handleToggleSelectedFavorite = useCallback(() => {
     if (selectedPlace) {
-      toggleFavorite(selectedPlace.id);
+      addToStash(selectedPlace.id, selectedPlace.name, 'someday');
     }
-  }, [selectedPlace, toggleFavorite]);
+  }, [selectedPlace, addToStash]);
 
   // Explore mode
   if (isExploreMode) {
     return (
       <ExploreMode
         places={kolaPlaces}
-        favorites={favorites}
-        onToggleFavorite={toggleFavorite}
+        stashedIds={stashedIds}
+        onSaveToStash={(id, name) => addToStash(id, name, 'someday')}
         onClose={() => setIsExploreMode(false)}
       />
     );
@@ -172,7 +173,7 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
             onToggleCategory={handleToggleCategory}
             showFavoritesOnly={showFavoritesOnly}
             onToggleFavoritesOnly={handleToggleFavoritesOnly}
-            favoritesCount={favoritesCount}
+            favoritesCount={stashCount}
             showHistoryLayer={showHistoryLayer}
             onToggleHistoryLayer={handleToggleHistoryLayer}
             showUnescoLayer={showUnescoLayer}
@@ -200,10 +201,10 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         places={filteredPlaces}
         center={KOLA_CENTER}
         zoom={INITIAL_ZOOM}
-        favorites={favorites}
+        favorites={stashedIds}
         selectedCategories={selectedCategories}
         showFavoritesOnly={showFavoritesOnly}
-        favoritesCount={favoritesCount}
+        favoritesCount={stashCount}
         showHistoryLayer={showHistoryLayer}
         showUnescoLayer={showUnescoLayer}
         showRestaurantLayer={showRestaurantLayer}
@@ -246,9 +247,9 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         >
           <span className="text-base">❤️</span>
           <span>{t('favorites.title')}</span>
-          {favoritesCount > 0 && (
+          {stashCount > 0 && (
             <span className="ml-auto text-xs font-medium bg-accent/20 text-accent px-1.5 py-0.5 rounded-full">
-              {favoritesCount}
+              {stashCount}
             </span>
           )}
         </button>

@@ -4,7 +4,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
-import { Search, Sparkles, User, LogOut, Heart, Menu, Map } from 'lucide-react';
+import { Search, Sparkles, User, LogOut, Bookmark, Menu, Map } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,9 +33,10 @@ interface HeaderProps {
   selectedCategory: CategoryGroup | 'all';
   onCategoryChange: (category: CategoryGroup | 'all') => void;
   onSearch?: (query: string) => void;
+  stashCount?: number;
 }
 
-export const Header = ({ selectedCategory, onCategoryChange, onSearch }: HeaderProps) => {
+export const Header = ({ selectedCategory, onCategoryChange, onSearch, stashCount = 0 }: HeaderProps) => {
   const { language, t } = useLanguage();
   const { isAuthenticated, user, logout, setShowLoginModal } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
@@ -106,6 +107,18 @@ export const Header = ({ selectedCategory, onCategoryChange, onSearch }: HeaderP
           ))}
         </nav>
         
+        {/* Stash icon */}
+        <div className="shrink-0">
+          <Link to="/stash" className="relative p-2 rounded-full hover:bg-muted transition-colors inline-flex">
+            <Bookmark className="h-5 w-5 text-foreground" />
+            {stashCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 h-4 min-w-[16px] px-1 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+                {stashCount}
+              </span>
+            )}
+          </Link>
+        </div>
+
         {/* Language Switcher */}
         <div className="shrink-0">
           <LanguageSwitcher variant="globe" />
@@ -145,9 +158,11 @@ export const Header = ({ selectedCategory, onCategoryChange, onSearch }: HeaderP
                       {language === 'ru' ? 'Планировщик' : 'Trip Planner'}
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Heart className="h-4 w-4 mr-2" />
-                    {language === 'ru' ? 'Избранное' : 'Favorites'}
+                  <DropdownMenuItem asChild>
+                    <Link to="/stash" className="flex items-center">
+                      <Bookmark className="h-4 w-4 mr-2" />
+                      {language === 'ru' ? 'Тайник' : 'Stash'}
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout} className="text-destructive">

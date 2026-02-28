@@ -67,7 +67,12 @@ export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
               {language === 'ru' ? 'Лучшее время' : 'Best time'}
             </p>
-            <SeasonPills season={location.season} language={language} />
+            <SeasonPills
+              season={location.season}
+              language={language}
+              reasons={location.best_time?.reasons}
+              avoid={location.best_time?.avoid}
+            />
           </div>
         )}
 

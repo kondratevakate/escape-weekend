@@ -42,6 +42,11 @@ export interface Safety {
   essentials?: string[];
 }
 
+export interface BestTime {
+  reasons?: Record<string, string>;
+  avoid?: Record<string, string>;
+}
+
 export interface Location {
   id: string;
   name: string;
@@ -51,6 +56,7 @@ export interface Location {
   region: string;
   tags: string[];
   season: string[];
+  best_time?: BestTime;
   what_to_do: string;
   pairing: string;
   permit_required: boolean;

@@ -13,7 +13,7 @@ import { kolaPlaces, locations } from '@/data/locations';
 import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
 import { unescoPlaces } from '@/data/unescoLayer';
 import { restaurantPlaces } from '@/data/restaurantsLayer';
-import { useFavorites } from '@/hooks/useFavorites';
+import { useStash } from '@/hooks/useStash';
 import { useUserLists } from '@/hooks/useUserLists';
 import { useTelegramCTA } from '@/hooks/useTelegramCTA';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -29,14 +29,14 @@ const categoryGroupMap: Record<CategoryGroup, PlaceCategory[]> = {
   top: ['attraction', 'museum', 'village', 'city'],
 };
 
-// Kola Peninsula center
 const KOLA_CENTER: [number, number] = [68.0, 34.0];
 const INITIAL_ZOOM = 7;
 
 const Index = () => {
   const { t } = useLanguage();
   const { requireAuth } = useAuth();
-  const { favorites, toggleFavorite, isFavorite } = useFavorites();
+  const { items: stashItems, addToStash, removeFromStash, isInStash, count: stashCount } = useStash();
+  const stashedIds = stashItems.map(i => i.id);
   const { 
     lists: userLists, 
     toggleInList, 
@@ -59,14 +59,10 @@ const Index = () => {
     }
   }, [shouldShowTelegramCTA]);
 
-  const handleToggleFavorite = useCallback((id: string) => {
-    requireAuth(() => {
-      toggleFavorite(id);
-      if (!favorites.includes(id)) {
-        recordSave();
-      }
-    });
-  }, [requireAuth, toggleFavorite, favorites, recordSave]);
+  const handleSaveToStash = useCallback((id: string, name: string) => {
+    addToStash(id, name, 'someday');
+    recordSave();
+  }, [addToStash, recordSave]);
   
   const [selectedCategory, setSelectedCategory] = useState<CategoryGroup | 'all'>('all');
   const [selectedCategories, setSelectedCategories] = useState<PlaceCategory[]>([]);
@@ -108,7 +104,6 @@ const Index = () => {
     setShowRestaurantLayer(prev => !prev);
   }, []);
 
-  // Filter places based on tag filter + header category + map category filter
   const filteredPlaces = useMemo(() => {
     let allPlaces = [...kolaPlaces];
     
@@ -124,7 +119,6 @@ const Index = () => {
     
     let places = allPlaces;
 
-    // Apply tag filter from left panel
     if (activeTagFilter !== 'all') {
       const filterDef = TAG_FILTERS.find(f => f.id === activeTagFilter);
       if (filterDef) {
@@ -136,13 +130,11 @@ const Index = () => {
       }
     }
     
-    // Header category group
     if (selectedCategory !== 'all') {
       const allowedCategories = categoryGroupMap[selectedCategory];
       places = places.filter(place => allowedCategories.includes(place.category));
     }
     
-    // Map category filter (right sidebar icons)
     if (selectedCategories.length > 0) {
       places = places.filter(place => 
         selectedCategories.includes(place.category) || 
@@ -153,11 +145,11 @@ const Index = () => {
     }
     
     if (showFavoritesOnly) {
-      places = places.filter(place => favorites.includes(place.id));
+      places = places.filter(place => stashedIds.includes(place.id));
     }
     
     return places;
-  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites, showHistoryLayer, showUnescoLayer, showRestaurantLayer, activeTagFilter]);
+  }, [selectedCategory, selectedCategories, showFavoritesOnly, stashedIds, showHistoryLayer, showUnescoLayer, showRestaurantLayer, activeTagFilter]);
 
   const handlePlaceClick = useCallback((place: Place) => {
     setSelectedPlace(place);
@@ -172,6 +164,7 @@ const Index = () => {
       <Header 
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
+        stashCount={stashCount}
       />
       
       <main className="flex-1 pt-14 md:pt-16 flex flex-col md:flex-row overflow-hidden">
@@ -216,10 +209,10 @@ const Index = () => {
             places={filteredPlaces}
             center={KOLA_CENTER}
             zoom={INITIAL_ZOOM}
-            favorites={favorites}
+            favorites={stashedIds}
             selectedCategories={selectedCategories}
             showFavoritesOnly={showFavoritesOnly}
-            favoritesCount={favorites.length}
+            favoritesCount={stashCount}
             showHistoryLayer={showHistoryLayer}
             showUnescoLayer={showUnescoLayer}
             showRestaurantLayer={showRestaurantLayer}
@@ -256,8 +249,8 @@ const Index = () => {
       {isExploreMode && (
         <ExploreMode
           places={filteredPlaces}
-          favorites={favorites}
-          onToggleFavorite={handleToggleFavorite}
+          stashedIds={stashedIds}
+          onSaveToStash={handleSaveToStash}
           onClose={() => setIsExploreMode(false)}
         />
       )}
