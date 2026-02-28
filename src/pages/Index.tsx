@@ -4,6 +4,7 @@ import { Footer } from '@/components/landing/Footer';
 import { DiscoverPanel, TagFilter, TAG_FILTERS } from '@/components/landing/DiscoverPanel';
 import { MapView } from '@/components/map/MapView';
 import { PlaceCard } from '@/components/map/PlaceCard';
+import { RestaurantCard } from '@/components/map/RestaurantCard';
 import { ExploreMode } from '@/components/map/ExploreMode';
 import { TelegramBridgeSheet } from '@/components/telegram/TelegramBridgeSheet';
 import { CookieConsent } from '@/components/CookieConsent';
@@ -11,6 +12,7 @@ import { Place, PlaceCategory } from '@/data/kolaPlaces';
 import { kolaPlaces, locations } from '@/data/locations';
 import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
 import { unescoPlaces } from '@/data/unescoLayer';
+import { restaurantPlaces } from '@/data/restaurantsLayer';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useUserLists } from '@/hooks/useUserLists';
 import { useTelegramCTA } from '@/hooks/useTelegramCTA';
@@ -71,6 +73,7 @@ const Index = () => {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [showHistoryLayer, setShowHistoryLayer] = useState(false);
   const [showUnescoLayer, setShowUnescoLayer] = useState(false);
+  const [showRestaurantLayer, setShowRestaurantLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -101,6 +104,10 @@ const Index = () => {
     setShowUnescoLayer(prev => !prev);
   }, []);
 
+  const handleToggleRestaurantLayer = useCallback(() => {
+    setShowRestaurantLayer(prev => !prev);
+  }, []);
+
   // Filter places based on tag filter + header category + map category filter
   const filteredPlaces = useMemo(() => {
     let allPlaces = [...kolaPlaces];
@@ -110,6 +117,9 @@ const Index = () => {
     }
     if (showUnescoLayer) {
       allPlaces = [...allPlaces, ...unescoPlaces];
+    }
+    if (showRestaurantLayer) {
+      allPlaces = [...allPlaces, ...restaurantPlaces];
     }
     
     let places = allPlaces;
@@ -137,7 +147,8 @@ const Index = () => {
       places = places.filter(place => 
         selectedCategories.includes(place.category) || 
         (showHistoryLayer && place.category === 'history') ||
-        (showUnescoLayer && place.category === 'unesco')
+        (showUnescoLayer && place.category === 'unesco') ||
+        (showRestaurantLayer && place.category === 'restaurant')
       );
     }
     
@@ -146,7 +157,7 @@ const Index = () => {
     }
     
     return places;
-  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites, showHistoryLayer, showUnescoLayer, activeTagFilter]);
+  }, [selectedCategory, selectedCategories, showFavoritesOnly, favorites, showHistoryLayer, showUnescoLayer, showRestaurantLayer, activeTagFilter]);
 
   const handlePlaceClick = useCallback((place: Place) => {
     setSelectedPlace(place);
@@ -211,20 +222,29 @@ const Index = () => {
             favoritesCount={favorites.length}
             showHistoryLayer={showHistoryLayer}
             showUnescoLayer={showUnescoLayer}
+            showRestaurantLayer={showRestaurantLayer}
             onToggleCategory={handleToggleCategory}
             onToggleFavoritesOnly={handleToggleFavoritesOnly}
             onToggleHistoryLayer={handleToggleHistoryLayer}
             onToggleUnescoLayer={handleToggleUnescoLayer}
+            onToggleRestaurantLayer={handleToggleRestaurantLayer}
             onMapReady={handleMapReady}
             onPlaceClick={handlePlaceClick}
           />
 
           {selectedPlace && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1001] max-w-[calc(100%-2rem)]">
-              <PlaceCard 
-                place={selectedPlace} 
-                onClose={handleCloseCard}
-              />
+              {selectedPlace.category === 'restaurant' ? (
+                <RestaurantCard 
+                  place={selectedPlace} 
+                  onClose={handleCloseCard}
+                />
+              ) : (
+                <PlaceCard 
+                  place={selectedPlace} 
+                  onClose={handleCloseCard}
+                />
+              )}
             </div>
           )}
         </div>
