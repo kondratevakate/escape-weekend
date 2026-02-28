@@ -1,6 +1,6 @@
 import { PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
 import { cn } from '@/lib/utils';
-import { Heart, Scroll, Landmark } from 'lucide-react';
+import { Heart, Scroll, Landmark, UtensilsCrossed } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CategoryFilterProps {
@@ -13,6 +13,8 @@ interface CategoryFilterProps {
   onToggleHistoryLayer: () => void;
   showUnescoLayer: boolean;
   onToggleUnescoLayer: () => void;
+  showRestaurantLayer: boolean;
+  onToggleRestaurantLayer: () => void;
 }
 
 export const CategoryFilter = ({ 
@@ -25,12 +27,14 @@ export const CategoryFilter = ({
   onToggleHistoryLayer,
   showUnescoLayer,
   onToggleUnescoLayer,
+  showRestaurantLayer,
+  onToggleRestaurantLayer,
 }: CategoryFilterProps) => {
   const { t } = useLanguage();
   
   // Filter out 'history' and 'unesco' from regular categories - they're shown as special layer toggles
   const categories = (Object.entries(categoryConfig) as [PlaceCategory, typeof categoryConfig[PlaceCategory]][])
-    .filter(([key]) => key !== 'history' && key !== 'unesco');
+    .filter(([key]) => key !== 'history' && key !== 'unesco' && key !== 'restaurant');
 
   return (
     <div className="flex flex-col gap-1">
@@ -92,6 +96,25 @@ export const CategoryFilter = ({
         title={t('historyLayer.title')}
       >
         <Scroll className="h-4 w-4" />
+      </button>
+
+      {/* Restaurant layer toggle */}
+      <button
+        onClick={onToggleRestaurantLayer}
+        className={cn(
+          "flex items-center justify-center p-2 rounded-lg text-lg transition-all duration-200",
+          "hover:scale-105 active:scale-95",
+          showRestaurantLayer
+            ? "shadow-sm"
+            : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted"
+        )}
+        style={showRestaurantLayer ? {
+          backgroundColor: categoryConfig.restaurant.bgColor,
+          color: categoryConfig.restaurant.color,
+        } : undefined}
+        title={t('categories.restaurant')}
+      >
+        <UtensilsCrossed className="h-4 w-4" />
       </button>
 
       <div className="h-px bg-border my-1" />

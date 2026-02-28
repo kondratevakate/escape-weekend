@@ -4,9 +4,11 @@ import { PlaceCategory, categoryConfig, Place } from '@/data/kolaPlaces';
 import { kolaPlaces } from '@/data/locations';
 import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
 import { unescoPlaces } from '@/data/unescoLayer';
+import { restaurantPlaces } from '@/data/restaurantsLayer';
 import { CategoryFilter } from './CategoryFilter';
 import { MapView } from './MapView';
 import { PlaceCard } from './PlaceCard';
+import { RestaurantCard } from './RestaurantCard';
 import { ExploreMode } from './ExploreMode';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { CookieConsent } from '@/components/CookieConsent';
@@ -33,6 +35,7 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [showHistoryLayer, setShowHistoryLayer] = useState(false);
   const [showUnescoLayer, setShowUnescoLayer] = useState(false);
+  const [showRestaurantLayer, setShowRestaurantLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isExploreMode, setIsExploreMode] = useState(false);
@@ -51,18 +54,22 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
     if (showUnescoLayer) {
       allPlaces = [...allPlaces, ...unescoPlaces];
     }
+    if (showRestaurantLayer) {
+      allPlaces = [...allPlaces, ...restaurantPlaces];
+    }
     
     let places = allPlaces.filter(place => 
       selectedCategories.includes(place.category) ||
       (showHistoryLayer && place.category === 'history') ||
-      (showUnescoLayer && place.category === 'unesco')
+      (showUnescoLayer && place.category === 'unesco') ||
+      (showRestaurantLayer && place.category === 'restaurant')
     );
     
     if (showFavoritesOnly) {
       places = places.filter(place => favorites.includes(place.id));
     }
     return places;
-  }, [selectedCategories, showFavoritesOnly, favorites, showHistoryLayer, showUnescoLayer]);
+  }, [selectedCategories, showFavoritesOnly, favorites, showHistoryLayer, showUnescoLayer, showRestaurantLayer]);
 
   const handleToggleCategory = (category: PlaceCategory) => {
     setSelectedCategories(prev => {
@@ -85,6 +92,10 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
 
   const handleToggleUnescoLayer = () => {
     setShowUnescoLayer(prev => !prev);
+  };
+
+  const handleToggleRestaurantLayer = () => {
+    setShowRestaurantLayer(prev => !prev);
   };
 
   const handlePlaceClick = useCallback((place: Place) => {
@@ -166,6 +177,8 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
             onToggleHistoryLayer={handleToggleHistoryLayer}
             showUnescoLayer={showUnescoLayer}
             onToggleUnescoLayer={handleToggleUnescoLayer}
+            showRestaurantLayer={showRestaurantLayer}
+            onToggleRestaurantLayer={handleToggleRestaurantLayer}
           />
         </div>
       )}
@@ -193,10 +206,12 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         favoritesCount={favoritesCount}
         showHistoryLayer={showHistoryLayer}
         showUnescoLayer={showUnescoLayer}
+        showRestaurantLayer={showRestaurantLayer}
         onToggleCategory={handleToggleCategory}
         onToggleFavoritesOnly={handleToggleFavoritesOnly}
         onToggleHistoryLayer={handleToggleHistoryLayer}
         onToggleUnescoLayer={handleToggleUnescoLayer}
+        onToggleRestaurantLayer={handleToggleRestaurantLayer}
         onMapReady={handleMapReady}
         onPlaceClick={handlePlaceClick}
       />
@@ -204,10 +219,17 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
       {/* Place card overlay */}
       {selectedPlace && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1001] max-w-[calc(100%-2rem)]">
-          <PlaceCard 
-            place={selectedPlace} 
-            onClose={handleCloseCard}
-          />
+          {selectedPlace.category === 'restaurant' ? (
+            <RestaurantCard 
+              place={selectedPlace} 
+              onClose={handleCloseCard}
+            />
+          ) : (
+            <PlaceCard 
+              place={selectedPlace} 
+              onClose={handleCloseCard}
+            />
+          )}
         </div>
       )}
 

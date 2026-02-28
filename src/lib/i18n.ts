@@ -27,6 +27,7 @@ export const translations = {
       reserve: 'Заповедники',
       history: 'История саамов',
       unesco: 'UNESCO',
+      restaurant: 'Рестораны',
     },
     
     // History layer
@@ -194,6 +195,7 @@ export const translations = {
       reserve: 'Reserves',
       history: 'Saami History',
       unesco: 'UNESCO',
+      restaurant: 'Restaurants',
     },
     
     // History layer
