@@ -176,6 +176,8 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
             onToggleHistoryLayer={handleToggleHistoryLayer}
             showUnescoLayer={showUnescoLayer}
             onToggleUnescoLayer={handleToggleUnescoLayer}
+            showRestaurantLayer={showRestaurantLayer}
+            onToggleRestaurantLayer={handleToggleRestaurantLayer}
           />
         </div>
       )}
@@ -206,6 +208,7 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         onToggleFavoritesOnly={handleToggleFavoritesOnly}
         onToggleHistoryLayer={handleToggleHistoryLayer}
         onToggleUnescoLayer={handleToggleUnescoLayer}
+        onToggleRestaurantLayer={handleToggleRestaurantLayer}
         onMapReady={handleMapReady}
         onPlaceClick={handlePlaceClick}
       />

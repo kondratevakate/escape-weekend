@@ -1,6 +1,6 @@
 import { categoryConfig } from '@/data/kolaPlaces';
 import { cn } from '@/lib/utils';
-import { Bookmark, Scroll, Landmark, Map } from 'lucide-react';
+import { Bookmark, Scroll, Landmark, UtensilsCrossed, Map } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Tooltip,
@@ -16,6 +16,8 @@ interface CategoryFilterProps {
   onToggleHistoryLayer: () => void;
   showUnescoLayer: boolean;
   onToggleUnescoLayer: () => void;
+  showRestaurantLayer: boolean;
+  onToggleRestaurantLayer: () => void;
 }
 
 export const CategoryFilter = ({ 
@@ -26,6 +28,8 @@ export const CategoryFilter = ({
   onToggleHistoryLayer,
   showUnescoLayer,
   onToggleUnescoLayer,
+  showRestaurantLayer,
+  onToggleRestaurantLayer,
 }: CategoryFilterProps) => {
   const { language, t } = useLanguage();
 
@@ -53,6 +57,14 @@ export const CategoryFilter = ({
       icon: <Scroll className="h-4 w-4" />,
       label: t('historyLayer.title'),
       style: showHistoryLayer ? { backgroundColor: categoryConfig.history.bgColor, color: categoryConfig.history.color } : undefined,
+    },
+    {
+      key: 'restaurants',
+      active: showRestaurantLayer,
+      onClick: onToggleRestaurantLayer,
+      icon: <UtensilsCrossed className="h-4 w-4" />,
+      label: language === 'ru' ? 'Рестораны' : 'Restaurants',
+      style: showRestaurantLayer ? { backgroundColor: categoryConfig.restaurant.bgColor, color: categoryConfig.restaurant.color } : undefined,
     },
     {
       key: 'mapstyle',
