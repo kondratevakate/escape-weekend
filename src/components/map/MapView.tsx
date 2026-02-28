@@ -19,6 +19,7 @@ interface MapViewProps {
   onToggleFavoritesOnly: () => void;
   onToggleHistoryLayer: () => void;
   onToggleUnescoLayer: () => void;
+  onToggleRestaurantLayer: () => void;
   onMapReady?: () => void;
   onPlaceClick?: (place: Place) => void;
 }
@@ -42,6 +43,7 @@ export const MapView = ({
   onToggleFavoritesOnly,
   onToggleHistoryLayer,
   onToggleUnescoLayer,
+  onToggleRestaurantLayer,
   onMapReady, 
   onPlaceClick 
 }: MapViewProps) => {
@@ -231,6 +233,8 @@ export const MapView = ({
             onToggleHistoryLayer={onToggleHistoryLayer}
             showUnescoLayer={showUnescoLayer}
             onToggleUnescoLayer={onToggleUnescoLayer}
+            showRestaurantLayer={showRestaurantLayer}
+            onToggleRestaurantLayer={onToggleRestaurantLayer}
           />
         </div>
       </div>

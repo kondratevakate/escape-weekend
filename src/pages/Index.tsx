@@ -204,6 +204,7 @@ const Index = () => {
             onToggleFavoritesOnly={handleToggleFavoritesOnly}
             onToggleHistoryLayer={handleToggleHistoryLayer}
             onToggleUnescoLayer={handleToggleUnescoLayer}
+            onToggleRestaurantLayer={handleToggleRestaurantLayer}
             onMapReady={handleMapReady}
             onPlaceClick={handlePlaceClick}
           />
