@@ -13,6 +13,35 @@ export interface LocationWarnings {
   traveler_issues?: string[];
 }
 
+export interface OnlyHereItem {
+  name: string;
+  where: string;
+  description: string;
+}
+
+export interface OnlyHereExperience extends OnlyHereItem {
+  months: string[];
+}
+
+export interface OnlyHere {
+  food?: OnlyHereItem[];
+  experience?: OnlyHereExperience[];
+  buy?: OnlyHereItem[];
+}
+
+export interface SafetyIncident {
+  title: string;
+  what_happened: string;
+  lesson: string;
+  risk_months: string[];
+}
+
+export interface Safety {
+  incidents?: SafetyIncident[];
+  go_with?: { name: string; description: string; link?: string }[];
+  essentials?: string[];
+}
+
 export interface Location {
   id: string;
   name: string;
@@ -28,6 +57,8 @@ export interface Location {
   hidden_gem: boolean;
   photo_url: string;
   warnings?: LocationWarnings;
+  only_here?: OnlyHere;
+  safety?: Safety;
 }
 
 const tagToCategoryMap: Record<string, PlaceCategory> = {
