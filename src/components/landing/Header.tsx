@@ -1,10 +1,9 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
-import { Search, Sparkles, User, LogOut, Bookmark, Menu, Map } from 'lucide-react';
+import { Search, Sparkles, Bookmark, Menu, User, Link2, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,6 +13,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
+
 export type CategoryGroup = 'nature' | 'hiking' | 'top';
 
 interface HeaderProps {
@@ -23,9 +24,12 @@ interface HeaderProps {
 
 export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
   const { language, t } = useLanguage();
-  const { isAuthenticated, user, logout, setShowLoginModal } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  const hasAccess = useMemo(() => !!localStorage.getItem('access_token'), []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,10 +38,17 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
     }
   };
 
+  const handleCopyReferral = () => {
+    const token = localStorage.getItem('access_token') || '';
+    const link = `${window.location.origin}?ref=${token.slice(0, 8)}`;
+    navigator.clipboard.writeText(link);
+    toast({ title: language === 'ru' ? 'Ссылка скопирована!' : 'Link copied!' });
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
       <div className="h-14 md:h-16 px-4 md:px-6 flex items-center gap-4">
-        {/* Logo - Left */}
+        {/* Logo */}
         <div className="flex items-center gap-2 shrink-0">
           <span className="text-xl">🌌</span>
           <span className="font-semibold text-foreground hidden sm:inline">
@@ -45,7 +56,7 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
           </span>
         </div>
         
-        {/* Search / AI Input - Center */}
+        {/* Search */}
         <form 
           onSubmit={handleSearch}
           className={cn(
@@ -67,7 +78,6 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
             <Sparkles className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/60" />
           </div>
         </form>
-        
         
         {/* Stash icon */}
         <div className="shrink-0">
@@ -97,64 +107,75 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
               >
                 <Menu className="h-4 w-4" />
                 <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center">
-                  {isAuthenticated ? (
-                    <span className="text-xs font-medium">
-                      {user?.email?.charAt(0).toUpperCase()}
-                    </span>
-                  ) : (
-                    <User className="h-3.5 w-3.5 text-muted-foreground" />
-                  )}
+                  <User className="h-3.5 w-3.5 text-muted-foreground" />
                 </div>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              {isAuthenticated ? (
+            <DropdownMenuContent align="end" className="w-64 p-0">
+              {hasAccess ? (
                 <>
-                  <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                    {user?.email}
+                  <div className="px-4 py-3">
+                    <p className="text-sm font-semibold">✅ {language === 'ru' ? 'Доступ активен' : 'Access active'}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {language === 'ru' ? 'Кольский · полный доступ' : 'Kola · full access'}
+                    </p>
+                  </div>
+                  <DropdownMenuSeparator className="m-0" />
+                  <DropdownMenuItem
+                    onClick={() => navigate('/stash')}
+                    className="px-4 py-2.5 cursor-pointer"
+                  >
+                    <span className="mr-2">🗄</span>
+                    <span className="flex-1">Secret Stash</span>
+                    <span className="text-xs text-muted-foreground">
+                      {stashCount} {language === 'ru' ? 'мест' : 'places'}
+                    </span>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/trip-planner" className="flex items-center">
-                      <Map className="h-4 w-4 mr-2" />
-                      {language === 'ru' ? 'Планировщик' : 'Trip Planner'}
-                    </Link>
+                  <DropdownMenuItem
+                    onClick={handleCopyReferral}
+                    className="px-4 py-2.5 cursor-pointer"
+                  >
+                    <Link2 className="h-4 w-4 mr-2" />
+                    {language === 'ru' ? 'Реферальная ссылка' : 'Referral link'}
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/stash" className="flex items-center">
-                      <Bookmark className="h-4 w-4 mr-2" />
-                      {language === 'ru' ? 'Тайник' : 'Stash'}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout} className="text-destructive">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    {t('auth.logout')}
-                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="m-0" />
+                  <div className="px-4 py-2.5">
+                    <p className="text-[11px] text-muted-foreground">
+                      {language === 'ru' ? 'Поделись — друг получит скидку 50%' : 'Share — your friend gets 50% off'}
+                    </p>
+                  </div>
                 </>
               ) : (
                 <>
-                  <DropdownMenuItem asChild>
-                    <Link to="/trip-planner" className="flex items-center">
-                      <Map className="h-4 w-4 mr-2" />
-                      {language === 'ru' ? 'Планировщик' : 'Trip Planner'}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setShowLoginModal(true)}>
-                    <User className="h-4 w-4 mr-2" />
-                    {t('auth.login')}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setShowLoginModal(true)}>
-                    {language === 'ru' ? '✨ Регистрация' : '✨ Sign up'}
-                  </DropdownMenuItem>
+                  <div className="px-4 py-3">
+                    <p className="text-sm font-semibold">👋 {language === 'ru' ? 'Привет, путешественник' : 'Hey, traveler'}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {language === 'ru' ? 'У тебя пока нет доступа к полной карте' : "You don't have full map access yet"}
+                    </p>
+                  </div>
+                  <div className="px-4 pb-3">
+                    <a
+                      href="https://t.me/dvushka_bot"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 w-full rounded-lg bg-[hsl(174_60%_41%)] hover:bg-[hsl(174_60%_36%)] text-white text-sm font-medium py-2.5 transition-colors"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      {language === 'ru' ? 'Получить доступ' : 'Get access'}
+                    </a>
+                  </div>
+                  <DropdownMenuSeparator className="m-0" />
+                  <div className="px-4 py-2.5">
+                    <p className="text-xs text-muted-foreground">
+                      🗄 Secret Stash · {stashCount} {language === 'ru' ? 'мест сохранено' : 'places saved'}
+                    </p>
+                  </div>
                 </>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
-      
     </header>
   );
 };
