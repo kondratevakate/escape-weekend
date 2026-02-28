@@ -1,10 +1,12 @@
 import { Place, categoryConfig } from '@/data/kolaPlaces';
 import { getLocationById } from '@/data/locations';
-import { X, MapPin, UtensilsCrossed, AlertTriangle, ExternalLink } from 'lucide-react';
+import { X, MapPin, UtensilsCrossed, ExternalLink } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { SeasonPills } from '@/components/SeasonPills';
 import { WarningsSection } from './WarningsSection';
+import { OnlyHereSection } from './OnlyHereSection';
+import { SafetySection } from './SafetySection';
 
 interface PlaceCardProps {
   place: Place;
@@ -100,7 +102,17 @@ export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
           </div>
         )}
 
-        {/* 6. Важно знать — warnings */}
+        {/* 6. Только здесь */}
+        {location?.only_here && (
+          <OnlyHereSection onlyHere={location.only_here} language={language} />
+        )}
+
+        {/* 7. Важно знать — safety */}
+        {location?.safety && (
+          <SafetySection safety={location.safety} language={language} />
+        )}
+
+        {/* 8. Warnings (road/permit/crowds) */}
         {location?.warnings && Object.keys(location.warnings).length > 0 && (
           <WarningsSection warnings={location.warnings} language={language} />
         )}
