@@ -51,8 +51,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       accessMode = 'telegram';
     } else if (accessToken) {
       accessMode = 'token';
-    } else if (!isTelegramEnv) {
-      // In browser without Telegram context = dev mode
+    } else if (import.meta.env.DEV) {
+      // Dev mode only available in development builds
       accessMode = 'dev';
     }
 
