@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useUser } from '@/contexts/UserContext';
 import { cn } from '@/lib/utils';
-import { Search, Sparkles, Bookmark, Menu, User, Link2, ExternalLink } from 'lucide-react';
+import { Search, Sparkles, Bookmark, Menu, User, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,12 +25,12 @@ interface HeaderProps {
 
 export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
   const { language, t } = useLanguage();
+  const { accessMode } = useUser();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-
-  const hasAccess = useMemo(() => !!localStorage.getItem('access_token'), []);
+  const hasAccess = accessMode === 'telegram' || accessMode === 'token' || accessMode === 'dev';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,8 +40,7 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
   };
 
   const handleCopyReferral = () => {
-    const token = localStorage.getItem('access_token') || '';
-    const link = `${window.location.origin}?ref=${token.slice(0, 8)}`;
+    const link = `${window.location.origin}`;
     navigator.clipboard.writeText(link);
     toast({ title: language === 'ru' ? 'Ссылка скопирована!' : 'Link copied!' });
   };
@@ -135,7 +135,7 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
                     onClick={handleCopyReferral}
                     className="px-4 py-2.5 cursor-pointer"
                   >
-                    <Link2 className="h-4 w-4 mr-2" />
+                    <ExternalLink className="h-4 w-4 mr-2" />
                     {language === 'ru' ? 'Реферальная ссылка' : 'Referral link'}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="m-0" />

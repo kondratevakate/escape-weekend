@@ -13,8 +13,11 @@ export const LoginModal = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim()) {
-      login(email);
+    const trimmed = email.trim();
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (trimmed && emailRegex.test(trimmed) && trimmed.length <= 255) {
+      login(trimmed);
     }
   };
 
