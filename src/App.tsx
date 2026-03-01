@@ -19,9 +19,7 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const { accessMode } = useUser();
 
-  if (accessMode === 'locked') {
-    return <LockedScreen />;
-  }
+  // All users can access the app — no locked screen
 
   return (
     <>
