@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { ArrowLeft, Share2 } from 'lucide-react';
+import { PremiumGate } from '@/components/PremiumGate';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTripBuilder } from '@/hooks/useTripBuilder';
@@ -13,6 +14,17 @@ import { TripDay } from '@/types/trip';
 import { toast } from 'sonner';
 
 const TripPlanner = () => {
+  const { language } = useLanguage();
+  const isRu = language === 'ru';
+
+  return (
+    <PremiumGate feature={isRu ? 'Планировщик поездки' : 'Trip Planner'}>
+      <TripPlannerContent />
+    </PremiumGate>
+  );
+};
+
+const TripPlannerContent = () => {
   const { language } = useLanguage();
   const isRu = language === 'ru';
   

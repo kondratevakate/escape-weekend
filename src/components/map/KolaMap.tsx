@@ -14,8 +14,10 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { CookieConsent } from '@/components/CookieConsent';
 import { useStash } from '@/hooks/useStash';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { usePremiumAccess } from '@/components/PremiumGate';
 import { Loader2, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 // Kola Peninsula center
 const KOLA_CENTER: [number, number] = [68.0, 34.0];
@@ -26,7 +28,8 @@ interface KolaMapProps {
 }
 
 export const KolaMap = ({ embedded = false }: KolaMapProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const hasPremium = usePremiumAccess();
   const { items: stashItems, addToStash, isInStash, count: stashCount } = useStash();
   const stashedIds = stashItems.map(i => i.id);
   
@@ -108,10 +111,15 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   }, []);
 
   const handleToggleSelectedFavorite = useCallback(() => {
-    if (selectedPlace) {
-      addToStash(selectedPlace.id, selectedPlace.name, 'someday');
+    if (!selectedPlace) return;
+    if (!hasPremium) {
+      toast(language === 'ru'
+        ? '🔒 Сохранение мест доступно владельцам гайда. Получите доступ через Telegram-бот.'
+        : '🔒 Saving places is available to guide owners. Get access via Telegram bot.');
+      return;
     }
-  }, [selectedPlace, addToStash]);
+    addToStash(selectedPlace.id, selectedPlace.name, 'someday');
+  }, [selectedPlace, addToStash, hasPremium, language]);
 
   // Explore mode
   if (isExploreMode) {

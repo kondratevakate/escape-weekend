@@ -7,7 +7,6 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { UserProvider, useUser } from "@/contexts/UserContext";
 import { LoginModal } from "@/components/auth/LoginModal";
-import { LockedScreen } from "@/components/LockedScreen";
 import Index from "./pages/Index";
 import TripPlanner from "./pages/TripPlanner";
 import StashPage from "./pages/StashPage";
