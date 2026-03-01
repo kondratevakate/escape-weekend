@@ -10,7 +10,7 @@ interface TgUser {
   photo_url?: string;
 }
 
-type AccessMode = 'telegram' | 'token' | 'dev' | 'locked';
+type AccessMode = 'telegram' | 'token' | 'dev' | 'guest';
 
 interface UserContextType {
   tgUser: TgUser | null;
@@ -22,7 +22,7 @@ interface UserContextType {
 const UserContext = createContext<UserContextType>({
   tgUser: null,
   accessToken: null,
-  accessMode: 'locked',
+  accessMode: 'guest',
   isTelegramEnv: false,
 });
 
@@ -46,15 +46,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       } catch {}
     }
 
-    let accessMode: AccessMode = 'locked';
+    let accessMode: AccessMode = 'guest';
     if (tgUser) {
       accessMode = 'telegram';
     } else if (accessToken) {
       accessMode = 'token';
     } else if (import.meta.env.DEV) {
-      // Dev mode only available in development builds
       accessMode = 'dev';
     }
+    // Guest mode: everyone can view the map and content
 
     return { tgUser, accessToken, accessMode, isTelegramEnv };
   });

@@ -31,6 +31,7 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const hasAccess = accessMode === 'telegram' || accessMode === 'token' || accessMode === 'dev';
+  const isGuest = accessMode === 'guest';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
