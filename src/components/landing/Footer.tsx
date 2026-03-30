@@ -10,7 +10,7 @@ export const Footer = () => {
         <div className="flex items-center gap-2">
           <span className="text-lg">🌌</span>
           <span className="font-medium text-foreground">
-            {language === 'ru' ? 'Кола Гид' : 'Kola Guide'}
+            Hedonist Odyssey
           </span>
           <span className="hidden sm:inline">—</span>
           <span className="hidden sm:inline">
