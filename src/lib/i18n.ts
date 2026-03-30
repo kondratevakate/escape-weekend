@@ -4,7 +4,7 @@ export const translations = {
   ru: {
     // Landing
     landing: {
-      brand: 'Кольский',
+      brand: 'Hedonist Odyssey',
       headline: 'Откройте красоту Кольского полуострова',
       subheadline: 'Курированная подборка лучших мест — от северного сияния до древних гор. Исследуйте, сохраняйте, делитесь.',
       cta: 'Открыть карту',
