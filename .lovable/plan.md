@@ -1,111 +1,102 @@
 
 
-# Plan: Migrate to `locations.json` and Remove Fake Content
+# Hedonist Odyssey — Roles & Features Plan
 
-## Scope of Changes
+## Summary
 
-This is a significant refactor touching the data layer and the PlaceCard UI. Two main goals:
-1. **New data source**: `src/data/locations.json` with the user's schema
-2. **Remove fake content** from PlaceCard: mock images, AI summary, reviews, ratings, like counts
+Rebrand to "Hedonist Odyssey", implement a role system (user / creator / admin), add creator visibility in the layers panel, enable offline map download for users and creators, add promo code sharing for users, and reduce visual noise in the right sidebar (Discover panel).
 
-## Files to Create
+## 1. Rebrand to "Hedonist Odyssey"
 
-### `src/data/locations.json`
-- JSON array with all 25 existing `kolaPlaces` entries, mapped to the new schema
-- New fields: `tags`, `season`, `what_to_do`, `pairing`, `permit_required`, `hidden_gem`, `photo_url`
-- `photo_url` will be `""` (empty) for all entries — user fills manually
-- `description` kept from existing data
-- Placeholder text for `what_to_do` and `pairing` (e.g., "TODO: fill in")
+- Update brand name in `Header.tsx` (logo text), `Footer.tsx`, `WelcomeModal.tsx`, `index.html` (title/meta)
+- Replace `🌌 Kola Guide` with `🌌 Hedonist Odyssey` everywhere
+- Update `landing.brand` in `i18n.ts`
 
-### `src/data/locations.ts` (adapter)
-- Import from `locations.json`
-- Export `Location` TypeScript interface matching the JSON schema
-- Export `locations` array (typed)
-- Export a `toPlace()` converter function that maps `Location` → existing `Place` type for backward compatibility with map/trip/share components
-- Export `kolaPlaces` (converted) so all existing imports still work without changing 20 files
-- Re-export `Place`, `PlaceCategory`, `categoryConfig` from existing `kolaPlaces.ts`
+## 2. Role System
 
-## Files to Modify
+**New file: `src/types/roles.ts`**
+- Define `type UserRole = 'user' | 'creator' | 'admin'`
+- Define role capabilities map (what each role can do)
 
-### `src/data/kolaPlaces.ts`
-- Keep `Place` interface, `PlaceCategory`, `categoryConfig` (types + config only)
-- **Remove** the `kolaPlaces` array — data now lives in `locations.json`
-- Components that import `kolaPlaces` will get it from the adapter instead
+**Update `UserContext.tsx`**
+- Add `role: UserRole` to context state
+- Determine role from: URL param `?role=creator`, Telegram user metadata, or default `'user'`
+- For now, role is client-side only (no backend yet). When backend is added, roles will come from a `user_roles` table
+- Export `useUserRole()` hook
 
-### `src/components/map/PlaceCard.tsx` — Major cleanup
-- **Remove**: `getMockPlaceData()`, `getMockReviews()`, all mock image/rating/review data
-- **Remove**: Rating badge (Star 4.7, 167 reviews)
-- **Remove**: AI Summary block (lines 294-302)
-- **Remove**: Collapsible Reviews section (lines 304-370)
-- **Remove**: Like button on photo with fake count (lines 226-243)
-- **Remove**: Double-tap heart animation logic
-- **Remove**: `usePlaceStats` import and usage
-- **Keep**: Close button, Bookmark button, category badge, title, description, Share button
-- **Add**: Show `photo_url` if available (from Location data), otherwise show category icon placeholder
-- **Add**: Show new fields from Location if available: tags, season, what_to_do
+**Update `PremiumGate.tsx`**
+- Add role-aware gating: `usePremiumAccess` checks both `accessMode` and `role`
 
-### `src/components/map/ExploreMode.tsx`
-- **Remove**: `getPlaceImage()` mock function
-- **Remove**: Star rating badge (line 144-147)
-- **Remove**: Social stats (likes/shares count, lines 183-192)
-- **Remove**: `useAllPlaceStats` import
-- Use `photo_url` from location data or show placeholder
+### Role capabilities:
+| Feature | User | Creator | Admin |
+|---|---|---|---|
+| View map & layers | yes | yes | yes |
+| Save to Stash | premium | yes | yes |
+| Share promo code | yes | — | — |
+| Add custom map layers | — | yes | yes |
+| Offline download | premium | yes | yes |
+| Manage creators | — | — | yes |
 
-### `src/components/landing/PlaceListCard.tsx`
-- **Remove**: Heart count from `usePlaceStats` (line 59-62)
-- **Remove**: `usePlaceStats` import
-- Keep category label and favorite button
+## 3. Creator Visibility in Layers Panel
 
-### `src/hooks/usePlaceStats.ts`
-- **Delete** this file entirely — all fake stats removed
+**Update `CategoryFilter.tsx`**
+- Add a "Creators" section below existing layer toggles
+- Each creator shown as: avatar circle + name (like Telegram-style rounded avatar)
+- Clicking a creator toggles their custom layer on/off
+- Data source: hardcoded array initially (`src/data/creators.ts`), later from backend
 
-### `src/data/collections.ts`
-- Keep as-is (references place IDs which remain the same)
-- The unsplash images in collections are fine — they're collection cover images, not place photos
+**New file: `src/data/creators.ts`**
+- Array of `{ id, name, avatarUrl, layerUrl, platform: 'google' | 'yandex' | 'mapsme' }`
+- Placeholder data for 2-3 creators
 
-## Import Migration Strategy
+## 4. Promo Code Sharing (User)
 
-Since ~20 files import from `@/data/kolaPlaces`, the adapter in `locations.ts` will re-export everything needed:
+**Update Header user menu**
+- For role `'user'`: show "Share promo" button that generates a referral link with discount code
+- Copy to clipboard with toast confirmation
+- Link format: `{origin}?promo=XXXXX`
 
-```typescript
-// src/data/locations.ts
-import locationsData from './locations.json';
-export { Place, PlaceCategory, categoryConfig } from './kolaPlaces';
+## 5. Creator: Add Custom Maps
 
-export interface Location { /* new schema */ }
-export const locations: Location[] = locationsData;
-export const kolaPlaces: Place[] = locations.map(toPlace);
-```
+**New component: `src/components/map/AddMapModal.tsx`**
+- Form: name, link (Google Maps / Yandex / Maps.me), description
+- For now, opens Telegram bot link (existing behavior) but with UI that explains the feature
+- Gate behind `role === 'creator'`
 
-Then update imports in files that use `kolaPlaces` array to import from `@/data/locations` instead. Files that only import types (`Place`, `categoryConfig`) can stay pointing at `kolaPlaces.ts`.
+## 6. Offline Map Download
+
+**New component: `src/components/map/OfflineDownload.tsx`**
+- Button in header or sidebar: "Download offline"
+- Generates a static snapshot of current visible places as JSON + tile cache manifest
+- For MVP: export places data as downloadable JSON file
+- Gate behind premium access or creator role
+
+## 7. Reduce Visual Noise in Discover Panel
+
+**Update `DiscoverPanel.tsx`**
+- Collapse "Collections", "Hidden Gems", and "Good to visit now" sections into accordion/collapsible sections — collapsed by default, only headers visible
+- Keep filter pills for Collections visible but make the section headers smaller and lighter
+- Remove card-style borders from Hidden Gems items, use simpler text list with dot indicators
+- "Good to visit now" banner: make it a single compact line instead of a block + pill list
 
 ## Technical Details
 
-### Location → Place mapping
-```typescript
-function toPlace(loc: Location): Place {
-  return {
-    id: loc.id,
-    name: loc.name,
-    nameEn: loc.name_en,
-    description: loc.description,
-    category: inferCategory(loc.tags), // map tags to PlaceCategory
-    coordinates: loc.coordinates as [number, number],
-    region: loc.region,
-    whenToVisit: loc.season.join(', '),
-    howToGet: loc.what_to_do, // approximate mapping
-    warning: loc.permit_required ? 'Permit required' : undefined,
-  };
-}
-```
+### Files to create:
+- `src/types/roles.ts` — role types and capability map
+- `src/data/creators.ts` — placeholder creator data
+- `src/components/map/AddMapModal.tsx` — creator map submission UI
+- `src/components/map/OfflineDownload.tsx` — offline export button
 
-### Tag → Category mapping
-```
-villages → village, nature → nature, hiking → hiking,
-museums → museum, cities → city, reserves → reserve,
-attractions → attraction
-```
+### Files to modify:
+- `src/contexts/UserContext.tsx` — add role to context
+- `src/components/PremiumGate.tsx` — role-aware gating
+- `src/components/map/CategoryFilter.tsx` — creator avatars in sidebar
+- `src/components/landing/DiscoverPanel.tsx` — collapsible sections, lighter UI
+- `src/components/landing/Header.tsx` — rebrand + promo sharing + offline button
+- `src/components/landing/Footer.tsx` — rebrand
+- `src/lib/i18n.ts` — brand name update
+- `index.html` — title update
 
-### Files that need import path updates (from `kolaPlaces` to `locations`)
-Only files importing the `kolaPlaces` **array**: Index.tsx, KolaMap.tsx, TripPlanner.tsx, DayColumn.tsx, CollectionShareButton.tsx, HiddenGems.tsx, ExploreMode.tsx (7 files)
+### Security note:
+Client-side roles are for UI gating only. When backend is added, all role checks must be server-side via `user_roles` table with RLS policies.
 
