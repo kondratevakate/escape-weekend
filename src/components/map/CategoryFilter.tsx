@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { categoryConfig } from '@/data/kolaPlaces';
+import { creators } from '@/data/creators';
 import { cn } from '@/lib/utils';
 import { Bookmark, Scroll, Landmark, UtensilsCrossed, Plus } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -32,6 +34,16 @@ export const CategoryFilter = ({
   onToggleRestaurantLayer,
 }: CategoryFilterProps) => {
   const { language, t } = useLanguage();
+  const [activeCreators, setActiveCreators] = useState<Set<string>>(new Set());
+
+  const toggleCreator = (id: string) => {
+    setActiveCreators(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const items = [
     {
@@ -102,6 +114,46 @@ export const CategoryFilter = ({
           </TooltipContent>
         </Tooltip>
       ))}
+
+      {/* Creators section */}
+      {creators.length > 0 && (
+        <>
+          <div className="h-px bg-border my-1" />
+          {creators.map((creator) => {
+            const isActive = activeCreators.has(creator.id);
+            return (
+              <Tooltip key={creator.id}>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => toggleCreator(creator.id)}
+                    className={cn(
+                      "flex items-center justify-center p-1.5 rounded-lg transition-all duration-200",
+                      "hover:scale-105 active:scale-95",
+                      isActive
+                        ? "ring-2 ring-primary/50 shadow-sm"
+                        : "hover:bg-muted opacity-70 hover:opacity-100"
+                    )}
+                  >
+                    <img
+                      src={creator.avatarUrl}
+                      alt={creator.name}
+                      className="h-7 w-7 rounded-full bg-muted"
+                    />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="left" className="text-xs">
+                  <div>
+                    <span className="font-medium">{creator.name}</span>
+                    <span className="block text-muted-foreground">
+                      {language === 'ru' ? creator.layerLabel.ru : creator.layerLabel.en}
+                    </span>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            );
+          })}
+        </>
+      )}
     </div>
   );
 };

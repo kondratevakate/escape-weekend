@@ -4,9 +4,10 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUser } from '@/contexts/UserContext';
 import { cn } from '@/lib/utils';
-import { Search, Sparkles, Bookmark, Menu, User, ExternalLink } from 'lucide-react';
+import { Search, Sparkles, Bookmark, Menu, User, ExternalLink, Gift } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { OfflineDownload } from '@/components/map/OfflineDownload';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,19 +26,33 @@ interface HeaderProps {
 
 export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
   const { language, t } = useLanguage();
-  const { accessMode } = useUser();
+  const { accessMode, role } = useUser();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const hasAccess = accessMode === 'telegram' || accessMode === 'token' || accessMode === 'dev';
-  const isGuest = accessMode === 'guest';
+  const hasAccess = accessMode === 'telegram' || accessMode === 'token' || accessMode === 'dev' || role === 'creator' || role === 'admin';
+  const isGuest = !hasAccess;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim() && onSearch) {
       onSearch(searchQuery.trim());
     }
+  };
+
+  const generatePromoCode = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+    return code;
+  };
+
+  const handleSharePromo = () => {
+    const code = generatePromoCode();
+    const link = `${window.location.origin}?promo=${code}`;
+    navigator.clipboard.writeText(link);
+    toast({ title: language === 'ru' ? `Промокод скопирован: ${code}` : `Promo code copied: ${code}` });
   };
 
   const handleCopyReferral = () => {
@@ -79,6 +94,9 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
             <Sparkles className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/60" />
           </div>
         </form>
+
+        {/* Offline Download */}
+        <OfflineDownload />
         
         {/* Stash icon */}
         <div className="shrink-0">
@@ -116,9 +134,16 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
               {hasAccess ? (
                 <>
                   <div className="px-4 py-3">
-                    <p className="text-sm font-semibold">✅ {language === 'ru' ? 'Доступ активен' : 'Access active'}</p>
+                    <p className="text-sm font-semibold">
+                      ✅ {language === 'ru' ? 'Доступ активен' : 'Access active'}
+                      {role !== 'user' && (
+                        <span className="ml-1.5 text-xs font-normal text-muted-foreground capitalize">
+                          ({role})
+                        </span>
+                      )}
+                    </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {language === 'ru' ? 'Кольский · полный доступ' : 'Kola · full access'}
+                      Hedonist Odyssey · {language === 'ru' ? 'полный доступ' : 'full access'}
                     </p>
                   </div>
                   <DropdownMenuSeparator className="m-0" />
@@ -151,10 +176,20 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
                   <div className="px-4 py-3">
                     <p className="text-sm font-semibold">👋 {language === 'ru' ? 'Привет, путешественник' : 'Hey, traveler'}</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {language === 'ru' ? 'У тебя пока нет доступа к полной карте' : "You don't have full map access yet"}
+                      {language === 'ru' ? 'У тебя пока нет полного доступа' : "You don't have full access yet"}
                     </p>
                   </div>
-                  <div className="px-4 pb-3">
+                  <DropdownMenuSeparator className="m-0" />
+                  {/* Promo sharing for guests/users */}
+                  <DropdownMenuItem
+                    onClick={handleSharePromo}
+                    className="px-4 py-2.5 cursor-pointer"
+                  >
+                    <Gift className="h-4 w-4 mr-2 text-primary" />
+                    {language === 'ru' ? 'Поделиться промокодом' : 'Share promo code'}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="m-0" />
+                  <div className="px-4 pb-3 pt-2">
                     <a
                       href="https://t.me/dvushka_bot"
                       target="_blank"
