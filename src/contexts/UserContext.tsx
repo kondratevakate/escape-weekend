@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { UserRole } from '@/types/roles';
 
 interface TgUser {
   id: number;
@@ -17,6 +18,7 @@ interface UserContextType {
   accessToken: string | null;
   accessMode: AccessMode;
   isTelegramEnv: boolean;
+  role: UserRole;
 }
 
 const UserContext = createContext<UserContextType>({
@@ -24,6 +26,7 @@ const UserContext = createContext<UserContextType>({
   accessToken: null,
   accessMode: 'guest',
   isTelegramEnv: false,
+  role: 'user',
 });
 
 function getTokenFromUrl(): string | null {
@@ -31,14 +34,20 @@ function getTokenFromUrl(): string | null {
   return params.get('token');
 }
 
+function getRoleFromUrl(): UserRole {
+  const params = new URLSearchParams(window.location.search);
+  const role = params.get('role');
+  if (role === 'creator' || role === 'admin') return role;
+  return 'user';
+}
+
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [state, setState] = useState<UserContextType>(() => {
+  const [state] = useState<UserContextType>(() => {
     const tgWebApp = window.Telegram?.WebApp;
     const tgUser = tgWebApp?.initDataUnsafe?.user ?? null;
     const isTelegramEnv = !!tgWebApp?.initData;
     const accessToken = getTokenFromUrl();
 
-    // Initialize Telegram WebApp if available
     if (tgWebApp) {
       try {
         tgWebApp.ready();
@@ -54,9 +63,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } else if (import.meta.env.DEV) {
       accessMode = 'dev';
     }
-    // Guest mode: everyone can view the map and content
 
-    return { tgUser, accessToken, accessMode, isTelegramEnv };
+    const role = getRoleFromUrl();
+
+    return { tgUser, accessToken, accessMode, isTelegramEnv, role };
   });
 
   return (
@@ -67,3 +77,4 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useUser = () => useContext(UserContext);
+export const useUserRole = () => useContext(UserContext).role;

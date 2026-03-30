@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Place } from '@/data/kolaPlaces';
 import { locations, Location } from '@/data/locations';
 import { kolaPlaces } from '@/data/locations';
@@ -6,8 +7,13 @@ import { ResourcesSection } from './ResourcesSection';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
-import { AlertTriangle, Sparkles, Sun } from 'lucide-react';
+import { AlertTriangle, Sparkles, Sun, ChevronDown } from 'lucide-react';
 import { getCurrentMonthKey } from '@/components/SeasonPills';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 
 export type TagFilter = 'all' | 'whales' | 'aurora' | 'hiking' | 'kayak' | 'history' | 'nature';
 
@@ -46,6 +52,8 @@ export const DiscoverPanel = ({
   highlightCollections,
 }: DiscoverPanelProps) => {
   const { language } = useLanguage();
+  const [seasonOpen, setSeasonOpen] = useState(false);
+  const [gemsOpen, setGemsOpen] = useState(false);
 
   const hiddenGemLocations = locations.filter(loc => loc.hidden_gem && locationMatchesFilter(loc, activeFilter));
   const permitLocations = locations.filter(loc => loc.permit_required && locationMatchesFilter(loc, activeFilter));
@@ -54,8 +62,8 @@ export const DiscoverPanel = ({
 
   return (
     <ScrollArea className="h-full w-full">
-      <div className="p-3 md:p-4 space-y-4 md:space-y-5 overflow-hidden">
-        {/* "Сейчас хорошо ехать" banner */}
+      <div className="p-3 md:p-4 space-y-3 md:space-y-4 overflow-hidden">
+        {/* "Сейчас хорошо ехать" — collapsible compact */}
         {(() => {
           const currentMonth = getCurrentMonthKey();
           const inSeasonNow = locations
@@ -67,52 +75,51 @@ export const DiscoverPanel = ({
             : new Date().toLocaleString('en', { month: 'long' });
 
           return (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-accent/15 border border-accent/30">
-                <Sun className="h-4 w-4 text-accent shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-foreground">
-                    {language === 'ru' ? 'Сейчас хорошо ехать' : 'Good to visit now'}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {monthLabel} • {inSeasonNow.length} {language === 'ru' ? 'мест' : 'places'}
-                  </p>
+            <Collapsible open={seasonOpen} onOpenChange={setSeasonOpen}>
+              <CollapsibleTrigger className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-muted/50 transition-colors">
+                <Sun className="h-3.5 w-3.5 text-accent shrink-0" />
+                <span className="text-xs font-medium text-foreground flex-1 text-left">
+                  {language === 'ru' ? 'Сейчас хорошо ехать' : 'Good to visit now'}
+                </span>
+                <span className="text-[10px] text-muted-foreground">{inSeasonNow.length}</span>
+                <ChevronDown className={cn("h-3 w-3 text-muted-foreground transition-transform", seasonOpen && "rotate-180")} />
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <div className="flex flex-wrap gap-1 pt-1.5 px-1">
+                  {inSeasonNow.slice(0, 8).map(loc => {
+                    const place = findPlace(loc.id);
+                    if (!place) return null;
+                    return (
+                      <button
+                        key={loc.id}
+                        onClick={() => onPlaceClick(place)}
+                        className="text-[10px] px-2 py-1 rounded-full bg-accent/10 text-accent-foreground hover:bg-accent/20 transition-colors truncate max-w-[140px]"
+                      >
+                        {loc.name}
+                      </button>
+                    );
+                  })}
+                  {inSeasonNow.length > 8 && (
+                    <span className="text-[10px] px-2 py-1 text-muted-foreground">
+                      +{inSeasonNow.length - 8}
+                    </span>
+                  )}
                 </div>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {inSeasonNow.slice(0, 8).map(loc => {
-                  const place = findPlace(loc.id);
-                  if (!place) return null;
-                  return (
-                    <button
-                      key={loc.id}
-                      onClick={() => onPlaceClick(place)}
-                      className="text-[10px] px-2 py-1 rounded-full bg-accent/10 text-accent-foreground hover:bg-accent/20 transition-colors truncate max-w-[140px]"
-                    >
-                      {loc.name}
-                    </button>
-                  );
-                })}
-                {inSeasonNow.length > 8 && (
-                  <span className="text-[10px] px-2 py-1 text-muted-foreground">
-                    +{inSeasonNow.length - 8}
-                  </span>
-                )}
-              </div>
-            </div>
+              </CollapsibleContent>
+            </Collapsible>
           );
         })()}
 
         {/* Explore Mode Card */}
         <ExploreCard onStart={onStartExplore} />
 
-        {/* 1. Коллекции — filter buttons */}
+        {/* Collections — always visible filter pills */}
         <div className={cn(
           "space-y-2 transition-all duration-500",
           highlightCollections && "ring-2 ring-primary/50 rounded-lg p-2 bg-primary/5"
         )}>
-          <h3 className="text-sm font-semibold text-foreground px-1">
-            {language === 'ru' ? '📚 Коллекции' : '📚 Collections'}
+          <h3 className="text-xs font-medium text-muted-foreground px-1 uppercase tracking-wide">
+            {language === 'ru' ? 'Коллекции' : 'Collections'}
           </h3>
           <div className="flex flex-wrap gap-1.5">
             {TAG_FILTERS.map(f => {
@@ -135,66 +142,54 @@ export const DiscoverPanel = ({
               );
             })}
           </div>
-          <p className="text-xs text-muted-foreground px-1">
+          <p className="text-[10px] text-muted-foreground px-1">
             {filteredCount} {language === 'ru' ? 'мест' : 'places'}
           </p>
         </div>
 
-        {/* 2. Скрытые места */}
+        {/* Hidden Gems — collapsible, compact list */}
         {hiddenGemLocations.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 px-1">
+          <Collapsible open={gemsOpen} onOpenChange={setGemsOpen}>
+            <CollapsibleTrigger className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-muted/50 transition-colors">
               <Sparkles className="h-3.5 w-3.5 text-primary shrink-0" />
-              <h3 className="text-sm font-semibold text-foreground">
+              <span className="text-xs font-medium text-foreground flex-1 text-left">
                 {language === 'ru' ? 'Скрытые места' : 'Hidden Gems'}
-              </h3>
-            </div>
-            <div className="space-y-1.5">
-              {hiddenGemLocations.map(loc => {
-                const place = findPlace(loc.id);
-                if (!place) return null;
-                return (
-                  <button
-                    key={loc.id}
-                    onClick={() => onPlaceClick(place)}
-                    className={cn(
-                      "w-full flex items-center gap-2.5 rounded-lg overflow-hidden",
-                      "bg-card border border-border hover:border-primary/50",
-                      "transition-all duration-200 hover:shadow-sm text-left p-2"
-                    )}
-                  >
-                    {loc.photo_url ? (
-                      <div className="w-10 h-10 shrink-0 rounded-md overflow-hidden">
-                        <img src={loc.photo_url} alt={loc.name} className="w-full h-full object-cover" />
-                      </div>
-                    ) : (
-                      <div className="w-10 h-10 shrink-0 rounded-md bg-muted flex items-center justify-center">
-                        <Sparkles className="h-4 w-4 text-primary" />
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-xs text-foreground line-clamp-1">{loc.name}</h4>
-                      <p className="text-[10px] text-muted-foreground line-clamp-1 mt-0.5">
-                        {loc.description}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+              </span>
+              <span className="text-[10px] text-muted-foreground">{hiddenGemLocations.length}</span>
+              <ChevronDown className={cn("h-3 w-3 text-muted-foreground transition-transform", gemsOpen && "rotate-180")} />
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="space-y-0.5 pt-1.5">
+                {hiddenGemLocations.map(loc => {
+                  const place = findPlace(loc.id);
+                  if (!place) return null;
+                  return (
+                    <button
+                      key={loc.id}
+                      onClick={() => onPlaceClick(place)}
+                      className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-muted/50 transition-colors text-left"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary/60 shrink-0" />
+                      <span className="text-xs text-foreground line-clamp-1 flex-1">{loc.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         )}
 
-        {/* 3. Нужен пропуск */}
+        {/* Permit Required — compact */}
         {permitLocations.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 px-1">
-              <AlertTriangle className="h-3.5 w-3.5 text-[hsl(25_95%_53%)] shrink-0" />
-              <h3 className="text-sm font-semibold text-foreground">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 px-2 py-1">
+              <AlertTriangle className="h-3 w-3 text-[hsl(25_95%_53%)] shrink-0" />
+              <span className="text-xs font-medium text-foreground">
                 {language === 'ru' ? 'Нужен пропуск' : 'Permit Required'}
-              </h3>
+              </span>
+              <span className="text-[10px] text-muted-foreground">{permitLocations.length}</span>
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-0.5">
               {permitLocations.map(loc => {
                 const place = findPlace(loc.id);
                 if (!place) return null;
@@ -202,22 +197,10 @@ export const DiscoverPanel = ({
                   <button
                     key={loc.id}
                     onClick={() => onPlaceClick(place)}
-                    className={cn(
-                      "w-full flex items-center gap-2.5 rounded-lg overflow-hidden",
-                      "bg-[hsl(25_95%_97%)] border border-[hsl(25_95%_85%)]",
-                      "hover:border-[hsl(25_95%_70%)]",
-                      "transition-all duration-200 hover:shadow-sm text-left p-2"
-                    )}
+                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-muted/50 transition-colors text-left"
                   >
-                    <div className="w-10 h-10 shrink-0 rounded-md bg-[hsl(25_95%_92%)] flex items-center justify-center">
-                      <AlertTriangle className="h-4 w-4 text-[hsl(25_95%_53%)]" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-xs text-foreground line-clamp-1">{loc.name}</h4>
-                      <p className="text-[10px] text-[hsl(25_80%_40%)] line-clamp-1 mt-0.5">
-                        {language === 'ru' ? '⚠️ Погранзона' : '⚠️ Border zone'}
-                      </p>
-                    </div>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[hsl(25_95%_53%)]/60 shrink-0" />
+                    <span className="text-xs text-foreground line-clamp-1 flex-1">{loc.name}</span>
                   </button>
                 );
               })}
