@@ -172,7 +172,7 @@ export const translations = {
   en: {
     // Landing
     landing: {
-      brand: 'Kola',
+      brand: 'Hedonist Odyssey',
       headline: 'Discover the beauty of Kola Peninsula',
       subheadline: 'A curated collection of the best places — from Northern Lights to ancient mountains. Explore, save, share.',
       cta: 'Open map',

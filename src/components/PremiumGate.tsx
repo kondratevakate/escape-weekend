@@ -1,24 +1,25 @@
 import { useUser } from '@/contexts/UserContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { hasCapability } from '@/types/roles';
 import { Send, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface PremiumGateProps {
   children: React.ReactNode;
-  /** What feature is being gated — shown in the prompt */
   feature?: string;
 }
 
-/**
- * Wraps premium content. If the user is a guest, shows a CTA to get access via Telegram.
- * Authenticated users (telegram/token/dev) see children normally.
- */
 export const PremiumGate = ({ children, feature }: PremiumGateProps) => {
-  const { accessMode } = useUser();
+  const { accessMode, role } = useUser();
   const { language } = useLanguage();
   const isRu = language === 'ru';
 
-  const hasAccess = accessMode === 'telegram' || accessMode === 'token' || accessMode === 'dev';
+  const hasAccess =
+    accessMode === 'telegram' ||
+    accessMode === 'token' ||
+    accessMode === 'dev' ||
+    role === 'creator' ||
+    role === 'admin';
 
   if (hasAccess) {
     return <>{children}</>;
@@ -53,10 +54,13 @@ export const PremiumGate = ({ children, feature }: PremiumGateProps) => {
   );
 };
 
-/**
- * Hook to check if user has premium access
- */
 export const usePremiumAccess = () => {
-  const { accessMode } = useUser();
-  return accessMode === 'telegram' || accessMode === 'token' || accessMode === 'dev';
+  const { accessMode, role } = useUser();
+  return (
+    accessMode === 'telegram' ||
+    accessMode === 'token' ||
+    accessMode === 'dev' ||
+    role === 'creator' ||
+    role === 'admin'
+  );
 };

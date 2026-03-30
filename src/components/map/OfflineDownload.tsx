@@ -1,7 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUser } from '@/contexts/UserContext';
 import { usePremiumAccess } from '@/components/PremiumGate';
-import { hasCapability } from '@/types/roles';
 import { kolaPlaces } from '@/data/locations';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
@@ -12,7 +11,7 @@ export const OfflineDownload = () => {
   const { role } = useUser();
   const hasPremium = usePremiumAccess();
 
-  const canDownload = hasPremium || hasCapability(role, 'offlineDownload');
+  const canDownload = hasPremium || role === 'creator' || role === 'admin';
 
   const handleDownload = () => {
     if (!canDownload) {
@@ -30,11 +29,9 @@ export const OfflineDownload = () => {
       places: kolaPlaces.map(p => ({
         id: p.id,
         name: p.name,
-        lat: p.lat,
-        lng: p.lng,
+        coordinates: p.coordinates,
         category: p.category,
         description: p.description,
-        rating: p.rating,
       })),
     };
 

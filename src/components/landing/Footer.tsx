@@ -15,8 +15,8 @@ export const Footer = () => {
           <span className="hidden sm:inline">—</span>
           <span className="hidden sm:inline">
             {language === 'ru' 
-              ? 'Интерактивная карта Кольского полуострова' 
-              : 'Interactive map of the Kola Peninsula'}
+              ? 'Интерактивная карта путешествий' 
+              : 'Interactive travel map'}
           </span>
         </div>
         
