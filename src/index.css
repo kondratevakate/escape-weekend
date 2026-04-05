@@ -7,10 +7,10 @@
 @layer base {
   :root {
     /* Warm, illustrated map palette */
-    --background: 45 30% 96%;
+    --background: 40 20% 97%;
     --foreground: 25 30% 15%;
 
-    --card: 40 25% 98%;
+    --card: 40 15% 98%;
     --card-foreground: 25 30% 15%;
 
     --popover: 40 25% 99%;

@@ -175,7 +175,7 @@ const Index = () => {
             variant="outline"
             size="icon"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="hidden md:flex absolute top-4 left-4 z-[1000] h-9 w-9 bg-background/95 backdrop-blur-sm shadow-md"
+            className="hidden md:flex absolute top-4 left-4 z-[1000] h-9 w-9 bg-background shadow-md"
           >
             {isSidebarOpen ? (
               <PanelLeftClose className="h-4 w-4" />
@@ -227,7 +227,7 @@ const Index = () => {
 
           {/* Empty state when filter returns 0 */}
           {isMapReady && filteredPlaces.length === 0 && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1001] bg-background/95 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-border text-center">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1001] bg-background rounded-xl p-6 shadow-lg border border-border text-center">
               <p className="text-muted-foreground text-sm mb-2">
                 {language === 'ru' ? 'Нет мест' : 'No places found'}
               </p>
