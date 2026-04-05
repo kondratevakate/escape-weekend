@@ -64,6 +64,7 @@ const Index = () => {
   const [showHistoryLayer, setShowHistoryLayer] = useState(false);
   const [showUnescoLayer, setShowUnescoLayer] = useState(false);
   const [showRestaurantLayer, setShowRestaurantLayer] = useState(false);
+  const [showTerrainLayer, setShowTerrainLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -89,6 +90,10 @@ const Index = () => {
 
   const handleToggleRestaurantLayer = useCallback(() => {
     setShowRestaurantLayer(prev => !prev);
+  }, []);
+
+  const handleToggleTerrainLayer = useCallback(() => {
+    setShowTerrainLayer(prev => !prev);
   }, []);
 
   const filteredPlaces = useMemo(() => {
@@ -201,10 +206,12 @@ const Index = () => {
             showHistoryLayer={showHistoryLayer}
             showUnescoLayer={showUnescoLayer}
             showRestaurantLayer={showRestaurantLayer}
+            showTerrainLayer={showTerrainLayer}
             onToggleFavoritesOnly={handleToggleFavoritesOnly}
             onToggleHistoryLayer={handleToggleHistoryLayer}
             onToggleUnescoLayer={handleToggleUnescoLayer}
             onToggleRestaurantLayer={handleToggleRestaurantLayer}
+            onToggleTerrainLayer={handleToggleTerrainLayer}
             onMapReady={handleMapReady}
             onPlaceClick={handlePlaceClick}
           />
