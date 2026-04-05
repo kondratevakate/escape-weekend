@@ -34,6 +34,7 @@ const CreatorDashboard = () => {
   const [dismissedOnboarding, setDismissedOnboarding] = useState(() => {
     return localStorage.getItem('creator-onboarding-dismissed') === 'true';
   });
+  const [activeTab, setActiveTab] = useState('profile');
 
   const isRu = language === 'ru';
 
