@@ -4,7 +4,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUser } from '@/contexts/UserContext';
 import { cn } from '@/lib/utils';
-import { Search, Sparkles, Bookmark, Menu, User, ExternalLink, Gift } from 'lucide-react';
+import { Search, Sparkles, Bookmark, Menu, User, ExternalLink, Gift, LayoutDashboard } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -145,6 +145,15 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
                     </p>
                   </div>
                   <DropdownMenuSeparator className="m-0" />
+                  {(role === 'creator' || role === 'admin') && (
+                    <DropdownMenuItem
+                      onClick={() => navigate('/creator')}
+                      className="px-4 py-2.5 cursor-pointer"
+                    >
+                      <LayoutDashboard className="h-4 w-4 mr-2" />
+                      {language === 'ru' ? 'Мой кабинет' : 'My Dashboard'}
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem
                     onClick={() => navigate('/stash')}
                     className="px-4 py-2.5 cursor-pointer"
