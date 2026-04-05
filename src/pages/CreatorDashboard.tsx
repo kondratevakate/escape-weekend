@@ -90,7 +90,6 @@ const CreatorDashboard = () => {
     localStorage.setItem('creator-onboarding-dismissed', 'true');
   };
 
-  const [activeTab, setActiveTab] = useState('profile');
 
   return (
     <div className="min-h-screen bg-background">
