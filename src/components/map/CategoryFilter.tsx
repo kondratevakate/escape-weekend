@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { categoryConfig } from '@/data/kolaPlaces';
 import { creators } from '@/data/creators';
 import { cn } from '@/lib/utils';
-import { Bookmark, Scroll, Landmark, UtensilsCrossed, Plus } from 'lucide-react';
+import { Bookmark, Scroll, Landmark, UtensilsCrossed, Plus, Mountain } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Tooltip,
@@ -20,6 +20,8 @@ interface CategoryFilterProps {
   onToggleUnescoLayer: () => void;
   showRestaurantLayer: boolean;
   onToggleRestaurantLayer: () => void;
+  showTerrainLayer: boolean;
+  onToggleTerrainLayer: () => void;
 }
 
 export const CategoryFilter = ({ 
@@ -32,6 +34,8 @@ export const CategoryFilter = ({
   onToggleUnescoLayer,
   showRestaurantLayer,
   onToggleRestaurantLayer,
+  showTerrainLayer,
+  onToggleTerrainLayer,
 }: CategoryFilterProps) => {
   const { language, t } = useLanguage();
   const [activeCreators, setActiveCreators] = useState<Set<string>>(new Set());
@@ -77,6 +81,13 @@ export const CategoryFilter = ({
       icon: <UtensilsCrossed className="h-4 w-4" />,
       label: language === 'ru' ? 'Рестораны' : 'Restaurants',
       style: showRestaurantLayer ? { backgroundColor: categoryConfig.restaurant.bgColor, color: categoryConfig.restaurant.color } : undefined,
+    },
+    {
+      key: 'terrain',
+      active: showTerrainLayer,
+      onClick: onToggleTerrainLayer,
+      icon: <Mountain className="h-4 w-4" />,
+      label: language === 'ru' ? 'Рельеф' : 'Terrain',
     },
     {
       key: 'addmap',

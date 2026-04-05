@@ -16,10 +16,12 @@ interface MapViewProps {
   showHistoryLayer: boolean;
   showUnescoLayer: boolean;
   showRestaurantLayer: boolean;
+  showTerrainLayer: boolean;
   onToggleFavoritesOnly: () => void;
   onToggleHistoryLayer: () => void;
   onToggleUnescoLayer: () => void;
   onToggleRestaurantLayer: () => void;
+  onToggleTerrainLayer: () => void;
   onMapReady?: () => void;
   onPlaceClick?: (place: Place) => void;
 }
@@ -40,10 +42,12 @@ export const MapView = ({
   showHistoryLayer,
   showUnescoLayer,
   showRestaurantLayer,
+  showTerrainLayer,
   onToggleFavoritesOnly,
   onToggleHistoryLayer,
   onToggleUnescoLayer,
   onToggleRestaurantLayer,
+  onToggleTerrainLayer,
   onMapReady, 
   onPlaceClick 
 }: MapViewProps) => {
@@ -51,6 +55,8 @@ export const MapView = ({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
   const historyLayerRef = useRef<L.GeoJSON | null>(null);
+  const baseTileRef = useRef<L.TileLayer | null>(null);
+  const terrainTileRef = useRef<L.TileLayer | null>(null);
 
   // Initialize map
   useEffect(() => {
@@ -63,7 +69,7 @@ export const MapView = ({
     });
 
     // CartoDB Positron - fast, minimal, free
-    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    baseTileRef.current = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19,
@@ -72,7 +78,7 @@ export const MapView = ({
     }).addTo(mapInstanceRef.current);
 
     // Notify when tiles are loaded
-    tileLayer.on('load', () => {
+    baseTileRef.current.on('load', () => {
       onMapReady?.();
     });
 
@@ -235,6 +241,8 @@ export const MapView = ({
             onToggleUnescoLayer={onToggleUnescoLayer}
             showRestaurantLayer={showRestaurantLayer}
             onToggleRestaurantLayer={onToggleRestaurantLayer}
+            showTerrainLayer={showTerrainLayer}
+            onToggleTerrainLayer={onToggleTerrainLayer}
           />
         </div>
       </div>
