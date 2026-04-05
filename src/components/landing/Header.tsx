@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { Search, Sparkles, Bookmark, Menu, User, ExternalLink, Gift } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { OfflineDownload } from '@/components/map/OfflineDownload';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -95,8 +95,6 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
           </div>
         </form>
 
-        {/* Offline Download */}
-        <OfflineDownload />
         
         {/* Stash icon */}
         <div className="shrink-0">
