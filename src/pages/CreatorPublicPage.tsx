@@ -94,9 +94,17 @@ const CreatorPublicPage = () => {
               <p className="text-3xl font-bold text-primary">
                 {profile.routePlanPrice} {CURRENCY_SYMBOLS[profile.routePlanCurrency]}
               </p>
-              <Button size="lg" className="w-full rounded-xl text-base font-semibold h-12 bg-primary hover:bg-primary/90">
-                {isRu ? '✨ Заказать маршрут' : '✨ Order route'}
-              </Button>
+              {profile.telegramUsername ? (
+                <Button asChild size="lg" className="w-full rounded-xl text-base font-semibold h-12 bg-primary hover:bg-primary/90">
+                  <a href={`https://t.me/${profile.telegramUsername}`} target="_blank" rel="noopener noreferrer">
+                    ✨ {isRu ? 'Заказать маршрут' : 'Order route'}
+                  </a>
+                </Button>
+              ) : (
+                <Button size="lg" disabled className="w-full rounded-xl text-base font-semibold h-12">
+                  {isRu ? '✨ Заказать маршрут' : '✨ Order route'}
+                </Button>
+              )}
             </div>
           </div>
         )}

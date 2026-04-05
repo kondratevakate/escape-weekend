@@ -284,21 +284,34 @@ const CreatorDashboard = () => {
                   <Switch checked={profile.routePlanEnabled} onCheckedChange={v => update({ routePlanEnabled: v })} />
                 </div>
                 {profile.routePlanEnabled && (
-                  <div className="flex gap-3">
-                    <div className="flex-1">
-                      <Label>{isRu ? 'Цена' : 'Price'}</Label>
-                      <Input type="number" value={profile.routePlanPrice ?? ''} onChange={e => update({ routePlanPrice: Number(e.target.value) || undefined })} placeholder="5000" />
+                  <div className="space-y-3">
+                    <div className="flex gap-3">
+                      <div className="flex-1">
+                        <Label>{isRu ? 'Цена' : 'Price'}</Label>
+                        <Input type="number" value={profile.routePlanPrice ?? ''} onChange={e => update({ routePlanPrice: Number(e.target.value) || undefined })} placeholder="5000" />
+                      </div>
+                      <div className="w-24">
+                        <Label>{isRu ? 'Валюта' : 'Currency'}</Label>
+                        <Select value={profile.routePlanCurrency} onValueChange={v => update({ routePlanCurrency: v as any })}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="RUB">₽ RUB</SelectItem>
+                            <SelectItem value="USD">$ USD</SelectItem>
+                            <SelectItem value="EUR">€ EUR</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                    <div className="w-24">
-                      <Label>{isRu ? 'Валюта' : 'Currency'}</Label>
-                      <Select value={profile.routePlanCurrency} onValueChange={v => update({ routePlanCurrency: v as any })}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="RUB">₽ RUB</SelectItem>
-                          <SelectItem value="USD">$ USD</SelectItem>
-                          <SelectItem value="EUR">€ EUR</SelectItem>
-                        </SelectContent>
-                      </Select>
+                    <div>
+                      <Label>{isRu ? 'Telegram для связи' : 'Telegram username'}</Label>
+                      <Input
+                        value={profile.telegramUsername ?? ''}
+                        onChange={e => update({ telegramUsername: e.target.value.replace(/^@/, '') })}
+                        placeholder="@username"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {isRu ? 'Клиенты напишут вам в Telegram по кнопке «Заказать маршрут»' : 'Clients will message you via the "Order route" button'}
+                      </p>
                     </div>
                   </div>
                 )}
