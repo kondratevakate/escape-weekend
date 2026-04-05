@@ -10,6 +10,8 @@ import { LoginModal } from "@/components/auth/LoginModal";
 import Index from "./pages/Index";
 import TripPlanner from "./pages/TripPlanner";
 import StashPage from "./pages/StashPage";
+import CreatorDashboard from "./pages/CreatorDashboard";
+import CreatorPublicPage from "./pages/CreatorPublicPage";
 import CookiePolicy from "./pages/CookiePolicy";
 import NotFound from "./pages/NotFound";
 
@@ -30,6 +32,8 @@ const AppContent = () => {
           <Route path="/" element={<Index />} />
           <Route path="/trip-planner" element={<TripPlanner />} />
           <Route path="/stash" element={<StashPage />} />
+          <Route path="/creator" element={<CreatorDashboard />} />
+          <Route path="/creator/:id" element={<CreatorPublicPage />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -4,7 +4,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUser } from '@/contexts/UserContext';
 import { cn } from '@/lib/utils';
-import { Search, Sparkles, Bookmark, Menu, User, ExternalLink, Gift } from 'lucide-react';
+import { Search, Sparkles, Bookmark, Menu, User, ExternalLink, Gift, LayoutDashboard } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
