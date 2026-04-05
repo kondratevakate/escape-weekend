@@ -40,6 +40,7 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   const [showHistoryLayer, setShowHistoryLayer] = useState(false);
   const [showUnescoLayer, setShowUnescoLayer] = useState(false);
   const [showRestaurantLayer, setShowRestaurantLayer] = useState(false);
+  const [showTerrainLayer, setShowTerrainLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isExploreMode, setIsExploreMode] = useState(false);
@@ -185,7 +186,9 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
             showUnescoLayer={showUnescoLayer}
             onToggleUnescoLayer={handleToggleUnescoLayer}
             showRestaurantLayer={showRestaurantLayer}
-            onToggleRestaurantLayer={handleToggleRestaurantLayer}
+            onToggleRestaurantLayer={() => setShowRestaurantLayer(p => !p)}
+            showTerrainLayer={showTerrainLayer}
+            onToggleTerrainLayer={() => setShowTerrainLayer(p => !p)}
           />
         </div>
       )}
@@ -213,10 +216,12 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         showHistoryLayer={showHistoryLayer}
         showUnescoLayer={showUnescoLayer}
         showRestaurantLayer={showRestaurantLayer}
-        onToggleFavoritesOnly={handleToggleFavoritesOnly}
-        onToggleHistoryLayer={handleToggleHistoryLayer}
-        onToggleUnescoLayer={handleToggleUnescoLayer}
-        onToggleRestaurantLayer={handleToggleRestaurantLayer}
+        showTerrainLayer={showTerrainLayer}
+        onToggleFavoritesOnly={() => setShowFavoritesOnly(p => !p)}
+        onToggleHistoryLayer={() => setShowHistoryLayer(p => !p)}
+        onToggleUnescoLayer={() => setShowUnescoLayer(p => !p)}
+        onToggleRestaurantLayer={() => setShowRestaurantLayer(p => !p)}
+        onToggleTerrainLayer={() => setShowTerrainLayer(p => !p)}
         onMapReady={handleMapReady}
         onPlaceClick={handlePlaceClick}
       />
