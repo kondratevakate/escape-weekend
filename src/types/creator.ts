@@ -33,6 +33,7 @@ export interface CreatorProfile {
   routePlanEnabled: boolean;
   routePlanPrice?: number;
   routePlanCurrency: 'RUB' | 'USD' | 'EUR';
+  telegramUsername?: string;
 }
 
 export const PLATFORM_LABELS: Record<CreatorMap['platform'], string> = {

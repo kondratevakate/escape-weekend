@@ -16,6 +16,7 @@ const defaultProfile: CreatorProfile = {
   routePlanEnabled: false,
   routePlanPrice: undefined,
   routePlanCurrency: 'RUB',
+  telegramUsername: '',
 };
 
 function loadProfile(): CreatorProfile {
