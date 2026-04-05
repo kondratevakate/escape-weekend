@@ -1,35 +1,56 @@
 
 
-# Fix: Terrain layer — add actual tile switching
+# Личный кабинет креатора
 
-## Problem
-The terrain toggle button exists in the UI but does nothing. The `showTerrainLayer` prop is received in `MapView` but there's no `useEffect` that swaps the tile layer.
+## Что делаем
 
-## Solution
+Новая страница `/creator` — личный кабинет креатора в стиле интерактивного Taplink. Креатор может:
 
-**File: `src/components/map/MapView.tsx`**
+1. **Добавить свои карты** — ссылки на Maps.me, Яндекс.Карты, Google Maps с названием и описанием
+2. **Инфопродукты** — список продуктов (гайды, курсы) с названием, описанием, ценой и ссылкой на покупку
+3. **Ссылки** — произвольные ссылки (соцсети, сайт, блог) с иконкой и названием
+4. **Стоимость планирования маршрута** — цена за персональное планирование маршрута (отображается как CTA-кнопка)
+5. **Профиль** — аватар, имя, био
 
-Add a `useEffect` that reacts to `showTerrainLayer`:
+Данные хранятся в `localStorage` (MVP без бэкенда). Страница доступна по роли `creator` или `admin`.
 
-- When **ON**: remove the default CartoDB Positron tiles, add **OpenTopoMap** tiles (`https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png`) — free, no API key, shows terrain/elevation/contours
-- When **OFF**: remove OpenTopoMap, restore CartoDB Positron
+## Технические изменения
 
-OpenTopoMap is a free topographic map based on OSM data that shows relief, contour lines, and elevation — exactly what the user's screenshot shows. No API key needed.
+### 1. Новая страница `src/pages/CreatorDashboard.tsx`
+Основная страница кабинета с табами или секциями:
+- **Профиль** — аватар (dicebear), имя, короткое био
+- **Мои карты** — список добавленных карт (платформа + ссылка + название), кнопка «Добавить карту»
+- **Инфопродукты** — карточки продуктов (название, описание, цена, ссылка), кнопка «Добавить»
+- **Ссылки** — список ссылок (URL + label), кнопка «Добавить»
+- **Планирование маршрута** — поле для ввода цены, toggle вкл/выкл
 
-### Why OpenTopoMap (not Stamen Terrain)
-Stamen Terrain tiles moved to Stadia Maps and now require an API key. OpenTopoMap is fully free and looks similar to the user's reference image with contour lines and landscape visualization.
+### 2. Хук `src/hooks/useCreatorProfile.ts`
+- CRUD для профиля, карт, продуктов, ссылок и цены маршрута
+- Хранение в `localStorage` под ключом `creator-profile`
+- Типы: `CreatorProfile`, `CreatorMap`, `CreatorProduct`, `CreatorLink`
 
-### Implementation detail
+### 3. Публичная страница `/creator/:id` — `src/pages/CreatorPublicPage.tsx`
+- Taplink-подобная страница для просмотра профиля креатора
+- Показывает карты, продукты, ссылки, кнопку «Заказать маршрут»
+- Доступна всем пользователям
+
+### 4. Обновить `src/App.tsx`
+- Добавить роуты `/creator` и `/creator/:id`
+
+### 5. Обновить `src/components/landing/Header.tsx`
+- Для роли `creator`/`admin` показать ссылку «Мой кабинет» в меню
+
+### 6. Типы `src/types/creator.ts`
 ```
-useEffect: showTerrainLayer
-  if (showTerrainLayer):
-    baseTileRef.current?.remove()
-    terrainTileRef.current = L.tileLayer(opentopomap_url).addTo(map)
-  else:
-    terrainTileRef.current?.remove()
-    terrainTileRef.current = null
-    baseTileRef.current = L.tileLayer(carto_url).addTo(map)
+CreatorProfile { name, bio, avatarSeed, maps[], products[], links[], routePlanPrice? }
+CreatorMap { id, platform, name, url, description? }
+CreatorProduct { id, title, description, price, currency, url }
+CreatorLink { id, label, url, icon? }
 ```
 
-One `useEffect`, one file changed.
+## UI-стиль
+- Карточки с `Card` компонентом из shadcn
+- Инлайн-редактирование через `Input`/`Textarea`
+- Кнопки добавления через `Dialog`
+- Публичная страница — вертикальный scroll, минималистичный дизайн как Taplink
 
