@@ -140,6 +140,29 @@ export const MapView = ({
     }
   }, [showHistoryLayer]);
 
+  // Toggle terrain / default tiles
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+
+    if (showTerrainLayer) {
+      baseTileRef.current?.remove();
+      terrainTileRef.current = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+        maxZoom: 17,
+      }).addTo(mapInstanceRef.current);
+    } else {
+      terrainTileRef.current?.remove();
+      terrainTileRef.current = null;
+      if (!mapInstanceRef.current.hasLayer(baseTileRef.current!)) {
+        baseTileRef.current = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+          subdomains: 'abcd',
+          maxZoom: 19,
+        }).addTo(mapInstanceRef.current);
+      }
+    }
+  }, [showTerrainLayer]);
+
   // Update markers when places or favorites change
   useEffect(() => {
     if (!mapInstanceRef.current) return;
