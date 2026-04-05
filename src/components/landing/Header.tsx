@@ -145,6 +145,15 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
                     </p>
                   </div>
                   <DropdownMenuSeparator className="m-0" />
+                  {(role === 'creator' || role === 'admin') && (
+                    <DropdownMenuItem
+                      onClick={() => navigate('/creator')}
+                      className="px-4 py-2.5 cursor-pointer"
+                    >
+                      <LayoutDashboard className="h-4 w-4 mr-2" />
+                      {language === 'ru' ? 'Мой кабинет' : 'My Dashboard'}
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem
                     onClick={() => navigate('/stash')}
                     className="px-4 py-2.5 cursor-pointer"
