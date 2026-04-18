@@ -240,8 +240,7 @@ export const MapView = ({
         p.coordinates[1],
         weightFor(p.category),
       ]);
-      // @ts-expect-error leaflet.heat extends L
-      touristPressureLayerRef.current = L.heatLayer(heatPoints, {
+      touristPressureLayerRef.current = (L as typeof L & { heatLayer: (pts: [number, number, number][], opts: Record<string, unknown>) => L.Layer }).heatLayer(heatPoints, {
         radius: 35,
         blur: 25,
         maxZoom: 10,
