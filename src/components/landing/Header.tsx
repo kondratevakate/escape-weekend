@@ -106,7 +106,7 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
             <span>🔥</span>
             <span>{language === 'ru' ? 'Клуб' : 'Club'}</span>
           </Link>
-          <Link to="/club" className="sm:hidden p-2 rounded-full hover:bg-muted transition-colors inline-flex" aria-label="Club">
+          <Link to="/club" className="sm:hidden p-2 rounded-full hover:bg-muted transition-colors inline-flex" aria-label={language === 'ru' ? 'Клуб' : 'Club'}>
             <span className="text-base">🔥</span>
           </Link>
         </div>
