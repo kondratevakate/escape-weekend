@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat';
 import { Place, PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
 import { indigenousPeoples } from '@/data/indigenousPeoplesLayer';
+import { hazards, hazardEmoji, severityColor } from '@/data/hazardsLayer';
 import { CategoryFilter } from './CategoryFilter';
 import { IndigenousPeoplesLegend } from './IndigenousPeoplesLegend';
 
@@ -21,6 +22,7 @@ interface MapViewProps {
   showLightPollutionLayer: boolean;
   showRoadsLayer: boolean;
   showTouristPressureLayer: boolean;
+  showHazardsLayer: boolean;
   onToggleFavoritesOnly: () => void;
   onToggleHistoryLayer: () => void;
   onToggleUnescoLayer: () => void;
@@ -29,6 +31,7 @@ interface MapViewProps {
   onToggleLightPollutionLayer: () => void;
   onToggleRoadsLayer: () => void;
   onToggleTouristPressureLayer: () => void;
+  onToggleHazardsLayer: () => void;
   onMapReady?: () => void;
   onPlaceClick?: (place: Place) => void;
 }
@@ -53,6 +56,7 @@ export const MapView = ({
   showLightPollutionLayer,
   showRoadsLayer,
   showTouristPressureLayer,
+  showHazardsLayer,
   onToggleFavoritesOnly,
   onToggleHistoryLayer,
   onToggleUnescoLayer,
@@ -61,6 +65,7 @@ export const MapView = ({
   onToggleLightPollutionLayer,
   onToggleRoadsLayer,
   onToggleTouristPressureLayer,
+  onToggleHazardsLayer,
   onMapReady, 
   onPlaceClick 
 }: MapViewProps) => {
@@ -73,6 +78,7 @@ export const MapView = ({
   const lightPollutionLayerRef = useRef<L.TileLayer | null>(null);
   const roadsLayerRef = useRef<L.TileLayer | null>(null);
   const touristPressureLayerRef = useRef<L.Layer | null>(null);
+  const hazardsLayerRef = useRef<L.LayerGroup | null>(null);
 
   // Initialize map
   useEffect(() => {
