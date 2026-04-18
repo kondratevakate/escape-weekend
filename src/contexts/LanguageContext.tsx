@@ -17,10 +17,8 @@ const getInitialLanguage = (): Language => {
     const stored = localStorage.getItem(STORAGE_KEY) as Language | null;
     if (stored === 'ru' || stored === 'en') return stored;
   } catch {}
-  
-  // Detect from browser
-  const browserLang = navigator.language.split('-')[0];
-  return browserLang === 'ru' ? 'ru' : 'en';
+  // Russian by default for everyone; users can switch via LanguageSwitcher.
+  return 'ru';
 };
 
 interface LanguageProviderProps {
