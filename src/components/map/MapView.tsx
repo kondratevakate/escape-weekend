@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat';
 import { Place, PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
 import { indigenousPeoples } from '@/data/indigenousPeoplesLayer';
+import { hazards, hazardEmoji, severityColor } from '@/data/hazardsLayer';
 import { CategoryFilter } from './CategoryFilter';
 import { IndigenousPeoplesLegend } from './IndigenousPeoplesLegend';
 
@@ -21,6 +22,7 @@ interface MapViewProps {
   showLightPollutionLayer: boolean;
   showRoadsLayer: boolean;
   showTouristPressureLayer: boolean;
+  showHazardsLayer: boolean;
   onToggleFavoritesOnly: () => void;
   onToggleHistoryLayer: () => void;
   onToggleUnescoLayer: () => void;
@@ -29,6 +31,7 @@ interface MapViewProps {
   onToggleLightPollutionLayer: () => void;
   onToggleRoadsLayer: () => void;
   onToggleTouristPressureLayer: () => void;
+  onToggleHazardsLayer: () => void;
   onMapReady?: () => void;
   onPlaceClick?: (place: Place) => void;
 }
@@ -53,6 +56,7 @@ export const MapView = ({
   showLightPollutionLayer,
   showRoadsLayer,
   showTouristPressureLayer,
+  showHazardsLayer,
   onToggleFavoritesOnly,
   onToggleHistoryLayer,
   onToggleUnescoLayer,
@@ -61,6 +65,7 @@ export const MapView = ({
   onToggleLightPollutionLayer,
   onToggleRoadsLayer,
   onToggleTouristPressureLayer,
+  onToggleHazardsLayer,
   onMapReady, 
   onPlaceClick 
 }: MapViewProps) => {
@@ -73,6 +78,7 @@ export const MapView = ({
   const lightPollutionLayerRef = useRef<L.TileLayer | null>(null);
   const roadsLayerRef = useRef<L.TileLayer | null>(null);
   const touristPressureLayerRef = useRef<L.Layer | null>(null);
+  const hazardsLayerRef = useRef<L.LayerGroup | null>(null);
 
   // Initialize map
   useEffect(() => {
@@ -259,6 +265,69 @@ export const MapView = ({
     }
   }, [showTouristPressureLayer, places]);
 
+  // Hazards layer
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    if (showHazardsLayer && !hazardsLayerRef.current) {
+      const group = L.layerGroup();
+      hazards.forEach(h => {
+        const colors = severityColor[h.severity];
+        const emoji = hazardEmoji[h.type];
+        const pulse = h.severity === 'danger' ? 'animation: hazard-pulse 1.8s ease-in-out infinite;' : '';
+        const icon = L.divIcon({
+          className: 'hazard-marker',
+          html: `
+            <div style="
+              position: relative;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 30px;
+              height: 30px;
+              background: ${colors.bg};
+              border: 2.5px solid ${colors.border};
+              border-radius: 50%;
+              box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+              font-size: 15px;
+              cursor: pointer;
+              ${pulse}
+            ">${emoji}</div>
+          `,
+          iconSize: [30, 30],
+          iconAnchor: [15, 15],
+          popupAnchor: [0, -15],
+        });
+        const marker = L.marker(h.coordinates, { icon });
+        const seasonStr = h.season.length === 0
+          ? 'Круглый год / All year'
+          : `Месяцы: ${h.season.join(', ')}`;
+        const sevLabel = h.severity === 'danger' ? '🔴 Опасно' : h.severity === 'warning' ? '🟠 Внимание' : '🟡 Инфо';
+        marker.bindPopup(`
+          <div style="min-width: 240px; max-width: 280px; padding: 4px;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+              <strong style="font-size: 14px;">${emoji} ${h.name.ru}</strong>
+            </div>
+            <div style="font-size: 11px; color: ${colors.border}; font-weight: 600; margin-bottom: 6px;">
+              ${sevLabel} • ${seasonStr}
+            </div>
+            <div style="font-size: 12px; color: #333; margin-bottom: 8px; line-height: 1.4;">
+              ${h.description.ru}
+            </div>
+            <div style="font-size: 12px; background: #f5f5f5; padding: 6px 8px; border-radius: 6px; line-height: 1.4;">
+              <strong>💡 Совет:</strong> ${h.advice.ru}
+            </div>
+            ${h.source ? `<div style="margin-top: 6px;"><a href="${h.source}" target="_blank" rel="noopener" style="font-size: 11px; color: #0066cc;">Источник →</a></div>` : ''}
+          </div>
+        `);
+        group.addLayer(marker);
+      });
+      hazardsLayerRef.current = group.addTo(mapInstanceRef.current);
+    } else if (!showHazardsLayer && hazardsLayerRef.current) {
+      hazardsLayerRef.current.remove();
+      hazardsLayerRef.current = null;
+    }
+  }, [showHazardsLayer]);
+
   // Update markers when places or favorites change
   useEffect(() => {
     if (!mapInstanceRef.current) return;
@@ -368,6 +437,8 @@ export const MapView = ({
             onToggleRoadsLayer={onToggleRoadsLayer}
             showTouristPressureLayer={showTouristPressureLayer}
             onToggleTouristPressureLayer={onToggleTouristPressureLayer}
+            showHazardsLayer={showHazardsLayer}
+            onToggleHazardsLayer={onToggleHazardsLayer}
           />
         </div>
       </div>

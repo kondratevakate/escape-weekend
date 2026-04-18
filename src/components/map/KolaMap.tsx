@@ -44,6 +44,7 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   const [showLightPollutionLayer, setShowLightPollutionLayer] = useState(false);
   const [showRoadsLayer, setShowRoadsLayer] = useState(false);
   const [showTouristPressureLayer, setShowTouristPressureLayer] = useState(false);
+  const [showHazardsLayer, setShowHazardsLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isExploreMode, setIsExploreMode] = useState(false);
@@ -198,6 +199,8 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
             onToggleRoadsLayer={() => setShowRoadsLayer(p => !p)}
             showTouristPressureLayer={showTouristPressureLayer}
             onToggleTouristPressureLayer={() => setShowTouristPressureLayer(p => !p)}
+            showHazardsLayer={showHazardsLayer}
+            onToggleHazardsLayer={() => setShowHazardsLayer(p => !p)}
           />
         </div>
       )}
@@ -229,6 +232,7 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         showLightPollutionLayer={showLightPollutionLayer}
         showRoadsLayer={showRoadsLayer}
         showTouristPressureLayer={showTouristPressureLayer}
+        showHazardsLayer={showHazardsLayer}
         onToggleFavoritesOnly={() => setShowFavoritesOnly(p => !p)}
         onToggleHistoryLayer={() => setShowHistoryLayer(p => !p)}
         onToggleUnescoLayer={() => setShowUnescoLayer(p => !p)}
@@ -237,6 +241,7 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         onToggleLightPollutionLayer={() => setShowLightPollutionLayer(p => !p)}
         onToggleRoadsLayer={() => setShowRoadsLayer(p => !p)}
         onToggleTouristPressureLayer={() => setShowTouristPressureLayer(p => !p)}
+        onToggleHazardsLayer={() => setShowHazardsLayer(p => !p)}
         onMapReady={handleMapReady}
         onPlaceClick={handlePlaceClick}
       />
