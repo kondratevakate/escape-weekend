@@ -125,7 +125,32 @@ export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
           <WarningsSection warnings={location.warnings} language={language} />
         )}
 
-        {/* 7. External link */}
+        {/* Club posts about this place */}
+        {clubPosts.length > 0 && (
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 inline-flex items-center gap-1">
+              <Flame className="h-3 w-3 text-orange-500" />
+              {language === 'ru' ? 'О месте писали в клубе' : 'From the club'}
+            </p>
+            <div className="space-y-1.5">
+              {clubPosts.slice(0, 3).map(p => {
+                const meta = POST_TYPE_META[p.type];
+                return (
+                  <Link
+                    key={p.id}
+                    to={`/club/post/${p.id}`}
+                    className="flex items-start gap-2 p-2 rounded-md bg-muted/40 hover:bg-muted text-xs"
+                  >
+                    <span className="text-base shrink-0" style={{ color: meta.color }}>{meta.emoji}</span>
+                    <span className="text-foreground line-clamp-2 leading-snug">{p.title[language]}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* External link */}
         <a
           href="#"
           target="_blank"
