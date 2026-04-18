@@ -5,6 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useUser } from '@/contexts/UserContext';
 import { cn } from '@/lib/utils';
 import { Search, Sparkles, Bookmark, Menu, User, ExternalLink, Gift, LayoutDashboard } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -29,6 +30,7 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
   const { accessMode, role } = useUser();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const hasAccess = accessMode === 'telegram' || accessMode === 'token' || accessMode === 'dev' || role === 'creator' || role === 'admin';
@@ -63,17 +65,17 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[1500] bg-background border-b border-border">
-      <div className="h-14 md:h-16 px-4 md:px-6 flex items-center gap-4">
+      <div className="h-14 md:h-16 px-3 md:px-6 flex items-center gap-2 md:gap-4">
         {/* Logo */}
-        <div className="flex items-center gap-2 shrink-0">
+        <Link to="/" className="flex items-center gap-2 shrink-0" aria-label={t('landing.brand')}>
           <span className="text-xl">🌌</span>
-          <span className="font-semibold text-foreground hidden sm:inline">
+          <span className="font-semibold text-foreground hidden md:inline">
             {t('landing.brand')}
           </span>
-        </div>
-        
+        </Link>
+
         {/* Search */}
-        <form 
+        <form
           onSubmit={handleSearch}
           className={cn(
             "flex-1 max-w-md mx-auto relative transition-all",
@@ -84,36 +86,36 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder={language === 'ru' ? 'Поиск мест или спросите ИИ...' : 'Search places or ask AI...'}
+              placeholder={
+                isMobile
+                  ? (language === 'ru' ? 'Поиск…' : 'Search…')
+                  : (language === 'ru' ? 'Поиск мест или спросите ИИ...' : 'Search places or ask AI...')
+              }
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setIsSearchFocused(true)}
               onBlur={() => setIsSearchFocused(false)}
-              className="pl-10 pr-10 h-10 rounded-full bg-muted/50 border-muted-foreground/20 focus:bg-background"
+              className="pl-10 pr-3 md:pr-10 h-10 rounded-full bg-muted/50 border-muted-foreground/20 focus:bg-background"
             />
-            <Sparkles className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/60" />
+            <Sparkles className="hidden md:block absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/60" />
           </div>
         </form>
 
-        
-        {/* Club link */}
-        <div className="shrink-0">
+        {/* Club link — desktop text, mobile hidden (mobile users use bottom nav) */}
+        <div className="shrink-0 hidden sm:block">
           <Link
             to="/club"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 hover:bg-orange-500/20 transition-colors text-sm font-semibold"
+            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 hover:bg-orange-500/20 transition-colors text-sm font-semibold"
             title={language === 'ru' ? 'Клуб энтузиастов' : 'Enthusiasts club'}
           >
             <span>🔥</span>
             <span>{language === 'ru' ? 'Клуб' : 'Club'}</span>
           </Link>
-          <Link to="/club" className="sm:hidden p-2 rounded-full hover:bg-muted transition-colors inline-flex" aria-label={language === 'ru' ? 'Клуб' : 'Club'}>
-            <span className="text-base">🔥</span>
-          </Link>
         </div>
 
-        {/* Stash icon */}
-        <div className="shrink-0">
-          <Link to="/stash" className="relative p-2 rounded-full hover:bg-muted transition-colors inline-flex">
+        {/* Stash icon — desktop only (mobile uses bottom nav) */}
+        <div className="shrink-0 hidden md:block">
+          <Link to="/stash" className="relative p-2 rounded-full hover:bg-muted transition-colors inline-flex" aria-label={language === 'ru' ? 'Тайник' : 'Secret Stash'}>
             <Bookmark className="h-5 w-5 text-foreground" />
             {stashCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 h-4 min-w-[16px] px-1 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
