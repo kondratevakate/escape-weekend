@@ -160,7 +160,9 @@ const ClubJoin = () => {
             <ExternalLink className="h-3.5 w-3.5 ml-2" />
           </Button>
           <p className="text-xs text-muted-foreground text-center">
-            {language === 'ru' ? 'Откроется бот @dvushka_bot — нажми Start' : 'Opens @dvushka_bot — press Start'}
+            {language === 'ru'
+              ? `Откроется бот @${TG_BOT_USERNAME} — нажми Start`
+              : `Opens @${TG_BOT_USERNAME} — press Start`}
           </p>
         </form>
       </main>
