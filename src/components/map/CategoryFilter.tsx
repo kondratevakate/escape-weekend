@@ -30,6 +30,7 @@ interface CategoryFilterProps {
   onToggleTouristPressureLayer: () => void;
   showHazardsLayer: boolean;
   onToggleHazardsLayer: () => void;
+  orientation?: 'vertical' | 'horizontal';
 }
 
 export const CategoryFilter = ({ 
@@ -52,6 +53,7 @@ export const CategoryFilter = ({
   onToggleTouristPressureLayer,
   showHazardsLayer,
   onToggleHazardsLayer,
+  orientation = 'vertical',
 }: CategoryFilterProps) => {
   const { language, t } = useLanguage();
   const [activeCreators, setActiveCreators] = useState<Set<string>>(new Set());
@@ -144,7 +146,7 @@ export const CategoryFilter = ({
   ];
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className={cn(orientation === 'horizontal' ? 'flex flex-row gap-1 items-center' : 'flex flex-col gap-1')}>
       {items.map((item) => (
         <Tooltip key={item.key}>
           <TooltipTrigger asChild>
@@ -165,7 +167,7 @@ export const CategoryFilter = ({
               )}
             </button>
           </TooltipTrigger>
-          <TooltipContent side="left" className="text-xs">
+          <TooltipContent side={orientation === 'horizontal' ? 'bottom' : 'left'} className="text-xs">
             {item.label}
           </TooltipContent>
         </Tooltip>
@@ -174,7 +176,7 @@ export const CategoryFilter = ({
       {/* Creators section */}
       {creators.length > 0 && (
         <>
-          <div className="h-px bg-border my-1" />
+          <div className={cn(orientation === 'horizontal' ? 'w-px h-7 bg-border mx-1' : 'h-px bg-border my-1')} />
           {creators.map((creator) => {
             const isActive = activeCreators.has(creator.id);
             return (
@@ -197,7 +199,7 @@ export const CategoryFilter = ({
                     />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent side="left" className="text-xs">
+                <TooltipContent side={orientation === 'horizontal' ? 'bottom' : 'left'} className="text-xs">
                   <div>
                     <span className="font-medium">{creator.name}</span>
                     <span className="block text-muted-foreground">
