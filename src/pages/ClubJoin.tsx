@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Send, Plus, CheckCircle2, ExternalLink } from 'lucide-react';
+import { sendApplicationToBot, buildBotUrl } from '@/lib/telegram';
+import { TG_BOT_USERNAME } from '@/lib/constants';
 
 const ClubJoin = () => {
   const { language } = useLanguage();
@@ -39,13 +41,14 @@ const ClubJoin = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !whyJoin.trim() || !contact.trim() || niches.length === 0) return;
-    submitApplication({ name: name.trim(), contact: contact.trim(), niches, whyJoin: whyJoin.trim() });
-
-    // Compose TG message
-    const text = encodeURIComponent(
-      `🆕 Заявка в клуб WoWAtlas\n\n👤 ${name}\n📬 ${contact}\n🏷 ${niches.join(', ')}\n\n💬 ${whyJoin}`
-    );
-    window.open(`https://t.me/dvushka_bot?start=club_${Date.now()}&text=${text}`, '_blank');
+    const payload = {
+      name: name.trim(),
+      contact: contact.trim(),
+      niches,
+      whyJoin: whyJoin.trim(),
+    };
+    submitApplication(payload);
+    sendApplicationToBot(payload);
   };
 
   if (status === 'pending') {
@@ -64,7 +67,7 @@ const ClubJoin = () => {
           </p>
           <div className="space-y-2">
             <Button asChild className="w-full">
-              <a href="https://t.me/dvushka_bot" target="_blank" rel="noopener noreferrer">
+              <a href={buildBotUrl()} target="_blank" rel="noopener noreferrer">
                 <Send className="h-4 w-4 mr-2" /> {language === 'ru' ? 'Написать куратору' : 'Message curator'}
               </a>
             </Button>
@@ -157,7 +160,9 @@ const ClubJoin = () => {
             <ExternalLink className="h-3.5 w-3.5 ml-2" />
           </Button>
           <p className="text-xs text-muted-foreground text-center">
-            {language === 'ru' ? 'Откроется бот @dvushka_bot — нажми Start' : 'Opens @dvushka_bot — press Start'}
+            {language === 'ru'
+              ? `Откроется бот @${TG_BOT_USERNAME} — нажми Start`
+              : `Opens @${TG_BOT_USERNAME} — press Start`}
           </p>
         </form>
       </main>

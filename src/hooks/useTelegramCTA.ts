@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-
-const STORAGE_KEY = 'kola_telegram_cta';
-const SAVE_THRESHOLD = 3;
+import { useLocalStorage } from './useLocalStorage';
+import { STORAGE_KEYS, TG_CTA_SAVE_THRESHOLD, TG_CTA_COOLDOWN_MS } from '@/lib/constants';
 
 interface TelegramCTAState {
   saveCount: number;
@@ -9,73 +8,46 @@ interface TelegramCTAState {
   lastShown: number | null;
 }
 
-export const useTelegramCTA = () => {
-  const [state, setState] = useState<TelegramCTAState>(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : { saveCount: 0, dismissed: false, lastShown: null };
-    } catch {
-      return { saveCount: 0, dismissed: false, lastShown: null };
-    }
-  });
+const INITIAL: TelegramCTAState = { saveCount: 0, dismissed: false, lastShown: null };
 
+/**
+ * Tracks the "convert this user to the Telegram bot" CTA state.
+ * Shown once the user has saved {@link TG_CTA_SAVE_THRESHOLD} places, with
+ * a {@link TG_CTA_COOLDOWN_MS} cooldown between displays.
+ */
+export const useTelegramCTA = () => {
+  const [state, setState] = useLocalStorage<TelegramCTAState>(STORAGE_KEYS.telegramCta, INITIAL);
   const [shouldShow, setShouldShow] = useState(false);
 
-  // Persist state
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (e) {
-      console.error('Failed to save telegram CTA state:', e);
-    }
-  }, [state]);
-
-  // Check if should show CTA
   useEffect(() => {
     if (state.dismissed) {
       setShouldShow(false);
       return;
     }
-
-    // Show after reaching threshold
-    if (state.saveCount >= SAVE_THRESHOLD) {
-      // Don't show more than once per session
-      const lastShown = state.lastShown;
+    if (state.saveCount >= TG_CTA_SAVE_THRESHOLD) {
       const now = Date.now();
-      const oneHour = 60 * 60 * 1000;
-      
-      if (!lastShown || (now - lastShown) > oneHour) {
+      if (!state.lastShown || now - state.lastShown > TG_CTA_COOLDOWN_MS) {
         setShouldShow(true);
       }
     }
   }, [state]);
 
-  const recordSave = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      saveCount: prev.saveCount + 1,
-    }));
-  }, []);
+  const recordSave = useCallback(
+    () => setState((prev) => ({ ...prev, saveCount: prev.saveCount + 1 })),
+    [setState]
+  );
 
   const dismissCTA = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      dismissed: true,
-      lastShown: Date.now(),
-    }));
+    setState((prev) => ({ ...prev, dismissed: true, lastShown: Date.now() }));
     setShouldShow(false);
-  }, []);
+  }, [setState]);
 
-  const markShown = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      lastShown: Date.now(),
-    }));
-  }, []);
+  const markShown = useCallback(
+    () => setState((prev) => ({ ...prev, lastShown: Date.now() })),
+    [setState]
+  );
 
-  const resetCTA = useCallback(() => {
-    setState({ saveCount: 0, dismissed: false, lastShown: null });
-  }, []);
+  const resetCTA = useCallback(() => setState(INITIAL), [setState]);
 
   return {
     shouldShow,

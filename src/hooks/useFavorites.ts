@@ -1,53 +1,35 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useLocalStorage } from './useLocalStorage';
+import { STORAGE_KEYS } from '@/lib/constants';
 
-const STORAGE_KEY = 'kola_favorites';
-
+/**
+ * Liked / favorited place IDs. Persisted in `localStorage`.
+ * Distinct from {@link useStash} — favorites have no planned season.
+ */
 export const useFavorites = () => {
-  const [favorites, setFavorites] = useState<string[]>(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [favorites, setFavorites] = useLocalStorage<string[]>(STORAGE_KEYS.favorites, []);
 
-  // Sync to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
-    } catch (e) {
-      console.error('Failed to save favorites:', e);
-    }
-  }, [favorites]);
+  const addFavorite = useCallback(
+    (id: string) => setFavorites((prev) => (prev.includes(id) ? prev : [...prev, id])),
+    [setFavorites]
+  );
 
-  const addFavorite = useCallback((id: string) => {
-    setFavorites(prev => {
-      if (prev.includes(id)) return prev;
-      return [...prev, id];
-    });
-  }, []);
+  const removeFavorite = useCallback(
+    (id: string) => setFavorites((prev) => prev.filter((fav) => fav !== id)),
+    [setFavorites]
+  );
 
-  const removeFavorite = useCallback((id: string) => {
-    setFavorites(prev => prev.filter(fav => fav !== id));
-  }, []);
+  const toggleFavorite = useCallback(
+    (id: string) =>
+      setFavorites((prev) =>
+        prev.includes(id) ? prev.filter((fav) => fav !== id) : [...prev, id]
+      ),
+    [setFavorites]
+  );
 
-  const toggleFavorite = useCallback((id: string) => {
-    setFavorites(prev => {
-      if (prev.includes(id)) {
-        return prev.filter(fav => fav !== id);
-      }
-      return [...prev, id];
-    });
-  }, []);
+  const isFavorite = useCallback((id: string) => favorites.includes(id), [favorites]);
 
-  const isFavorite = useCallback((id: string) => {
-    return favorites.includes(id);
-  }, [favorites]);
-
-  const clearFavorites = useCallback(() => {
-    setFavorites([]);
-  }, []);
+  const clearFavorites = useCallback(() => setFavorites([]), [setFavorites]);
 
   return {
     favorites,
