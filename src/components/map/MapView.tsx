@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet.heat';
 import { Place, PlaceCategory, categoryConfig } from '@/data/kolaPlaces';
 import { indigenousPeoples } from '@/data/indigenousPeoplesLayer';
 import { CategoryFilter } from './CategoryFilter';
@@ -17,11 +18,17 @@ interface MapViewProps {
   showUnescoLayer: boolean;
   showRestaurantLayer: boolean;
   showTerrainLayer: boolean;
+  showLightPollutionLayer: boolean;
+  showRoadsLayer: boolean;
+  showTouristPressureLayer: boolean;
   onToggleFavoritesOnly: () => void;
   onToggleHistoryLayer: () => void;
   onToggleUnescoLayer: () => void;
   onToggleRestaurantLayer: () => void;
   onToggleTerrainLayer: () => void;
+  onToggleLightPollutionLayer: () => void;
+  onToggleRoadsLayer: () => void;
+  onToggleTouristPressureLayer: () => void;
   onMapReady?: () => void;
   onPlaceClick?: (place: Place) => void;
 }
@@ -43,11 +50,17 @@ export const MapView = ({
   showUnescoLayer,
   showRestaurantLayer,
   showTerrainLayer,
+  showLightPollutionLayer,
+  showRoadsLayer,
+  showTouristPressureLayer,
   onToggleFavoritesOnly,
   onToggleHistoryLayer,
   onToggleUnescoLayer,
   onToggleRestaurantLayer,
   onToggleTerrainLayer,
+  onToggleLightPollutionLayer,
+  onToggleRoadsLayer,
+  onToggleTouristPressureLayer,
   onMapReady, 
   onPlaceClick 
 }: MapViewProps) => {
@@ -57,6 +70,9 @@ export const MapView = ({
   const historyLayerRef = useRef<L.GeoJSON | null>(null);
   const baseTileRef = useRef<L.TileLayer | null>(null);
   const terrainTileRef = useRef<L.Layer | null>(null);
+  const lightPollutionLayerRef = useRef<L.TileLayer | null>(null);
+  const roadsLayerRef = useRef<L.TileLayer | null>(null);
+  const touristPressureLayerRef = useRef<L.Layer | null>(null);
 
   // Initialize map
   useEffect(() => {
