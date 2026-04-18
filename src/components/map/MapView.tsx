@@ -437,6 +437,8 @@ export const MapView = ({
             onToggleRoadsLayer={onToggleRoadsLayer}
             showTouristPressureLayer={showTouristPressureLayer}
             onToggleTouristPressureLayer={onToggleTouristPressureLayer}
+            showHazardsLayer={showHazardsLayer}
+            onToggleHazardsLayer={onToggleHazardsLayer}
           />
         </div>
       </div>
