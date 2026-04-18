@@ -96,6 +96,21 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
         </form>
 
         
+        {/* Club link */}
+        <div className="shrink-0">
+          <Link
+            to="/club"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 h-9 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 hover:bg-orange-500/20 transition-colors text-sm font-semibold"
+            title={language === 'ru' ? 'Клуб энтузиастов' : 'Enthusiasts club'}
+          >
+            <span>🔥</span>
+            <span>{language === 'ru' ? 'Клуб' : 'Club'}</span>
+          </Link>
+          <Link to="/club" className="sm:hidden p-2 rounded-full hover:bg-muted transition-colors inline-flex" aria-label="Club">
+            <span className="text-base">🔥</span>
+          </Link>
+        </div>
+
         {/* Stash icon */}
         <div className="shrink-0">
           <Link to="/stash" className="relative p-2 rounded-full hover:bg-muted transition-colors inline-flex">
