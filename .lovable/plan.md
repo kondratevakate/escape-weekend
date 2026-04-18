@@ -1,72 +1,154 @@
 
 ## Цель
-Превратить WoWAtlas в **нишевое комьюнити экспертов по адвенчур-туризму** (по образцу vas3k.club), где люди делятся местами, маршрутами, отчётами и обсуждают их. Ты — хост и куратор.
+Поднять проект до уровня **долгоживущего open-source комьюнити-продукта**: сформулировать tone of voice и бренд-систему, навести порядок в коде и сделать так, чтобы внешний разработчик мог за 15 минут понять, как контрибьютить.
 
-## Что берём у vas3k.club (адаптировано)
-1. **Заявка + ручное одобрение** — фильтр на «своих»
-2. **Посты-форматы** с разной структурой
-3. **Профили экспертов** с нишей и кредибилити (🔥 от пиров)
+Задача делится на 3 блока: **Brand & Voice**, **Code Quality / DX**, **Open Source готовность**.
 
-## MVP (фаза 1, на localStorage + seed-данных)
+---
 
-### A. Раздел `/club` — лента
-Карточки постов, фильтры по типу и нише, сортировки: Свежее / 🔥 / Обсуждаемое.
+## Блок 1. Brand & Tone of Voice
 
-### B. 5 типов постов
-- **Маршрут** (Trip Report) — мини-карта с треком, дни, сложность
-- **Тайное место** (Secret Spot) — точка + сезон + почему стоит
-- **Вопрос** (Ask) — короткая карточка, акцент на ответы
-- **Меетап** — дата, точка сбора, RSVP
-- **Гайд** — обложка, read time, длинный текст
+### 1.1 Документ `BRAND.md` (в корне)
+Единый источник правды для дизайна, копирайта и продукта.
 
-Цветная полоска слева по типу.
+**Содержание:**
+- **Миссия**: «Помогаем находить нехоженые места и людей, которые их знают»
+- **Аудитория**: нишевые энтузиасты adventure-туризма (астрофотографы, хайкеры, каякеры, этнографы)
+- **Голос бренда** — 4 принципа:
+  1. *Тёплый, не корпоративный* — пишем как опытный друг, а не туроператор
+  2. *Конкретный, не пафосный* — «3 часа на УАЗике от Мурманска», а не «незабываемое приключение»
+  3. *Честный про сложности* — говорим про опасности, отсутствие связи, плохие дороги
+  4. *Двуязычный по умолчанию* — RU/EN равноправны, без машинного перевода
+- **Что мы НЕ делаем**: AI-отзывы, накрутка, продажа данных, скрытая реклама, генерация фейк-контента
+- **Лексикон Do/Don't** с примерами на RU и EN
+- **Эмодзи-словарь**: 🥾 маршрут, 📍 место, ❓ вопрос, 🤝 митап, 📖 гайд, 🔥 огонь, 🔖 тайник
+- **Микрокопирайтинг**: empty states, errors, CTAs, loading — список канонических фраз
 
-### C. Создание поста `/club/new`
-Wizard: тип → содержание (заголовок, markdown, фото, ниши) → привязка мест из карты. Черновик в localStorage.
+### 1.2 Документ `DESIGN.md` (в корне)
+Дизайн-токены и визуальные правила.
 
-### D. Профиль участника `/club/u/:id`
-Расширение CreatorProfile: ниши-чипсы, статы (постов, 🔥, мест), лента его постов, кнопки Follow / TG / Заказать маршрут.
+**Содержание:**
+- Палитра (HSL, как в `index.css`): orange accent, beige bg, severity colors, post type colors
+- Типографика: иерархия, line-height
+- Spacing scale (Tailwind)
+- Компонентные правила: карточка 320px, аватар 28px, маркер 30px и т.д. (вытащить из существующей памяти)
+- Анимации: pulse, hover, transitions — список и где применяются
+- Что запрещено: backdrop-blur, Serif, тёмный фон по умолчанию, эмодзи-флаги стран
 
-### E. Заявка `/club/join`
-Форма-интро: кто ты, ниши, зачем в клуб, соцсети. Submit → отправка тебе в TG-бот на модерацию (используем существующий `dvushka_bot` deeplink).
+---
 
-### F. Реакции и комменты
-🔥-реакция (одна на пост) + плоские комменты, всё в localStorage.
+## Блок 2. Code Quality & DX
 
-### G. Интеграция с картой
-- В `PlaceCard` блок «О месте писали в клубе»
-- На карте чип «🔥 Из клуба» — подсветка упомянутых мест
+### 2.1 Архитектурная документация `ARCHITECTURE.md`
+Карта проекта для нового разработчика. Описывает:
+- Структуру папок (`pages/`, `components/`, `hooks/`, `data/`, `contexts/`, `lib/`)
+- Поток данных: `locations.json` → hooks → components
+- Слой клуба: types → seed-data → hooks (localStorage) → pages
+- Слои карты: как добавить новый layer (5 шагов: data → ref → effect → toggle → i18n)
+- Роли: user/creator/admin/member, где проверяются
+- i18n: как добавить новый ключ
+- ASCII-диаграмма основных потоков
 
-### H. Навигация
-Пункт «Клуб 🔥» в Header, иконка в MobileBottomNav, секция «Сообщество экспертов» на лендинге с превью 3 свежих постов.
+### 2.2 Code hygiene — точечный рефакторинг
+Без переписывания всего, фокус на проблемных точках:
 
-## Сид-контент (чтобы клуб не выглядел пустым)
-- 5-6 экспертов: астрофотограф, гид по Хибинам, каякер, фотограф-этнограф, гастро-блогер, скитур-гид
-- 8-10 постов разных типов от их имени
+**a) Вынести магические числа и строки в константы**
+- `src/lib/constants.ts` — KEY-имена localStorage (`club_user_posts_v1`, `club_membership_v1`, и т.д. — сейчас разбросаны по хукам), URL-ы тайл-серверов, дефолтные координаты Кольского, размеры маркеров.
+
+**b) Унификация localStorage хуков**
+Сейчас 6+ хуков (`useStash`, `useFavorites`, `useClubPosts`, `useClubReactions`, `useClubComments`, `useClubMembership`) повторяют один и тот же паттерн `load → useState → useEffect → save`. Создать `src/hooks/useLocalStorage.ts` (типизированный generic) и переписать остальные на него — минус ~40 строк дублирования и единая обработка ошибок парсинга.
+
+**c) Убрать `any` в критичных местах**
+- `MapView.tsx`: `(L as any).heatLayer` → объявить корректный тип через module augmentation в `src/types/leaflet-heat.d.ts`.
+
+**d) Вынести Telegram deeplinks в один модуль**
+`src/lib/telegram.ts` — функции `openBot()`, `sendApplicationToBot()`, `shareToTelegram()`. Сейчас deeplink-логика дублируется минимум в 3 местах.
+
+**e) JSDoc на публичные хуки и утилиты**
+Короткие шапки с описанием, параметрами и примером — то, что увидит контрибьютор в IDE.
+
+### 2.3 Линт и формат
+- Проверить `eslint.config.js`: сейчас отключен `no-unused-vars` — оставить, но добавить `react-hooks/exhaustive-deps: "warn"` (если ещё нет)
+- Добавить `.editorconfig` (2 пробела, LF, utf-8)
+- Добавить `.prettierrc` минимальный
+
+### 2.4 Тесты
+Сейчас один `example.test.ts`. Добавить smoke-тесты для критичной логики:
+- `useClubPosts.filterAndSort` — фильтры по типу/нише/сортировке
+- `useClubMembership` — переходы статусов
+- `hasCapability` (роли)
+- `seasonal logic` — фильтрация по месяцу
+
+Не более 6-8 коротких тестов. Цель — пример для контрибьюторов, как писать тесты, а не покрытие 100%.
+
+---
+
+## Блок 3. Open Source готовность
+
+### 3.1 Документы в корне
+- **`README.md`** — полностью переписать. Сейчас generic-шаблон Lovable. Сделать настоящий: что это, скриншоты, фичи, demo-ссылка (`wowatlas.lovable.app`), стек, как запустить локально, как контрибьютить, лицензия, благодарности (vas3k.club, OSM, CartoDB, Leaflet).
+- **`CONTRIBUTING.md`** — как форкнуть, ветки, коммиты (Conventional Commits), как добавить новое место в `locations.json`, как добавить новый слой карты, как добавить новую опасность/коллекцию/нишу, code style, PR-шаблон.
+- **`CODE_OF_CONDUCT.md`** — Contributor Covenant 2.1 (стандарт), адаптированный под наш TOV.
+- **`LICENSE`** — MIT (если ОК) или AGPL-3.0 (как vas3k.club, чтобы форки тоже были открыты). Решить нужно.
+- **`SECURITY.md`** — куда писать про найденные уязвимости (TG-контакт хоста).
+- **`CHANGELOG.md`** — пустая заготовка по Keep a Changelog + первая запись.
+
+### 3.2 GitHub-папка `.github/`
+- `ISSUE_TEMPLATE/bug_report.md`
+- `ISSUE_TEMPLATE/feature_request.md`
+- `ISSUE_TEMPLATE/new_place.md` — отдельный шаблон, чтобы не-кодеры могли предлагать места заполнением формы
+- `ISSUE_TEMPLATE/new_hazard.md` — для опасностей
+- `PULL_REQUEST_TEMPLATE.md`
+- `FUNDING.yml` — куда донатить хосту (TG / Boosty / Patreon — на выбор)
+
+### 3.3 Гайды для контрибьюторов в `docs/`
+Маленькие how-to с примерами кода:
+- `docs/adding-a-place.md` — пошагово: схема, скриншоты Leaflet для координат, валидация
+- `docs/adding-a-map-layer.md` — на примере Hazards layer
+- `docs/adding-a-club-post-type.md`
+- `docs/i18n.md` — как добавить язык / ключ
+- `docs/data-sources.md` — откуда берём данные, какие лицензии (OSM, UNESCO, и т.д.)
+
+### 3.4 Onboarding скрипт (опционально, флажок к обсуждению)
+`npm run check` — алиас на `lint && tsc --noEmit && test` чтобы контрибьютор одной командой проверил готовность PR.
+
+---
 
 ## Файлы
 
-**Новые:** `src/pages/Club{Feed,Post,NewPost,Member,Join}.tsx`, `src/components/club/{PostCard,PostTypeIcon,ReactionButton,CommentThread,MemberBadge,NicheChips,JoinForm}.tsx`, `src/data/{clubPosts,clubMembers,niches}.ts`, `src/hooks/{useClubPosts,useClubReactions,useClubComments,useClubMembership}.ts`, `src/types/club.ts`.
+**Создать (документация):**
+- `BRAND.md`, `DESIGN.md`, `ARCHITECTURE.md`
+- `README.md` (перезаписать)
+- `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `LICENSE`, `SECURITY.md`, `CHANGELOG.md`
+- `.github/ISSUE_TEMPLATE/{bug_report,feature_request,new_place,new_hazard}.md`
+- `.github/PULL_REQUEST_TEMPLATE.md`, `.github/FUNDING.yml`
+- `docs/adding-a-place.md`, `docs/adding-a-map-layer.md`, `docs/adding-a-club-post-type.md`, `docs/i18n.md`, `docs/data-sources.md`
+- `.editorconfig`, `.prettierrc`
 
-**Правки:** `App.tsx` (5 роутов), `Header.tsx`, `MobileBottomNav.tsx`, `PlaceCard.tsx`, `Hero.tsx`, `i18n.ts`, `roles.ts` (роль `member`), новый mem://features/club.
+**Создать (код):**
+- `src/lib/constants.ts` — ключи localStorage, URL тайлов, дефолты
+- `src/lib/telegram.ts` — deeplink-утилиты
+- `src/hooks/useLocalStorage.ts` — generic
+- `src/types/leaflet-heat.d.ts` — типы для leaflet.heat
+- 4-5 файлов в `src/test/` — smoke-тесты
 
-## Что НЕ делаем сейчас (фаза 2 — после валидации)
-- Реальный бэкенд на Supabase (posts, comments, reactions, members + RLS)
-- Платная подписка
-- TG/email-нотификации о новых постах в твоей нише
-- Поиск, wiki-гайды, баттлы, лички
+**Править (код, точечно):**
+- `useStash`, `useFavorites`, `useClubPosts`, `useClubReactions`, `useClubComments`, `useClubMembership` — переписать на `useLocalStorage`
+- `MapView.tsx` — убрать `as any` для heatLayer, вынести URL тайлов в constants
+- `ClubJoin.tsx`, `TelegramBridgeSheet.tsx`, `useTelegramCTA.ts` — использовать `lib/telegram.ts`
+- `package.json` — скрипт `check`
 
-Фаза 2 включается после 10+ заявок и 5+ постов от не-сидов.
+**Память:**
+- `mem://brand/voice-and-tokens` — короткое ядро TOV + ссылка на BRAND.md
+- `mem://tech/code-conventions` — правила: localStorage через useLocalStorage, deeplinks через lib/telegram, новые слои по 5-шаговому гайду
+- Обновить `mem://index.md` — добавить ссылки
 
-## Визуал
-Тёплый бежевый, оранжевый акцент. Карточки с цветной полоской по типу. 🔥 — крупная тактильная кнопка. Аватары 28px в комментах.
+---
 
-## Нужны 4 решения перед стартом
+## 3 решения нужны от тебя
 
-**1. Бэкенд:** localStorage + seed (быстро, для валидации) или сразу Lovable Cloud (медленнее, но посты видны всем)?
+**1. Лицензия**: MIT (максимум свободы — могут закрыть форк) или **AGPL-3.0** (как vas3k.club — форки обязаны быть открытыми)?
 
-**2. Вход в клуб:** свободно с анкетой / заявка + ручное одобрение через TG / только по инвайтам от членов?
+**2. Контакт для модерации/security**: твой личный TG (`@username`) или общий бот (`@dvushka_bot`)? Подставлю в CONTRIBUTING/SECURITY/FUNDING.
 
-**3. Стартовые ниши:** Астротуризм, Хайкинг, Каякинг/SUP, Этнография, Гастрономия, Фотография, Дайвинг, Зимние виды — какие включаем в первую версию?
-
-**4. Скоуп фазы 1:** полный MVP по плану / минимум (без комментов и профилей) / только форма заявки сейчас (собираем вейтлист, клуб строим после)?
+**3. Скоуп сейчас**: делать всё (документы + рефакторинг + тесты + .github) одним заходом, или начать с **«документация + .github»** (чисто DX и комьюнити-готовность), а рефакторинг хуков и тесты — следующим шагом?
