@@ -1,39 +1,46 @@
 
-План:
+Добавлю три новых слоя на карту: световое загрязнение, дороги и туристическая нагрузка.
 
-## 1. Убрать атрибуцию Leaflet и «флаг Украины»
+## 1. Световое загрязнение (Light Pollution)
+Использую публичный тайл-сервер **Light Pollution Map** от djlorenz (jshine.net) — стандартная атласная подложка ночного неба, бесплатно, без ключа:
+- Тайлы: `https://djlorenz.github.io/astronomy/lp2022/overlay/tiles/tile_{z}_{x}_{y}.png` (overlay, прозрачный)
+- Накладывается поверх базовой карты с opacity ~0.7
+- Иконка: `Moon` из lucide
+- Кнопка: «Световое загрязнение» / «Light Pollution»
 
-«Флаг» — это значок Leaflet (`leaflet-attribution-flag`, синие/жёлтые полосы рядом с надписью «Leaflet»), который добавлен в новых версиях библиотеки. Уберём его CSS-правилом + полностью скроем control-attribution.
+## 2. Дороги
+Использую **OpenStreetMap Transport** или специализированный road-overlay. Лучший бесплатный вариант — **CartoDB Voyager** (выделяет дорожную сеть ярко) или **Esri World Transportation** (чистый road overlay):
+- Тайлы: `https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}` (overlay)
+- Иконка: `Route` из lucide
+- Кнопка: «Дороги» / «Roads»
 
-В `src/index.css` добавить:
-```css
-.leaflet-attribution-flag { display: none !important; }
-.leaflet-control-attribution { display: none !important; }
-```
+## 3. Туристическая нагрузка (Tourist Pressure)
+Готового публичного тайл-слоя «загрязнения туристами» не существует. Сделаю **синтетический heatmap** на основе наших же данных:
+- Из `kolaPlaces` беру координаты + популярность места (по тегам/категории) → строю heatmap-слой через `leaflet.heat` (уже есть в стеке Leaflet, добавлю lib `leaflet.heat`).
+- Чем больше популярных мест в зоне — тем ярче «горячая точка».
+- Иконка: `Flame` из lucide
+- Кнопка: «Туристическая нагрузка» / «Tourist Pressure»
+- Подпись внизу: «Оценка на основе плотности и популярности мест»
 
-В `MapView.tsx` дополнительно передать `attributionControl: false` в `L.map(...)` — чтобы не рендерился вовсе.
+## Изменения файлов
 
-## 2. Заменить «олдовый» террейн (OpenTopoMap) на красивый
+### `src/components/map/MapView.tsx`
+- Добавить пропсы: `showLightPollutionLayer`, `showRoadsLayer`, `showTouristPressureLayer` + соответствующие `onToggle...`
+- Добавить refs: `lightPollutionLayerRef`, `roadsLayerRef`, `touristPressureLayerRef`
+- 3 новых useEffect для управления слоями
+- Для heatmap — импорт `leaflet.heat`
 
-Сейчас режим «Рельеф» использует `opentopomap.org` — серо-зелёные растровые тайлы в стиле бумажной карты. Это и выглядит «олдово».
+### `src/components/map/CategoryFilter.tsx`
+- Добавить 3 новых пункта меню (Moon / Route / Flame) с пропсами
 
-Предлагаю заменить на современный вариант в духе Windy/Mapbox Outdoors. Лучшие бесплатные варианты без ключа:
+### `src/components/map/KolaMap.tsx` (родитель)
+- Добавить 3 useState + прокинуть пропсы вниз
 
-- **Esri World Topo Map** — рельеф с отмывкой, насыщенные цвета, без ключа.
-- **Esri World Imagery + Hillshade overlay** — спутник + полупрозрачная отмывка рельефа (наиболее «как Windy»).
+### `package.json`
+- Установить `leaflet.heat` + типы
 
-Использую комбинацию: **Esri World Imagery (база) + Esri Hillshade (overlay 60%) + подписи**. Это даёт спутниковую картинку с подчёркнутым рельефом и горами — визуально близко к Windy/Gaia GPS.
+### `src/lib/i18n.ts`
+- Добавить переводы: `lightPollution.title`, `roads.title`, `touristPressure.title`, `touristPressure.note`
 
-Изменение в `MapView.tsx` (блок `showTerrainLayer`): вместо одного `opentopomap` слоя создаём `L.layerGroup` из:
-1. `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}`
-2. `https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}` (opacity 0.5)
-3. `https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}` (подписи)
-
-Хранить ссылку на `layerGroup` в `terrainTileRef` (расширить тип на `L.Layer`).
-
-## 3. Файлы
-
-- `src/components/map/MapView.tsx` — `attributionControl: false`, переписать блок terrain.
-- `src/index.css` — скрыть `.leaflet-attribution-flag` и `.leaflet-control-attribution`.
-
-Краткий итог: пропадёт значок Leaflet/флага, а кнопка «Рельеф» будет показывать красивую спутниково-рельефную карту вместо старомодной OpenTopoMap.
+## Итог
+Пользователь получит ещё 3 переключаемых слоя в правой панели карты: ночные огни (для астротуризма / поиска северного сияния), сеть дорог (для планирования логистики), плотность туристической активности (чтобы наоборот искать менее затоптанные места).
