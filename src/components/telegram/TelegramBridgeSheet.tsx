@@ -10,8 +10,7 @@ import {
 } from '@/components/ui/sheet';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { track } from '@/lib/analytics';
-import { buildBotUrl, openBridgeBot } from '@/lib/telegram';
-import { TG_BRIDGE_BOT_USERNAME } from '@/lib/constants';
+import { openBridgeBot } from '@/lib/telegram';
 
 interface TelegramBridgeSheetProps {
   isOpen: boolean;
@@ -69,7 +68,7 @@ export const TelegramBridgeSheet = memo(({
       : 'Continue your conversation with AI assistant in Telegram.',
   };
 
-  const deepLink = buildBotUrl(TG_BRIDGE_BOT_USERNAME, payload);
+  
 
   const handleOpenBot = () => {
     track({ event: 'telegram_cta_clicked', trigger });
