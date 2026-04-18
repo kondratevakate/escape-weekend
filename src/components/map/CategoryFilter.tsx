@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { categoryConfig } from '@/data/kolaPlaces';
 import { creators } from '@/data/creators';
 import { cn } from '@/lib/utils';
-import { Bookmark, Scroll, Landmark, UtensilsCrossed, Plus, Mountain } from 'lucide-react';
+import { Bookmark, Scroll, Landmark, UtensilsCrossed, Plus, Mountain, Moon, Route, Flame } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Tooltip,
@@ -22,6 +22,12 @@ interface CategoryFilterProps {
   onToggleRestaurantLayer: () => void;
   showTerrainLayer: boolean;
   onToggleTerrainLayer: () => void;
+  showLightPollutionLayer: boolean;
+  onToggleLightPollutionLayer: () => void;
+  showRoadsLayer: boolean;
+  onToggleRoadsLayer: () => void;
+  showTouristPressureLayer: boolean;
+  onToggleTouristPressureLayer: () => void;
 }
 
 export const CategoryFilter = ({ 
@@ -36,6 +42,12 @@ export const CategoryFilter = ({
   onToggleRestaurantLayer,
   showTerrainLayer,
   onToggleTerrainLayer,
+  showLightPollutionLayer,
+  onToggleLightPollutionLayer,
+  showRoadsLayer,
+  onToggleRoadsLayer,
+  showTouristPressureLayer,
+  onToggleTouristPressureLayer,
 }: CategoryFilterProps) => {
   const { language, t } = useLanguage();
   const [activeCreators, setActiveCreators] = useState<Set<string>>(new Set());
@@ -88,6 +100,27 @@ export const CategoryFilter = ({
       onClick: onToggleTerrainLayer,
       icon: <Mountain className="h-4 w-4" />,
       label: language === 'ru' ? 'Рельеф' : 'Terrain',
+    },
+    {
+      key: 'lightPollution',
+      active: showLightPollutionLayer,
+      onClick: onToggleLightPollutionLayer,
+      icon: <Moon className="h-4 w-4" />,
+      label: language === 'ru' ? 'Световое загрязнение' : 'Light Pollution',
+    },
+    {
+      key: 'roads',
+      active: showRoadsLayer,
+      onClick: onToggleRoadsLayer,
+      icon: <Route className="h-4 w-4" />,
+      label: language === 'ru' ? 'Дороги' : 'Roads',
+    },
+    {
+      key: 'touristPressure',
+      active: showTouristPressureLayer,
+      onClick: onToggleTouristPressureLayer,
+      icon: <Flame className="h-4 w-4" />,
+      label: language === 'ru' ? 'Туристическая нагрузка' : 'Tourist Pressure',
     },
     {
       key: 'addmap',

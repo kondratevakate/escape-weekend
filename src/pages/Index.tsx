@@ -65,6 +65,9 @@ const Index = () => {
   const [showUnescoLayer, setShowUnescoLayer] = useState(false);
   const [showRestaurantLayer, setShowRestaurantLayer] = useState(false);
   const [showTerrainLayer, setShowTerrainLayer] = useState(false);
+  const [showLightPollutionLayer, setShowLightPollutionLayer] = useState(false);
+  const [showRoadsLayer, setShowRoadsLayer] = useState(false);
+  const [showTouristPressureLayer, setShowTouristPressureLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -207,11 +210,17 @@ const Index = () => {
             showUnescoLayer={showUnescoLayer}
             showRestaurantLayer={showRestaurantLayer}
             showTerrainLayer={showTerrainLayer}
+            showLightPollutionLayer={showLightPollutionLayer}
+            showRoadsLayer={showRoadsLayer}
+            showTouristPressureLayer={showTouristPressureLayer}
             onToggleFavoritesOnly={handleToggleFavoritesOnly}
             onToggleHistoryLayer={handleToggleHistoryLayer}
             onToggleUnescoLayer={handleToggleUnescoLayer}
             onToggleRestaurantLayer={handleToggleRestaurantLayer}
             onToggleTerrainLayer={handleToggleTerrainLayer}
+            onToggleLightPollutionLayer={() => setShowLightPollutionLayer(p => !p)}
+            onToggleRoadsLayer={() => setShowRoadsLayer(p => !p)}
+            onToggleTouristPressureLayer={() => setShowTouristPressureLayer(p => !p)}
             onMapReady={handleMapReady}
             onPlaceClick={handlePlaceClick}
           />
