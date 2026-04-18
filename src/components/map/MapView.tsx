@@ -406,15 +406,15 @@ export const MapView = ({
 
       const marker = L.marker(place.coordinates, { icon });
 
-      // Click handler
+      // Click handler — uses ref so we don't re-create markers on every parent render
       marker.on('click', () => {
-        onPlaceClick?.(place);
+        onPlaceClickRef.current?.(place);
       });
 
       marker.addTo(mapInstanceRef.current!);
       markersRef.current.push(marker);
     });
-  }, [places, favorites, onPlaceClick]);
+  }, [places, favorites]);
 
   return (
     <div className="relative h-full w-full">
@@ -424,49 +424,80 @@ export const MapView = ({
         style={{ background: 'hsl(var(--muted))' }}
       />
       
-      {/* Category filter overlay - right side, vertically centered */}
-      <div className="absolute top-1/2 -translate-y-1/2 right-3 z-[1000]">
-        <div className="bg-background/95 backdrop-blur-sm rounded-xl p-2 shadow-lg border border-border">
-          <CategoryFilter
-            showFavoritesOnly={showFavoritesOnly}
-            onToggleFavoritesOnly={onToggleFavoritesOnly}
-            favoritesCount={favoritesCount}
-            showHistoryLayer={showHistoryLayer}
-            onToggleHistoryLayer={onToggleHistoryLayer}
-            showUnescoLayer={showUnescoLayer}
-            onToggleUnescoLayer={onToggleUnescoLayer}
-            showRestaurantLayer={showRestaurantLayer}
-            onToggleRestaurantLayer={onToggleRestaurantLayer}
-            showTerrainLayer={showTerrainLayer}
-            onToggleTerrainLayer={onToggleTerrainLayer}
-            showLightPollutionLayer={showLightPollutionLayer}
-            onToggleLightPollutionLayer={onToggleLightPollutionLayer}
-            showRoadsLayer={showRoadsLayer}
-            onToggleRoadsLayer={onToggleRoadsLayer}
-            showTouristPressureLayer={showTouristPressureLayer}
-            onToggleTouristPressureLayer={onToggleTouristPressureLayer}
-            showHazardsLayer={showHazardsLayer}
-            onToggleHazardsLayer={onToggleHazardsLayer}
-          />
+      {/* Category filter — desktop: vertical right column; mobile: horizontal top bar */}
+      {isMobile ? (
+        <div className="absolute top-2 left-2 right-2 z-[1000]">
+          <div className="bg-background rounded-xl px-2 py-1.5 shadow-md border border-border overflow-x-auto">
+            <div className="flex flex-row gap-1 min-w-max">
+              <CategoryFilter
+                orientation="horizontal"
+                showFavoritesOnly={showFavoritesOnly}
+                onToggleFavoritesOnly={onToggleFavoritesOnly}
+                favoritesCount={favoritesCount}
+                showHistoryLayer={showHistoryLayer}
+                onToggleHistoryLayer={onToggleHistoryLayer}
+                showUnescoLayer={showUnescoLayer}
+                onToggleUnescoLayer={onToggleUnescoLayer}
+                showRestaurantLayer={showRestaurantLayer}
+                onToggleRestaurantLayer={onToggleRestaurantLayer}
+                showTerrainLayer={showTerrainLayer}
+                onToggleTerrainLayer={onToggleTerrainLayer}
+                showLightPollutionLayer={showLightPollutionLayer}
+                onToggleLightPollutionLayer={onToggleLightPollutionLayer}
+                showRoadsLayer={showRoadsLayer}
+                onToggleRoadsLayer={onToggleRoadsLayer}
+                showTouristPressureLayer={showTouristPressureLayer}
+                onToggleTouristPressureLayer={onToggleTouristPressureLayer}
+                showHazardsLayer={showHazardsLayer}
+                onToggleHazardsLayer={onToggleHazardsLayer}
+              />
+            </div>
+          </div>
         </div>
-      </div>
-      
+      ) : (
+        <div className="absolute top-1/2 -translate-y-1/2 right-3 z-[1000]">
+          <div className="bg-background rounded-xl p-2 shadow-lg border border-border">
+            <CategoryFilter
+              showFavoritesOnly={showFavoritesOnly}
+              onToggleFavoritesOnly={onToggleFavoritesOnly}
+              favoritesCount={favoritesCount}
+              showHistoryLayer={showHistoryLayer}
+              onToggleHistoryLayer={onToggleHistoryLayer}
+              showUnescoLayer={showUnescoLayer}
+              onToggleUnescoLayer={onToggleUnescoLayer}
+              showRestaurantLayer={showRestaurantLayer}
+              onToggleRestaurantLayer={onToggleRestaurantLayer}
+              showTerrainLayer={showTerrainLayer}
+              onToggleTerrainLayer={onToggleTerrainLayer}
+              showLightPollutionLayer={showLightPollutionLayer}
+              onToggleLightPollutionLayer={onToggleLightPollutionLayer}
+              showRoadsLayer={showRoadsLayer}
+              onToggleRoadsLayer={onToggleRoadsLayer}
+              showTouristPressureLayer={showTouristPressureLayer}
+              onToggleTouristPressureLayer={onToggleTouristPressureLayer}
+              showHazardsLayer={showHazardsLayer}
+              onToggleHazardsLayer={onToggleHazardsLayer}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Indigenous Peoples Legend */}
-      <IndigenousPeoplesLegend 
+      <IndigenousPeoplesLegend
         isVisible={showHistoryLayer}
         onPeopleClick={(id, center) => {
           mapInstanceRef.current?.flyTo(center, 5, { duration: 1.5 });
         }}
       />
-      
+
       {/* UNESCO attribution */}
       {showUnescoLayer && (
         <div className="absolute bottom-2 left-2 z-[1000]">
-          <a 
-            href="https://whc.unesco.org" 
-            target="_blank" 
+          <a
+            href="https://whc.unesco.org"
+            target="_blank"
             rel="noopener noreferrer"
-            className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="bg-background border border-border px-2 py-1 rounded text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             🏛️ UNESCO World Heritage Centre
           </a>
@@ -476,7 +507,7 @@ export const MapView = ({
       {/* Tourist pressure note */}
       {showTouristPressureLayer && (
         <div className="absolute bottom-2 left-2 z-[1000]">
-          <div className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground">
+          <div className="bg-background border border-border px-2 py-1 rounded text-xs text-muted-foreground">
             🔥 Оценка на основе плотности и популярности мест
           </div>
         </div>
