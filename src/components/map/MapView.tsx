@@ -291,6 +291,12 @@ export const MapView = ({
             onToggleRestaurantLayer={onToggleRestaurantLayer}
             showTerrainLayer={showTerrainLayer}
             onToggleTerrainLayer={onToggleTerrainLayer}
+            showLightPollutionLayer={showLightPollutionLayer}
+            onToggleLightPollutionLayer={onToggleLightPollutionLayer}
+            showRoadsLayer={showRoadsLayer}
+            onToggleRoadsLayer={onToggleRoadsLayer}
+            showTouristPressureLayer={showTouristPressureLayer}
+            onToggleTouristPressureLayer={onToggleTouristPressureLayer}
           />
         </div>
       </div>

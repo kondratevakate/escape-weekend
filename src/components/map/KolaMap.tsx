@@ -41,6 +41,9 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
   const [showUnescoLayer, setShowUnescoLayer] = useState(false);
   const [showRestaurantLayer, setShowRestaurantLayer] = useState(false);
   const [showTerrainLayer, setShowTerrainLayer] = useState(false);
+  const [showLightPollutionLayer, setShowLightPollutionLayer] = useState(false);
+  const [showRoadsLayer, setShowRoadsLayer] = useState(false);
+  const [showTouristPressureLayer, setShowTouristPressureLayer] = useState(false);
   const [isMapReady, setIsMapReady] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [isExploreMode, setIsExploreMode] = useState(false);
@@ -189,6 +192,12 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
             onToggleRestaurantLayer={() => setShowRestaurantLayer(p => !p)}
             showTerrainLayer={showTerrainLayer}
             onToggleTerrainLayer={() => setShowTerrainLayer(p => !p)}
+            showLightPollutionLayer={showLightPollutionLayer}
+            onToggleLightPollutionLayer={() => setShowLightPollutionLayer(p => !p)}
+            showRoadsLayer={showRoadsLayer}
+            onToggleRoadsLayer={() => setShowRoadsLayer(p => !p)}
+            showTouristPressureLayer={showTouristPressureLayer}
+            onToggleTouristPressureLayer={() => setShowTouristPressureLayer(p => !p)}
           />
         </div>
       )}
@@ -217,11 +226,17 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
         showUnescoLayer={showUnescoLayer}
         showRestaurantLayer={showRestaurantLayer}
         showTerrainLayer={showTerrainLayer}
+        showLightPollutionLayer={showLightPollutionLayer}
+        showRoadsLayer={showRoadsLayer}
+        showTouristPressureLayer={showTouristPressureLayer}
         onToggleFavoritesOnly={() => setShowFavoritesOnly(p => !p)}
         onToggleHistoryLayer={() => setShowHistoryLayer(p => !p)}
         onToggleUnescoLayer={() => setShowUnescoLayer(p => !p)}
         onToggleRestaurantLayer={() => setShowRestaurantLayer(p => !p)}
         onToggleTerrainLayer={() => setShowTerrainLayer(p => !p)}
+        onToggleLightPollutionLayer={() => setShowLightPollutionLayer(p => !p)}
+        onToggleRoadsLayer={() => setShowRoadsLayer(p => !p)}
+        onToggleTouristPressureLayer={() => setShowTouristPressureLayer(p => !p)}
         onMapReady={handleMapReady}
         onPlaceClick={handlePlaceClick}
       />
