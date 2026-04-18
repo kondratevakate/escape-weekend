@@ -393,6 +393,15 @@ export const MapView = ({
           </a>
         </div>
       )}
+
+      {/* Tourist pressure note */}
+      {showTouristPressureLayer && (
+        <div className="absolute bottom-2 left-2 z-[1000]">
+          <div className="bg-background/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-muted-foreground">
+            🔥 Оценка на основе плотности и популярности мест
+          </div>
+        </div>
+      )}
     </div>
   );
 };
