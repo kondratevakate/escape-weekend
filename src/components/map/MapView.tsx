@@ -188,6 +188,78 @@ export const MapView = ({
     }
   }, [showTerrainLayer]);
 
+  // Light pollution overlay (djlorenz)
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    if (showLightPollutionLayer && !lightPollutionLayerRef.current) {
+      lightPollutionLayerRef.current = L.tileLayer(
+        'https://djlorenz.github.io/astronomy/lp2022/overlay/tiles/tile_{z}_{x}_{y}.png',
+        { maxZoom: 8, opacity: 0.7, attribution: '' }
+      ).addTo(mapInstanceRef.current);
+    } else if (!showLightPollutionLayer && lightPollutionLayerRef.current) {
+      lightPollutionLayerRef.current.remove();
+      lightPollutionLayerRef.current = null;
+    }
+  }, [showLightPollutionLayer]);
+
+  // Roads overlay (Esri World Transportation)
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    if (showRoadsLayer && !roadsLayerRef.current) {
+      roadsLayerRef.current = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',
+        { maxZoom: 19, opacity: 0.9 }
+      ).addTo(mapInstanceRef.current);
+    } else if (!showRoadsLayer && roadsLayerRef.current) {
+      roadsLayerRef.current.remove();
+      roadsLayerRef.current = null;
+    }
+  }, [showRoadsLayer]);
+
+  // Tourist pressure heatmap (synthetic, based on places)
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    if (showTouristPressureLayer && !touristPressureLayerRef.current) {
+      // Weight: popular categories get higher intensity
+      const weightFor = (cat: PlaceCategory) => {
+        switch (cat) {
+          case 'city': return 1.0;
+          case 'attraction': return 0.9;
+          case 'unesco': return 0.85;
+          case 'museum': return 0.7;
+          case 'restaurant': return 0.6;
+          case 'village': return 0.45;
+          case 'hiking': return 0.4;
+          case 'nature': return 0.5;
+          case 'reserve': return 0.35;
+          default: return 0.3;
+        }
+      };
+      const heatPoints: [number, number, number][] = places.map(p => [
+        p.coordinates[0],
+        p.coordinates[1],
+        weightFor(p.category),
+      ]);
+      // @ts-expect-error leaflet.heat extends L
+      touristPressureLayerRef.current = L.heatLayer(heatPoints, {
+        radius: 35,
+        blur: 25,
+        maxZoom: 10,
+        max: 1.0,
+        gradient: {
+          0.2: 'hsl(199, 89%, 48%)',
+          0.4: 'hsl(160, 84%, 39%)',
+          0.6: 'hsl(45, 93%, 47%)',
+          0.8: 'hsl(25, 95%, 53%)',
+          1.0: 'hsl(0, 84%, 50%)',
+        },
+      }).addTo(mapInstanceRef.current);
+    } else if (!showTouristPressureLayer && touristPressureLayerRef.current) {
+      touristPressureLayerRef.current.remove();
+      touristPressureLayerRef.current = null;
+    }
+  }, [showTouristPressureLayer, places]);
+
   // Update markers when places or favorites change
   useEffect(() => {
     if (!mapInstanceRef.current) return;
