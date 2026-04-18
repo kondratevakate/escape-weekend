@@ -114,6 +114,26 @@ export const DiscoverPanel = ({
         {/* Explore Mode Card */}
         <ExploreCard onStart={onStartExplore} />
 
+        {/* Labs promo — vote for AI features */}
+        <Link
+          to="/labs"
+          className="block rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors p-3"
+        >
+          <div className="flex items-start gap-2.5">
+            <FlaskConical className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-foreground">
+                {language === 'ru' ? 'Голосуй за AI-фичи' : 'Vote for AI features'}
+              </p>
+              <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                {language === 'ru'
+                  ? 'Подкасты, AI-маршруты, поездки-сюрпризы — выбери, что делать первым.'
+                  : 'Podcasts, AI routes, surprise trips — pick what we build first.'}
+              </p>
+            </div>
+          </div>
+        </Link>
+
         {/* Collections — always visible filter pills */}
         <div className={cn(
           "space-y-2 transition-all duration-500",
