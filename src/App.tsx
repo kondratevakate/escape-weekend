@@ -13,6 +13,11 @@ import StashPage from "./pages/StashPage";
 import CreatorDashboard from "./pages/CreatorDashboard";
 import CreatorPublicPage from "./pages/CreatorPublicPage";
 import CookiePolicy from "./pages/CookiePolicy";
+import ClubFeed from "./pages/ClubFeed";
+import ClubPost from "./pages/ClubPost";
+import ClubMember from "./pages/ClubMember";
+import ClubJoin from "./pages/ClubJoin";
+import ClubNewPost from "./pages/ClubNewPost";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +39,11 @@ const AppContent = () => {
           <Route path="/stash" element={<StashPage />} />
           <Route path="/creator" element={<CreatorDashboard />} />
           <Route path="/creator/:id" element={<CreatorPublicPage />} />
+          <Route path="/club" element={<ClubFeed />} />
+          <Route path="/club/new" element={<ClubNewPost />} />
+          <Route path="/club/join" element={<ClubJoin />} />
+          <Route path="/club/post/:id" element={<ClubPost />} />
+          <Route path="/club/u/:id" element={<ClubMember />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
