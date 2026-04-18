@@ -56,7 +56,7 @@ export const MapView = ({
   const markersRef = useRef<L.Marker[]>([]);
   const historyLayerRef = useRef<L.GeoJSON | null>(null);
   const baseTileRef = useRef<L.TileLayer | null>(null);
-  const terrainTileRef = useRef<L.TileLayer | null>(null);
+  const terrainTileRef = useRef<L.Layer | null>(null);
 
   // Initialize map
   useEffect(() => {
@@ -66,6 +66,7 @@ export const MapView = ({
       center,
       zoom,
       zoomControl: false,
+      attributionControl: false,
     });
 
     // CartoDB Positron - fast, minimal, free
@@ -146,16 +147,24 @@ export const MapView = ({
 
     if (showTerrainLayer) {
       baseTileRef.current?.remove();
-      terrainTileRef.current = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
-        maxZoom: 17,
-      }).addTo(mapInstanceRef.current);
+      const imagery = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        { maxZoom: 19 }
+      );
+      const hillshade = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Elevation/World_Hillshade/MapServer/tile/{z}/{y}/{x}',
+        { maxZoom: 19, opacity: 0.5 }
+      );
+      const labels = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+        { maxZoom: 19 }
+      );
+      terrainTileRef.current = L.layerGroup([imagery, hillshade, labels]).addTo(mapInstanceRef.current);
     } else {
       terrainTileRef.current?.remove();
       terrainTileRef.current = null;
       if (!mapInstanceRef.current.hasLayer(baseTileRef.current!)) {
         baseTileRef.current = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
           subdomains: 'abcd',
           maxZoom: 19,
         }).addTo(mapInstanceRef.current);
