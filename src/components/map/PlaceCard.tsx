@@ -20,9 +20,11 @@ export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
   const { t, language } = useLanguage();
   const config = categoryConfig[place.category];
   const location = getLocationById(place.id);
+  const { byPlaceId } = useClubPosts();
+  const clubPosts = byPlaceId(place.id);
 
   return (
-    <div className="bg-card rounded-xl shadow-2xl border border-border overflow-hidden w-[320px]">
+    <div className="bg-card rounded-xl shadow-2xl border border-border overflow-hidden w-[320px] max-h-[80vh] overflow-y-auto">
       {/* 1. Photo */}
       <div className="relative h-[200px] overflow-hidden">
         {location?.photo_url ? (
