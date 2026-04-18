@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUser } from '@/contexts/UserContext';
 import { cn } from '@/lib/utils';
@@ -26,7 +25,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
-  const { language, t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const { accessMode, role } = useUser();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -67,7 +66,12 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
     <header className="fixed top-0 left-0 right-0 z-[1500] bg-background border-b border-border">
       <div className="h-14 md:h-16 px-3 md:px-6 flex items-center gap-2 md:gap-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 shrink-0" aria-label={t('landing.brand')}>
+        <Link
+          to="/"
+          className="flex items-center gap-2 shrink-0"
+          aria-label={t('landing.brand')}
+          title={language === 'ru' ? 'Escape Weekend · от Катюшка 2 Ушка' : 'Escape Weekend · by Katyushka 2 Ushka'}
+        >
           <span className="text-xl">🌌</span>
           <span className="font-semibold text-foreground hidden md:inline">
             {t('landing.brand')}
@@ -113,18 +117,6 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
           </Link>
         </div>
 
-        {/* Labs link — desktop only */}
-        <div className="shrink-0 hidden md:block">
-          <Link
-            to="/labs"
-            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-semibold"
-            title={language === 'ru' ? 'Лаборатория идей' : 'Idea Lab'}
-          >
-            <span>🧪</span>
-            <span>{language === 'ru' ? 'Лаборатория' : 'Labs'}</span>
-          </Link>
-        </div>
-
         {/* Stash icon — desktop only (mobile uses bottom nav) */}
         <div className="shrink-0 hidden md:block">
           <Link to="/stash" className="relative p-2 rounded-full hover:bg-muted transition-colors inline-flex" aria-label={language === 'ru' ? 'Тайник' : 'Secret Stash'}>
@@ -135,11 +127,6 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
               </span>
             )}
           </Link>
-        </div>
-
-        {/* Language Switcher */}
-        <div className="shrink-0">
-          <LanguageSwitcher variant="globe" />
         </div>
 
         {/* User Menu */}
@@ -170,7 +157,7 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
                       )}
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      Hedonist Odyssey · {language === 'ru' ? 'полный доступ' : 'full access'}
+                      Escape Weekend · {language === 'ru' ? 'полный доступ' : 'full access'}
                     </p>
                   </div>
                   <DropdownMenuSeparator className="m-0" />
@@ -206,6 +193,17 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
                   >
                     <ExternalLink className="h-4 w-4 mr-2" />
                     {language === 'ru' ? 'Реферальная ссылка' : 'Referral link'}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="m-0" />
+                  <DropdownMenuItem
+                    onClick={() => setLanguage(language === 'ru' ? 'en' : 'ru')}
+                    className="px-4 py-2.5 cursor-pointer"
+                  >
+                    <span className="mr-2">🌐</span>
+                    <span className="flex-1">{language === 'ru' ? 'Язык' : 'Language'}</span>
+                    <span className="text-xs text-muted-foreground uppercase">
+                      {language === 'ru' ? 'RU → EN' : 'EN → RU'}
+                    </span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="m-0" />
                   <div className="px-4 py-2.5">
