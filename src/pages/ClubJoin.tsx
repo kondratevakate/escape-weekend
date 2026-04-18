@@ -67,7 +67,7 @@ const ClubJoin = () => {
           </p>
           <div className="space-y-2">
             <Button asChild className="w-full">
-              <a href="https://t.me/dvushka_bot" target="_blank" rel="noopener noreferrer">
+              <a href={buildBotUrl()} target="_blank" rel="noopener noreferrer">
                 <Send className="h-4 w-4 mr-2" /> {language === 'ru' ? 'Написать куратору' : 'Message curator'}
               </a>
             </Button>
