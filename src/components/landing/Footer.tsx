@@ -5,7 +5,7 @@ export const Footer = () => {
   const { language } = useLanguage();
 
   return (
-    <footer className="bg-background border-t border-border py-4 px-4 md:px-6">
+    <footer className="hidden md:block bg-background border-t border-border py-4 px-4 md:px-6">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
           <span className="text-lg">🌌</span>
@@ -14,12 +14,12 @@ export const Footer = () => {
           </span>
           <span className="hidden sm:inline">—</span>
           <span className="hidden sm:inline">
-            {language === 'ru' 
-              ? 'Интерактивная карта путешествий' 
+            {language === 'ru'
+              ? 'Интерактивная карта путешествий'
               : 'Interactive travel map'}
           </span>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1">
             {language === 'ru' ? 'Сделано с' : 'Made with'}

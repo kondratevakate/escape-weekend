@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,48 +6,49 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { UserProvider, useUser } from "@/contexts/UserContext";
+import { UserProvider } from "@/contexts/UserContext";
 import { LoginModal } from "@/components/auth/LoginModal";
+import { RouteLoader } from "@/components/RouteLoader";
 import Index from "./pages/Index";
-import TripPlanner from "./pages/TripPlanner";
-import StashPage from "./pages/StashPage";
-import CreatorDashboard from "./pages/CreatorDashboard";
-import CreatorPublicPage from "./pages/CreatorPublicPage";
-import CookiePolicy from "./pages/CookiePolicy";
-import ClubFeed from "./pages/ClubFeed";
-import ClubPost from "./pages/ClubPost";
-import ClubMember from "./pages/ClubMember";
-import ClubJoin from "./pages/ClubJoin";
-import ClubNewPost from "./pages/ClubNewPost";
-import NotFound from "./pages/NotFound";
+
+// Lazy-load secondary routes — keeps initial bundle focused on the map
+const TripPlanner = lazy(() => import("./pages/TripPlanner"));
+const StashPage = lazy(() => import("./pages/StashPage"));
+const CreatorDashboard = lazy(() => import("./pages/CreatorDashboard"));
+const CreatorPublicPage = lazy(() => import("./pages/CreatorPublicPage"));
+const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
+const ClubFeed = lazy(() => import("./pages/ClubFeed"));
+const ClubPost = lazy(() => import("./pages/ClubPost"));
+const ClubMember = lazy(() => import("./pages/ClubMember"));
+const ClubJoin = lazy(() => import("./pages/ClubJoin"));
+const ClubNewPost = lazy(() => import("./pages/ClubNewPost"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { accessMode } = useUser();
-
-  // All users can access the app — no locked screen
-
   return (
     <>
       <Toaster />
       <Sonner />
       <LoginModal />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/trip-planner" element={<TripPlanner />} />
-          <Route path="/stash" element={<StashPage />} />
-          <Route path="/creator" element={<CreatorDashboard />} />
-          <Route path="/creator/:id" element={<CreatorPublicPage />} />
-          <Route path="/club" element={<ClubFeed />} />
-          <Route path="/club/new" element={<ClubNewPost />} />
-          <Route path="/club/join" element={<ClubJoin />} />
-          <Route path="/club/post/:id" element={<ClubPost />} />
-          <Route path="/club/u/:id" element={<ClubMember />} />
-          <Route path="/cookie-policy" element={<CookiePolicy />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<RouteLoader />}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/trip-planner" element={<TripPlanner />} />
+            <Route path="/stash" element={<StashPage />} />
+            <Route path="/creator" element={<CreatorDashboard />} />
+            <Route path="/creator/:id" element={<CreatorPublicPage />} />
+            <Route path="/club" element={<ClubFeed />} />
+            <Route path="/club/new" element={<ClubNewPost />} />
+            <Route path="/club/join" element={<ClubJoin />} />
+            <Route path="/club/post/:id" element={<ClubPost />} />
+            <Route path="/club/u/:id" element={<ClubMember />} />
+            <Route path="/cookie-policy" element={<CookiePolicy />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </>
   );

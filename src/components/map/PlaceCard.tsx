@@ -44,7 +44,7 @@ export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
         )}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 p-1.5 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background transition-colors active:scale-95"
+          className="absolute top-2 right-2 p-1.5 bg-background border border-border rounded-full hover:bg-muted transition-colors active:scale-95"
         >
           <X className="h-4 w-4" />
         </button>
