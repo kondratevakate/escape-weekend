@@ -1,12 +1,15 @@
 import { Place, categoryConfig } from '@/data/kolaPlaces';
 import { getLocationById } from '@/data/locations';
-import { X, MapPin, UtensilsCrossed, ExternalLink } from 'lucide-react';
+import { X, MapPin, UtensilsCrossed, ExternalLink, Flame } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { SeasonPills } from '@/components/SeasonPills';
 import { WarningsSection } from './WarningsSection';
 import { OnlyHereSection } from './OnlyHereSection';
 import { SafetySection } from './SafetySection';
+import { Link } from 'react-router-dom';
+import { useClubPosts } from '@/hooks/useClubPosts';
+import { POST_TYPE_META } from '@/types/club';
 
 interface PlaceCardProps {
   place: Place;
@@ -17,9 +20,11 @@ export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
   const { t, language } = useLanguage();
   const config = categoryConfig[place.category];
   const location = getLocationById(place.id);
+  const { byPlaceId } = useClubPosts();
+  const clubPosts = byPlaceId(place.id);
 
   return (
-    <div className="bg-card rounded-xl shadow-2xl border border-border overflow-hidden w-[320px]">
+    <div className="bg-card rounded-xl shadow-2xl border border-border overflow-hidden w-[320px] max-h-[80vh] overflow-y-auto">
       {/* 1. Photo */}
       <div className="relative h-[200px] overflow-hidden">
         {location?.photo_url ? (
@@ -122,7 +127,32 @@ export const PlaceCard = ({ place, onClose }: PlaceCardProps) => {
           <WarningsSection warnings={location.warnings} language={language} />
         )}
 
-        {/* 7. External link */}
+        {/* Club posts about this place */}
+        {clubPosts.length > 0 && (
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 inline-flex items-center gap-1">
+              <Flame className="h-3 w-3 text-orange-500" />
+              {language === 'ru' ? 'О месте писали в клубе' : 'From the club'}
+            </p>
+            <div className="space-y-1.5">
+              {clubPosts.slice(0, 3).map(p => {
+                const meta = POST_TYPE_META[p.type];
+                return (
+                  <Link
+                    key={p.id}
+                    to={`/club/post/${p.id}`}
+                    className="flex items-start gap-2 p-2 rounded-md bg-muted/40 hover:bg-muted text-xs"
+                  >
+                    <span className="text-base shrink-0" style={{ color: meta.color }}>{meta.emoji}</span>
+                    <span className="text-foreground line-clamp-2 leading-snug">{p.title[language]}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* External link */}
         <a
           href="#"
           target="_blank"
