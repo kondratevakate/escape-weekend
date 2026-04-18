@@ -113,6 +113,18 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
           </Link>
         </div>
 
+        {/* Labs link — desktop only */}
+        <div className="shrink-0 hidden md:block">
+          <Link
+            to="/labs"
+            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-semibold"
+            title={language === 'ru' ? 'Лаборатория идей' : 'Idea Lab'}
+          >
+            <span>🧪</span>
+            <span>{language === 'ru' ? 'Лаборатория' : 'Labs'}</span>
+          </Link>
+        </div>
+
         {/* Stash icon — desktop only (mobile uses bottom nav) */}
         <div className="shrink-0 hidden md:block">
           <Link to="/stash" className="relative p-2 rounded-full hover:bg-muted transition-colors inline-flex" aria-label={language === 'ru' ? 'Тайник' : 'Secret Stash'}>
@@ -180,6 +192,13 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
                     <span className="text-xs text-muted-foreground">
                       {stashCount} {language === 'ru' ? 'мест' : 'places'}
                     </span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate('/labs')}
+                    className="px-4 py-2.5 cursor-pointer"
+                  >
+                    <span className="mr-2">🧪</span>
+                    <span className="flex-1">{language === 'ru' ? 'Лаборатория идей' : 'Idea Lab'}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={handleCopyReferral}

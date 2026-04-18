@@ -65,3 +65,47 @@ export const shareToTelegram = (url: string, text: string): void => {
   const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
   window.open(shareUrl, '_blank', 'noopener,noreferrer');
 };
+
+// ─── Labs (internal Kickstarter) ─────────────────────────────────────────────
+/**
+ * Open Telegram to confirm a "support" pledge for a Labs idea.
+ * No real money is collected; the bot operator handles the transfer manually.
+ */
+export const openSupportFeature = (ideaId: string, amount: number, ideaTitle: string): void => {
+  const text = encodeURIComponent(
+    `💛 Хочу поддержать идею WoWAtlas Labs\n\n` +
+      `Идея: ${ideaTitle}\n` +
+      `Сумма: ${amount} ₽\n\n` +
+      `Напишите, как перевести.`
+  );
+  const start = `support_${ideaId}_${amount}`;
+  window.open(
+    `https://t.me/${TG_BOT_USERNAME}?start=${start}&text=${text}`,
+    '_blank',
+    'noopener,noreferrer'
+  );
+};
+
+/**
+ * Send a user-submitted feature idea to the curator bot.
+ */
+export interface LabsSubmissionPayload {
+  title: string;
+  description: string;
+  expectedPrice: string;
+}
+
+export const sendIdeaToBot = (payload: LabsSubmissionPayload): void => {
+  const text = encodeURIComponent(
+    `💡 Новая идея в WoWAtlas Labs\n\n` +
+      `📝 ${payload.title}\n\n` +
+      `${payload.description}\n\n` +
+      `💰 Ожидаемая стоимость: ${payload.expectedPrice || '—'}`
+  );
+  const start = `idea_${Date.now()}`;
+  window.open(
+    `https://t.me/${TG_BOT_USERNAME}?start=${start}&text=${text}`,
+    '_blank',
+    'noopener,noreferrer'
+  );
+};
