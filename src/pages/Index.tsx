@@ -1,15 +1,14 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
+import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { DiscoverPanel, TagFilter, TAG_FILTERS } from '@/components/landing/DiscoverPanel';
 import { MapView } from '@/components/map/MapView';
 import { PlaceCard } from '@/components/map/PlaceCard';
 import { RestaurantCard } from '@/components/map/RestaurantCard';
-import { ExploreMode } from '@/components/map/ExploreMode';
 import { TelegramBridgeSheet } from '@/components/telegram/TelegramBridgeSheet';
 import { CookieConsent } from '@/components/CookieConsent';
-import { WelcomeModal } from '@/components/WelcomeModal';
 import { Place } from '@/data/kolaPlaces';
 import { kolaPlaces, locations } from '@/data/locations';
 import { getAllCulturalCenters } from '@/data/indigenousPeoplesLayer';
@@ -23,6 +22,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Loader2, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+
+// Lazy: not needed on the first frame
+const ExploreMode = lazy(() => import('@/components/map/ExploreMode').then(m => ({ default: m.ExploreMode })));
+const WelcomeModal = lazy(() => import('@/components/WelcomeModal').then(m => ({ default: m.WelcomeModal })));
 
 const KOLA_CENTER: [number, number] = [68.0, 34.0];
 const INITIAL_ZOOM = 7;
@@ -156,17 +159,17 @@ const Index = () => {
   }, [navigate]);
 
   return (
-    <div className="h-screen flex flex-col bg-background">
-      <Header 
+    <div className="h-screen flex flex-col bg-background pb-14 md:pb-0">
+      <Header
         stashCount={stashCount}
       />
-      
+
       <main className="flex-1 pt-14 md:pt-16 flex flex-col md:flex-row overflow-hidden">
         <aside 
           className={cn(
             "order-2 md:order-1 overflow-y-auto border-t md:border-t-0 md:border-r border-border bg-background transition-all duration-300",
             "h-[40vh] md:h-full",
-            isSidebarOpen ? "md:w-[320px]" : "md:w-0 md:overflow-hidden"
+            isSidebarOpen ? "md:w-[280px]" : "md:w-0 md:overflow-hidden"
           )}
         >
           <DiscoverPanel
@@ -262,22 +265,27 @@ const Index = () => {
       </main>
 
       <Footer />
+      <MobileBottomNav stashCount={stashCount} />
       <CookieConsent />
 
-      <WelcomeModal
-        onExploreMap={handleWelcomeExplore}
-        onSwipeMode={handleWelcomeSwipe}
-        onHighlightCollections={handleWelcomeCollections}
-        onOpenStash={handleWelcomeStash}
-      />
+      <Suspense fallback={null}>
+        <WelcomeModal
+          onExploreMap={handleWelcomeExplore}
+          onSwipeMode={handleWelcomeSwipe}
+          onHighlightCollections={handleWelcomeCollections}
+          onOpenStash={handleWelcomeStash}
+        />
+      </Suspense>
 
       {isExploreMode && (
-        <ExploreMode
-          places={filteredPlaces}
-          stashedIds={stashedIds}
-          onSaveToStash={handleSaveToStash}
-          onClose={() => setIsExploreMode(false)}
-        />
+        <Suspense fallback={null}>
+          <ExploreMode
+            places={filteredPlaces}
+            stashedIds={stashedIds}
+            onSaveToStash={handleSaveToStash}
+            onClose={() => setIsExploreMode(false)}
+          />
+        </Suspense>
       )}
 
       <TelegramBridgeSheet
