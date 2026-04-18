@@ -142,7 +142,15 @@
   }
 }
 
-/* Prose styles for cookie policy page */
+/* Hazard danger marker pulse */
+@keyframes hazard-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(0, 84%, 50%, 0.6), 0 3px 10px rgba(0,0,0,0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 8px hsl(0, 84%, 50%, 0), 0 3px 10px rgba(0,0,0,0.25);
+  }
+}
 .prose {
   @apply text-foreground;
 }
