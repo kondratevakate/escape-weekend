@@ -1,12 +1,15 @@
 import { Place, categoryConfig } from '@/data/kolaPlaces';
 import { getLocationById } from '@/data/locations';
-import { X, MapPin, UtensilsCrossed, ExternalLink } from 'lucide-react';
+import { X, MapPin, UtensilsCrossed, ExternalLink, Flame } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { SeasonPills } from '@/components/SeasonPills';
 import { WarningsSection } from './WarningsSection';
 import { OnlyHereSection } from './OnlyHereSection';
 import { SafetySection } from './SafetySection';
+import { Link } from 'react-router-dom';
+import { useClubPosts } from '@/hooks/useClubPosts';
+import { POST_TYPE_META } from '@/types/club';
 
 interface PlaceCardProps {
   place: Place;
