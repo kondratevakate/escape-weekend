@@ -7,7 +7,8 @@ import { ResourcesSection } from './ResourcesSection';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
-import { AlertTriangle, Sparkles, Sun, ChevronDown } from 'lucide-react';
+import { AlertTriangle, Sparkles, Sun, ChevronDown, FlaskConical } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { getCurrentMonthKey } from '@/components/SeasonPills';
 import {
   Collapsible,
