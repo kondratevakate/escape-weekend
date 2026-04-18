@@ -174,7 +174,7 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
                     className="px-4 py-2.5 cursor-pointer"
                   >
                     <span className="mr-2">🗄</span>
-                    <span className="flex-1">Secret Stash</span>
+                    <span className="flex-1">{language === 'ru' ? 'Тайник' : 'Secret Stash'}</span>
                     <span className="text-xs text-muted-foreground">
                       {stashCount} {language === 'ru' ? 'мест' : 'places'}
                     </span>
