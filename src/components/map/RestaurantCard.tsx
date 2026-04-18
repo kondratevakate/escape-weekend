@@ -37,12 +37,12 @@ export const RestaurantCard = ({ place, onClose }: RestaurantCardProps) => {
         )}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 p-1.5 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background transition-colors active:scale-95"
+          className="absolute top-2 right-2 p-1.5 bg-background border border-border rounded-full hover:bg-muted transition-colors active:scale-95"
         >
           <X className="h-4 w-4" />
         </button>
         {/* Price badge */}
-        <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-background/80 backdrop-blur-sm rounded-full text-xs font-bold text-foreground">
+        <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-background border border-border rounded-full text-xs font-bold text-foreground">
           {restaurant.price_range}
         </div>
       </div>
