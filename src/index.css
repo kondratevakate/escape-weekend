@@ -125,6 +125,11 @@
     transform: scale(1.15);
     box-shadow: 0 6px 20px rgba(0,0,0,0.35);
   }
+
+  .leaflet-attribution-flag,
+  .leaflet-control-attribution {
+    display: none !important;
+  }
 }
 
 /* Favorite marker pulse animation */
