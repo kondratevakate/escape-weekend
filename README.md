@@ -1,73 +1,95 @@
-# Welcome to your Lovable project
+# 🗺️ WoWAtlas
 
-## Project info
+**Niche community map for adventure-travel enthusiasts.**
+Find unbeaten places — and the people who actually know them.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+🌐 **Live demo:** [wowatlas.lovable.app](https://wowatlas.lovable.app)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## What is this?
 
-**Use Lovable**
+WoWAtlas is an open-source map + community for people who plan their own trips and want depth over polish. It started as a guide to the Kola Peninsula and is growing into a multi-region atlas with:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- 🗺️ **Curated map** of real, visited places — no AI-generated reviews, no SEO slop
+- 🔖 **Stash** — save places with the season you plan to visit
+- ⚠️ **Hazards layer** — honest warnings: closed roads, dangerous treks, no-signal zones
+- 🪶 **Indigenous peoples layer** — 12 ethnic groups across northern Russia
+- 🍽️ **Restaurants layer** — 65+ specialty places worth a detour
+- 🌌 **Seasonal logic** — "good to go this month" based on real conditions, not guesses
+- 🔥 **Club** — invite-only community of niche experts (astrophotographers, hikers, kayakers, ethnographers, …) sharing routes and secret spots, [vas3k.club](https://vas3k.club)-style
+- 📱 **Telegram Mini App** ready
 
-Changes made via Lovable will be committed automatically to this repo.
+## Screenshots
 
-**Use your preferred IDE**
+> Drop screenshots in `docs/img/` and link them here.
+> `![Map](./docs/img/map.png)` `![Club](./docs/img/club.png)`
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+React 18 · TypeScript 5 · Vite 5 · Tailwind CSS · shadcn/ui · Leaflet (CartoDB Positron) · react-router-dom · Vitest
 
-Follow these steps:
+User state lives in `localStorage` (no backend yet — see [phase 2 plan](./.lovable/plan.md)).
+
+## Quickstart
+
+Requires Node 18+ and npm.
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+git clone https://github.com/YOUR_USERNAME/wowatlas.git
+cd wowatlas
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Open http://localhost:5173.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Other commands
 
-**Use GitHub Codespaces**
+```sh
+npm run build      # production build
+npm run lint       # ESLint
+npm run test       # Vitest (run once)
+npm run test:watch # Vitest watch mode
+npm run check      # lint + typecheck + tests (run before opening a PR)
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## How to contribute
 
-## What technologies are used for this project?
+Three ways, ordered from easiest to most involved:
 
-This project is built with:
+1. **Suggest a new place** — open an issue with the [New Place template](./.github/ISSUE_TEMPLATE/new_place.md). No code needed.
+2. **Report a hazard** — open an issue with the [New Hazard template](./.github/ISSUE_TEMPLATE/new_hazard.md). Help us keep people safe.
+3. **Code contributions** — read [`CONTRIBUTING.md`](./CONTRIBUTING.md), pick an issue labeled `good-first-issue`, open a PR.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Before opening a PR, run `npm run check`.
 
-## How can I deploy this project?
+## Documentation
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+| Doc | What it covers |
+|---|---|
+| [`BRAND.md`](./BRAND.md) | Mission, voice, microcopy, what we don't do |
+| [`DESIGN.md`](./DESIGN.md) | Color tokens, typography, components, motion |
+| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Code structure, data flow, conventions |
+| [`CONTRIBUTING.md`](./CONTRIBUTING.md) | Workflow, commits, PR process |
+| [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) | Community rules |
+| [`SECURITY.md`](./SECURITY.md) | Reporting vulnerabilities |
+| [`docs/`](./docs) | How-to guides (adding places, layers, post types, i18n) |
 
-## Can I connect a custom domain to my Lovable project?
+## License
 
-Yes, you can!
+[AGPL-3.0](./LICENSE) — same spirit as [vas3k.club](https://github.com/vas3k/vas3k.club). If you fork and host it, your fork must also be open source.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Acknowledgements
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- [vas3k.club](https://vas3k.club) — community model, AGPL inspiration
+- [OpenStreetMap](https://www.openstreetmap.org) contributors — base geodata
+- [CartoDB Positron](https://carto.com/basemaps/) — map tiles
+- [Leaflet](https://leafletjs.com) — map engine
+- [shadcn/ui](https://ui.shadcn.com) — component primitives
+- [Lovable](https://lovable.dev) — initial scaffolding
+
+---
+
+Built and curated by humans who actually go to these places.
+Questions, ideas, or want to join the club? → [@dvushka_bot](https://t.me/dvushka_bot)
