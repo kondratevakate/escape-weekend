@@ -4,7 +4,7 @@ export const translations = {
   ru: {
     // Landing
     landing: {
-      brand: 'Hedonist Odyssey',
+      brand: 'Escape Weekend',
       headline: 'Откройте красоту Кольского полуострова',
       subheadline: 'Курированная подборка лучших мест — от северного сияния до древних гор. Исследуйте, сохраняйте, делитесь.',
       cta: 'Открыть карту',
@@ -172,7 +172,7 @@ export const translations = {
   en: {
     // Landing
     landing: {
-      brand: 'Hedonist Odyssey',
+      brand: 'Escape Weekend',
       headline: 'Discover the beauty of Kola Peninsula',
       subheadline: 'A curated collection of the best places — from Northern Lights to ancient mountains. Explore, save, share.',
       cta: 'Open map',
