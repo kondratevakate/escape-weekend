@@ -1,4 +1,5 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat';
@@ -69,6 +70,7 @@ export const MapView = ({
   onMapReady, 
   onPlaceClick 
 }: MapViewProps) => {
+  const isMobile = useIsMobile();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
@@ -79,6 +81,12 @@ export const MapView = ({
   const roadsLayerRef = useRef<L.TileLayer | null>(null);
   const touristPressureLayerRef = useRef<L.Layer | null>(null);
   const hazardsLayerRef = useRef<L.LayerGroup | null>(null);
+
+  // Keep latest onPlaceClick in a ref so marker effect doesn't re-run on every parent render
+  const onPlaceClickRef = useRef(onPlaceClick);
+  useEffect(() => {
+    onPlaceClickRef.current = onPlaceClick;
+  }, [onPlaceClick]);
 
   // Initialize map
   useEffect(() => {
