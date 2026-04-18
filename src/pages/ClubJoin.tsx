@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Send, Plus, CheckCircle2, ExternalLink } from 'lucide-react';
+import { sendApplicationToBot, buildBotUrl } from '@/lib/telegram';
+import { TG_BOT_USERNAME } from '@/lib/constants';
 
 const ClubJoin = () => {
   const { language } = useLanguage();
@@ -39,13 +41,14 @@ const ClubJoin = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !whyJoin.trim() || !contact.trim() || niches.length === 0) return;
-    submitApplication({ name: name.trim(), contact: contact.trim(), niches, whyJoin: whyJoin.trim() });
-
-    // Compose TG message
-    const text = encodeURIComponent(
-      `🆕 Заявка в клуб WoWAtlas\n\n👤 ${name}\n📬 ${contact}\n🏷 ${niches.join(', ')}\n\n💬 ${whyJoin}`
-    );
-    window.open(`https://t.me/dvushka_bot?start=club_${Date.now()}&text=${text}`, '_blank');
+    const payload = {
+      name: name.trim(),
+      contact: contact.trim(),
+      niches,
+      whyJoin: whyJoin.trim(),
+    };
+    submitApplication(payload);
+    sendApplicationToBot(payload);
   };
 
   if (status === 'pending') {

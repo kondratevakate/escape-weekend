@@ -21,17 +21,21 @@ export const SEED_NICHES: Niche[] = [
   { id: 'fishing',       emoji: '🎣', ru: 'Рыбалка',         en: 'Fishing' },
 ];
 
-const CUSTOM_KEY = 'club_custom_niches_v1';
+import { STORAGE_KEYS } from '@/lib/constants';
 
 export const getCustomNiches = (): Niche[] => {
-  try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || '[]'); } catch { return []; }
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.clubCustomNiches) || '[]');
+  } catch {
+    return [];
+  }
 };
 
 export const addCustomNiche = (niche: Niche) => {
   const all = getCustomNiches();
-  if (all.find(n => n.id === niche.id) || SEED_NICHES.find(n => n.id === niche.id)) return;
+  if (all.find((n) => n.id === niche.id) || SEED_NICHES.find((n) => n.id === niche.id)) return;
   all.push(niche);
-  localStorage.setItem(CUSTOM_KEY, JSON.stringify(all));
+  localStorage.setItem(STORAGE_KEYS.clubCustomNiches, JSON.stringify(all));
 };
 
 export const getAllNiches = (): Niche[] => [...SEED_NICHES, ...getCustomNiches()];
