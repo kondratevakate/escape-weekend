@@ -1,0 +1,26 @@
+{
+  "tokens": [
+    {
+      "token": "5d79a0be7192424eb239cd4ca38ffd03",
+      "user_id": 201599587,
+      "username": "katushka2ushka",
+      "regions": [
+        "all"
+      ],
+      "credits_granted": 100,
+      "minted_at": "2026-04-25T18:55:08.759836+00:00",
+      "share_codes": [
+        {
+          "code": "5e54d74e"
+        },
+        {
+          "code": "a78015a2"
+        },
+        {
+          "code": "ad12e4f1"
+        }
+      ],
+      "notes": "Test mint for local dev 2026-04-25"
+    }
+  ]
+}

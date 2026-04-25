@@ -1,4 +1,6 @@
 import { memo } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Sparkles, Check, AlertTriangle } from 'lucide-react';
 import { TripDay } from '@/types/trip';
 import { categoryConfig } from '@/data/kolaPlaces';
@@ -10,6 +12,8 @@ interface AITripResultProps {
   days: TripDay[];
   tips: string[];
   warnings: string[];
+  /** Free-text narrative from the LLM agent (markdown). */
+  aiText?: string;
   onAccept: () => void;
   onEdit: () => void;
 }
@@ -18,6 +22,7 @@ export const AITripResult = memo(({
   days,
   tips,
   warnings,
+  aiText,
   onAccept,
   onEdit,
 }: AITripResultProps) => {
@@ -32,6 +37,13 @@ export const AITripResult = memo(({
           {isRu ? 'AI собрал маршрут' : 'AI built your route'}
         </h3>
       </div>
+
+      {/* AI narrative (LLM prose) */}
+      {aiText && (
+        <div className="mb-4 prose prose-sm prose-neutral dark:prose-invert max-w-none bg-background/40 rounded-lg p-3">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{aiText}</ReactMarkdown>
+        </div>
+      )}
 
       {/* Days preview */}
       <div className="space-y-3 mb-4">

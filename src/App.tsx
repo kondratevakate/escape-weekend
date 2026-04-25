@@ -23,6 +23,8 @@ const ClubMember = lazy(() => import("./pages/ClubMember"));
 const ClubJoin = lazy(() => import("./pages/ClubJoin"));
 const ClubNewPost = lazy(() => import("./pages/ClubNewPost"));
 const LabsPage = lazy(() => import("./pages/LabsPage"));
+const ArticlesIndexPage = lazy(() => import("./pages/ArticlesIndexPage"));
+const ArticlePage = lazy(() => import("./pages/ArticlePage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -39,6 +41,8 @@ const AppContent = () => {
             <Route path="/" element={<Index />} />
             <Route path="/trip-planner" element={<TripPlanner />} />
             <Route path="/stash" element={<StashPage />} />
+            <Route path="/articles" element={<ArticlesIndexPage />} />
+            <Route path="/articles/:slug" element={<ArticlePage />} />
             <Route path="/creator" element={<CreatorDashboard />} />
             <Route path="/creator/:id" element={<CreatorPublicPage />} />
             <Route path="/club" element={<ClubFeed />} />

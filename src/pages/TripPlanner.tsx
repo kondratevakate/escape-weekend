@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react';
-import { ArrowLeft, Share2 } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { ArrowLeft, Share2, Sparkles } from 'lucide-react';
 import { PremiumGate } from '@/components/PremiumGate';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useUser } from '@/contexts/UserContext';
 import { useTripBuilder } from '@/hooks/useTripBuilder';
 import { TripSidebar } from '@/components/trip/TripSidebar';
 import { DayColumn } from '@/components/trip/DayColumn';
@@ -12,6 +13,8 @@ import { Place } from '@/data/kolaPlaces';
 import { kolaPlaces } from '@/data/locations';
 import { TripDay } from '@/types/trip';
 import { toast } from 'sonner';
+import { planTrip, isLLMConfigured, LLMUnavailableError, LLMRequestError } from '@/lib/llm';
+import { getCredits, decrementCredits } from '@/lib/credits';
 
 const TripPlanner = () => {
   const { language } = useLanguage();
@@ -41,12 +44,19 @@ const TripPlannerContent = () => {
     totalPlaces,
   } = useTripBuilder();
 
+  const { accessToken } = useUser();
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiResult, setAiResult] = useState<{
     days: TripDay[];
     tips: string[];
     warnings: string[];
+    aiText?: string;
   } | null>(null);
+  const [creditsRemaining, setCreditsRemaining] = useState(0);
+
+  useEffect(() => {
+    setCreditsRemaining(getCredits(accessToken));
+  }, [accessToken]);
 
   // Drag state
   const [draggedPlaceId, setDraggedPlaceId] = useState<string | null>(null);
@@ -83,6 +93,60 @@ const TripPlannerContent = () => {
     setDraggedFromDayId(null);
   }, [draggedPlaceId, draggedFromDayId, plan.days, reorderPlaceInDay, movePlaceBetweenDays]);
 
+  const buildDeterministicPlan = useCallback(() => {
+    const generateId = () => Math.random().toString(36).substring(2, 9);
+
+    const suitablePlaces = kolaPlaces.filter(p => {
+      if (plan.vehicleType === 'no-car' && (p.id === 'rybachy' || p.id === 'sredny')) {
+        return false;
+      }
+      if (plan.vehicleType === 'sedan' && p.howToGet?.includes('4x4')) {
+        return false;
+      }
+      return true;
+    });
+
+    const shuffled = [...suitablePlaces].sort(() => Math.random() - 0.5);
+    const generatedDays: TripDay[] = plan.days.map((day, i) => ({
+      id: generateId(),
+      dayNumber: day.dayNumber,
+      places: shuffled.slice(i * 2, i * 2 + 2).slice(0, 3),
+    }));
+
+    const tips = [
+      isRu ? 'Забронируйте жильё заранее в Териберке' : 'Book accommodation in Teriberka in advance',
+      isRu ? 'Проверьте прогноз погоды перед выездом' : 'Check weather forecast before departure',
+    ];
+
+    const warnings = plan.vehicleType !== '4x4'
+      ? [isRu ? 'Рыбачий и Средний недоступны без 4x4' : 'Rybachy and Sredny require 4x4']
+      : [];
+
+    return { days: generatedDays, tips, warnings };
+  }, [plan.vehicleType, plan.days, isRu]);
+
+  const buildLLMPrompt = useCallback((): string => {
+    const days = plan.days.length;
+    const vehicle =
+      plan.vehicleType === '4x4'
+        ? 'внедорожник 4x4'
+        : plan.vehicleType === 'sedan'
+          ? 'седан'
+          : 'без машины';
+    const interests =
+      plan.interests && plan.interests.length > 0
+        ? `Интересы: ${plan.interests.join(', ')}.`
+        : '';
+    return [
+      `У меня поездка на ${days} ${days === 1 ? 'день' : 'дней'} на Кольский полуостров.`,
+      `Транспорт: ${vehicle}.`,
+      interests,
+      'Предложи маршрут по дням с конкретными местами, временем и одной важной заметкой на день.',
+    ]
+      .filter(Boolean)
+      .join(' ');
+  }, [plan.days.length, plan.vehicleType, plan.interests]);
+
   const handleGenerateAI = useCallback(async () => {
     if (!plan.startDate || !plan.endDate) {
       toast.error(isRu ? 'Выберите даты поездки' : 'Select trip dates');
@@ -90,45 +154,62 @@ const TripPlannerContent = () => {
     }
 
     setIsGenerating(true);
-    
-    // Mock AI generation (will be replaced with real API call)
-    setTimeout(() => {
-      const generateId = () => Math.random().toString(36).substring(2, 9);
-      
-      // Simple mock logic based on interests and vehicle
-      const suitablePlaces = kolaPlaces.filter(p => {
-        // Filter based on vehicle
-        if (plan.vehicleType === 'no-car' && (p.id === 'rybachy' || p.id === 'sredny')) {
-          return false;
-        }
-        if (plan.vehicleType === 'sedan' && p.howToGet?.includes('4x4')) {
-          return false;
-        }
-        return true;
-      });
+    const deterministic = buildDeterministicPlan();
 
-      const shuffled = [...suitablePlaces].sort(() => Math.random() - 0.5);
-      const placesPerDay = Math.ceil(shuffled.length / plan.days.length);
-
-      const generatedDays: TripDay[] = plan.days.map((day, i) => ({
-        id: generateId(),
-        dayNumber: day.dayNumber,
-        places: shuffled.slice(i * 2, i * 2 + 2).slice(0, 3),
-      }));
-
-      const tips = [
-        isRu ? 'Забронируйте жильё заранее в Териберке' : 'Book accommodation in Teriberka in advance',
-        isRu ? 'Проверьте прогноз погоды перед выездом' : 'Check weather forecast before departure',
-      ];
-
-      const warnings = plan.vehicleType !== '4x4' 
-        ? [isRu ? 'Рыбачий и Средний недоступны без 4x4' : 'Rybachy and Sredny require 4x4']
-        : [];
-
-      setAiResult({ days: generatedDays, tips, warnings });
+    if (!isLLMConfigured() || !accessToken) {
+      // No proxy or no buyer token → silently use the deterministic-only plan.
+      setAiResult({ ...deterministic });
       setIsGenerating(false);
-    }, 2000);
-  }, [plan, isRu]);
+      return;
+    }
+
+    if (creditsRemaining <= 0) {
+      toast.error(
+        isRu ? 'Кредиты на AI закончились — пригласи друзей чтобы получить больше' : 'Out of AI credits — invite friends to earn more',
+      );
+      setAiResult({ ...deterministic });
+      setIsGenerating(false);
+      return;
+    }
+
+    try {
+      const resp = await planTrip({
+        token: accessToken,
+        prompt: buildLLMPrompt(),
+        region: 'murmansk',
+      });
+      const remaining = decrementCredits(accessToken);
+      setCreditsRemaining(remaining);
+      setAiResult({ ...deterministic, aiText: resp.text });
+    } catch (e) {
+      if (e instanceof LLMUnavailableError) {
+        toast.warning(isRu ? 'AI офлайн — показал базовый план' : 'AI offline — showing fallback plan');
+        setAiResult({ ...deterministic });
+      } else if (e instanceof LLMRequestError) {
+        const msg =
+          e.code === 'invalid_token'
+            ? isRu ? 'Токен не распознан' : 'Token not recognized'
+            : e.code === 'region_not_unlocked'
+              ? isRu ? 'Регион не открыт для тебя' : 'Region not unlocked'
+              : isRu ? 'AI временно недоступен' : 'AI temporarily unavailable';
+        toast.error(msg);
+        setAiResult({ ...deterministic });
+      } else {
+        toast.error(isRu ? 'Что-то пошло не так' : 'Something went wrong');
+        setAiResult({ ...deterministic });
+      }
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [
+    plan.startDate,
+    plan.endDate,
+    isRu,
+    buildDeterministicPlan,
+    buildLLMPrompt,
+    accessToken,
+    creditsRemaining,
+  ]);
 
   const handleAcceptAI = useCallback(() => {
     if (aiResult) {
@@ -154,10 +235,18 @@ const TripPlannerContent = () => {
               {isRu ? '🗺️ Планировщик маршрута' : '🗺️ Trip Planner'}
             </h1>
           </div>
-          <Button variant="outline" size="sm" disabled={totalPlaces === 0}>
-            <Share2 className="h-4 w-4 mr-1" />
-            {isRu ? 'Поделиться' : 'Share'}
-          </Button>
+          <div className="flex items-center gap-2">
+            {accessToken && (
+              <span className="hidden sm:inline-flex items-center gap-1 text-xs text-muted-foreground">
+                <Sparkles className="h-3.5 w-3.5" />
+                {creditsRemaining} {isRu ? 'кредитов' : 'credits'}
+              </span>
+            )}
+            <Button variant="outline" size="sm" disabled={totalPlaces === 0}>
+              <Share2 className="h-4 w-4 mr-1" />
+              {isRu ? 'Поделиться' : 'Share'}
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -182,6 +271,7 @@ const TripPlannerContent = () => {
                   days={aiResult.days}
                   tips={aiResult.tips}
                   warnings={aiResult.warnings}
+                  aiText={aiResult.aiText}
                   onAccept={handleAcceptAI}
                   onEdit={() => setAiResult(null)}
                 />
