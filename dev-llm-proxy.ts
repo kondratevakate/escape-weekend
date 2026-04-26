@@ -7,7 +7,7 @@
  * a separate process or paying for a deployed Worker.
  *
  * It reads GEMINI_API_KEY from one of:
- *   1. Vite's normal env loading (.env, .env.local in atlas-explorer/) —
+ *   1. Vite's normal env loading (.env, .env.local in escape-weekend/) —
  *      variable name `LOCAL_GEMINI_API_KEY` (NOT prefixed with VITE_ so it
  *      doesn't leak into the client bundle)
  *   2. Sibling `../2ushka_telegram_bot/.env` GEMINI_API_KEY as fallback
@@ -169,7 +169,7 @@ export function devLlmProxy(): Plugin {
           if (!apiKey) {
             return sendJson(res, 500, {
               error: 'no_gemini_key',
-              hint: 'set LOCAL_GEMINI_API_KEY in atlas-explorer/.env.local or GEMINI_API_KEY in 2ushka_telegram_bot/.env',
+              hint: 'set LOCAL_GEMINI_API_KEY in escape-weekend/.env.local or GEMINI_API_KEY in 2ushka_telegram_bot/.env',
             });
           }
 

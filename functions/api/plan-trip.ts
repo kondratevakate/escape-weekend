@@ -1,25 +1,16 @@
 /**
- * Cloudflare Worker that proxies AI trip-planner requests to Google Gemini
- * (via the OpenAI-compatible endpoint at generativelanguage.googleapis.com).
+ * Cloudflare Pages Function: POST /api/plan-trip.
  *
- * Why a Worker (vs calling Gemini from the browser directly): the API key
- * must not ship in the JS bundle. The Worker holds the secret and validates
- * the buyer token before forwarding.
+ * Validates a buyer token against the bundled allowlist, then proxies the
+ * trip-plan prompt to Google Gemini. Same fetch-handler logic as a Worker,
+ * just deployed automatically with `git push` (no wrangler).
  *
- * Deploy:
- *   cd atlas-explorer
- *   npm install -g wrangler  # one-time
- *   wrangler login            # one-time
- *   wrangler secret put GEMINI_API_KEY   # paste the AI Studio key
- *   wrangler deploy
- *
- * Local dev:
- *   wrangler dev               # runs on http://localhost:8787
- *
- * The front-end calls VITE_LLM_PROXY_URL/plan-trip (configured in .env).
+ * Set GEMINI_API_KEY in Cloudflare dashboard:
+ *   Pages → escape-weekend → Settings → Environment variables → Production
+ *   Type: Encrypted (so it's not visible in logs/UI after entry).
  */
 
-import buyerTokensJson from '../src/data/buyer_tokens.json';
+import buyerTokensJson from '../../src/data/buyer_tokens.json';
 
 interface BuyerEntry {
   token: string;
@@ -42,7 +33,6 @@ interface ChatMessage {
 
 interface Env {
   GEMINI_API_KEY: string;
-  /** Optional model override; default below. */
   GEMINI_MODEL?: string;
 }
 
@@ -59,7 +49,9 @@ const GEMINI_ENDPOINT =
   'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
 
 const ALLOWED_ORIGINS = [
-  'https://atlas.2ushka.com',
+  'https://escape-weekend.com',
+  'https://www.escape-weekend.com',
+  'https://atlas.escape-weekend.com',
   'http://localhost:5173',
   'http://localhost:8080',
   'http://localhost:4173',
@@ -105,12 +97,12 @@ function buildSystemPrompt(buyer: BuyerEntry, region?: string): string {
   ].join('\n');
 }
 
-async function handlePlanTrip(req: Request, env: Env): Promise<Response> {
-  const origin = req.headers.get('Origin');
+export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
+  const origin = request.headers.get('Origin');
 
   let payload: PlanRequest;
   try {
-    payload = (await req.json()) as PlanRequest;
+    payload = (await request.json()) as PlanRequest;
   } catch {
     return jsonResponse({ error: 'invalid_json' }, { status: 400 }, origin);
   }
@@ -133,6 +125,14 @@ async function handlePlanTrip(req: Request, env: Env): Promise<Response> {
   }
   if (payload.prompt.length > 4000) {
     return jsonResponse({ error: 'prompt_too_long' }, { status: 400 }, origin);
+  }
+
+  if (!env.GEMINI_API_KEY) {
+    return jsonResponse(
+      { error: 'no_api_key', hint: 'Set GEMINI_API_KEY in Cloudflare Pages environment variables' },
+      { status: 500 },
+      origin,
+    );
   }
 
   const messages: ChatMessage[] = [
@@ -177,27 +177,9 @@ async function handlePlanTrip(req: Request, env: Env): Promise<Response> {
     { status: 200 },
     origin,
   );
-}
+};
 
-export default {
-  async fetch(req: Request, env: Env): Promise<Response> {
-    const origin = req.headers.get('Origin');
-
-    if (req.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: corsHeaders(origin) });
-    }
-
-    const url = new URL(req.url);
-    if (url.pathname === '/plan-trip' && req.method === 'POST') {
-      return handlePlanTrip(req, env);
-    }
-    if (url.pathname === '/health' && req.method === 'GET') {
-      return jsonResponse(
-        { ok: true, tokens_loaded: tokenIndex.size, model: env.GEMINI_MODEL ?? DEFAULT_MODEL },
-        { status: 200 },
-        origin,
-      );
-    }
-    return jsonResponse({ error: 'not_found' }, { status: 404 }, origin);
-  },
+export const onRequestOptions: PagesFunction<Env> = async ({ request }) => {
+  const origin = request.headers.get('Origin');
+  return new Response(null, { status: 204, headers: corsHeaders(origin) });
 };

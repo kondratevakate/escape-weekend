@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Copies the canonical paid-article markdown files from the sibling
-# 2ushka_telegram_bot knowledge vault into atlas-explorer's article content
+# 2ushka_telegram_bot knowledge vault into escape-weekend's article content
 # directory.
 #
 # Master source: ../2ushka_telegram_bot/knowledge/articles/*.md
