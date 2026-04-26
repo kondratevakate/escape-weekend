@@ -42,9 +42,12 @@ const ArticlePage = () => {
   }
 
   const isLocked = article.gated && !hasAccess;
-  const visibleBody = isLocked
-    ? article.body.slice(0, Math.floor(article.body.length * TEASER_FRACTION))
-    : article.body;
+  const isComingSoon = !!article.comingSoon;
+  const visibleBody = isComingSoon
+    ? ''
+    : isLocked
+      ? article.body.slice(0, Math.floor(article.body.length * TEASER_FRACTION))
+      : article.body;
 
   return (
     <div className="min-h-screen bg-background">
@@ -76,11 +79,32 @@ const ArticlePage = () => {
           )}
         </header>
 
-        <article className="prose prose-neutral dark:prose-invert max-w-none">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{visibleBody}</ReactMarkdown>
-        </article>
+        {!isComingSoon && (
+          <article className="prose prose-neutral dark:prose-invert max-w-none">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{visibleBody}</ReactMarkdown>
+          </article>
+        )}
 
-        {isLocked && (
+        {isComingSoon && (
+          <aside className="mt-6 rounded-2xl border border-dashed border-border bg-muted/30 p-8 text-center space-y-3">
+            <h2 className="text-xl font-bold">
+              {isRu ? 'Скоро' : 'Coming soon'}
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              {isRu
+                ? 'Этот гайд в разработке. Подпишись на наш Telegram-бот, чтобы первым узнать о запуске.'
+                : 'This guide is in the works. Follow our Telegram bot to be first when it ships.'}
+            </p>
+            <Button asChild size="lg" className="gap-2">
+              <a href={TELEGRAM_BOT_URL} target="_blank" rel="noopener noreferrer">
+                <Send className="h-5 w-5" />
+                {isRu ? 'Подписаться' : 'Follow'}
+              </a>
+            </Button>
+          </aside>
+        )}
+
+        {!isComingSoon && isLocked && (
           <aside className="mt-10 rounded-2xl border border-border bg-muted/40 p-6 md:p-8 text-center space-y-4">
             <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
               <Lock className="h-6 w-6 text-primary" />

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Lock, Unlock } from 'lucide-react';
+import { Lock, Unlock, Hourglass } from 'lucide-react';
 import { Header } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -33,18 +33,24 @@ const ArticlesIndexPage = () => {
               >
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <h2 className="text-2xl font-semibold">{article.title}</h2>
-                  {article.gated ? (
+                  {article.comingSoon ? (
+                    <Hourglass className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
+                  ) : article.gated ? (
                     <Lock className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
                   ) : (
                     <Unlock className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">{article.summary}</p>
-                {article.gated && article.priceRub && (
+                {article.comingSoon ? (
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                    {isRu ? 'Скоро' : 'Coming soon'}
+                  </span>
+                ) : article.gated && article.priceRub ? (
                   <span className="text-xs uppercase tracking-wider text-muted-foreground">
                     {isRu ? `Гайд — ${article.priceRub}₽` : `Guide — ${article.priceRub}₽`}
                   </span>
-                )}
+                ) : null}
               </Link>
             </li>
           ))}

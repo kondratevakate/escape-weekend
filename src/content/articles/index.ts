@@ -1,43 +1,49 @@
 import murmanskRaw from './murmansk.md?raw';
-import altaiRaw from './altai.md?raw';
-import servicesRaw from './services.md?raw';
+import topToursRaw from './top-tours-2025.md?raw';
+import japanRaw from './japan.md?raw';
 
 export interface Article {
   slug: string;
   title: string;
-  region: 'murmansk' | 'altai' | 'services';
+  /** Free-form region tag matching `BuyerToken.regions[]` for access control. */
+  region: string;
   summary: string;
   body: string;
   gated: boolean;
   priceRub?: number;
+  /** Listed in the index but the page renders a "coming soon" stub. */
+  comingSoon?: boolean;
 }
 
 export const articles: Article[] = [
   {
     slug: 'murmansk',
-    title: 'Мурманск и Кольский полуостров',
+    title: 'Северная одиссея: Кольский',
     region: 'murmansk',
-    summary: 'Северное сияние, киты, снегоходы. Авторский гайд Кати с маршрутами, бюджетом и ошибками новичков.',
+    summary:
+      'Авторский маршрут-гид по Мурманской области. Северное сияние, киты, снегоходы. С маршрутами, бюджетом, ошибками новичков и реальной статистикой выходов в море.',
     body: murmanskRaw,
     gated: true,
     priceRub: 1500,
   },
   {
-    slug: 'altai',
-    title: 'Алтай',
-    region: 'altai',
-    summary: 'Авторский гайд по Алтаю.',
-    body: altaiRaw,
+    slug: 'top-tours-2025',
+    title: 'Топ туров на север 2025',
+    region: 'russia-north',
+    summary:
+      'Подборка из 14 туров по русскому северу: Земля Франца-Иосифа, Плато Путорана, Чукотка, Камчатка, Алтай, Архыз и другие — с честными плюсами и минусами от команды «Два ушка».',
+    body: topToursRaw,
     gated: true,
     priceRub: 1500,
   },
   {
-    slug: 'services',
-    title: 'Тарифы и сервисы',
-    region: 'services',
-    summary: 'Что входит в консьерж и в гайд.',
-    body: servicesRaw,
-    gated: false,
+    slug: 'japan',
+    title: 'Япония',
+    region: 'japan',
+    summary: 'Скоро. Авторский гайд по Японии в разработке.',
+    body: japanRaw,
+    gated: true,
+    comingSoon: true,
   },
 ];
 
