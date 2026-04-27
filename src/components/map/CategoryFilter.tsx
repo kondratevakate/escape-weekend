@@ -139,7 +139,7 @@ export const CategoryFilter = ({
     {
       key: 'addmap',
       active: false,
-      onClick: () => window.open('https://t.me/dvushka_bot?start=custom_map', '_blank'),
+      onClick: () => window.open('https://t.me/twoushka_bot?start=custom_map', '_blank'),
       icon: <Plus className="h-4 w-4" />,
       label: language === 'ru' ? 'Добавить свою карту' : 'Add your map',
     },

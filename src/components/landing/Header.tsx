@@ -232,7 +232,7 @@ export const Header = ({ onSearch, stashCount = 0 }: HeaderProps) => {
                   <DropdownMenuSeparator className="m-0" />
                   <div className="px-4 pb-3 pt-2">
                     <a
-                      href="https://t.me/dvushka_bot"
+                      href="https://t.me/twoushka_bot"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full rounded-lg bg-[hsl(174_60%_41%)] hover:bg-[hsl(174_60%_36%)] text-white text-sm font-medium py-2.5 transition-colors"

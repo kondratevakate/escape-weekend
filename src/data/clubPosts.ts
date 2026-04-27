@@ -18,7 +18,7 @@ export const SEED_POSTS: ClubPost[] = [
     cover: 'https://images.unsplash.com/photo-1483347756197-71ef80e95f73?w=800',
     niches: ['astro', 'photo'],
     linkedPlaceIds: ['teriberka'],
-    externalUrl: 'https://t.me/dvushka_bot',
+    externalUrl: 'https://t.me/twoushka_bot',
     externalLabel: 'Канал в TG',
   },
   {
@@ -40,7 +40,7 @@ export const SEED_POSTS: ClubPost[] = [
     difficulty: 'hard',
     durationDays: 3,
     linkedPlaceIds: ['khibiny'],
-    externalUrl: 'https://t.me/dvushka_bot',
+    externalUrl: 'https://t.me/twoushka_bot',
     externalLabel: 'Заказать гида',
   },
   {
@@ -77,7 +77,7 @@ export const SEED_POSTS: ClubPost[] = [
     niches: ['astro', 'photo'],
     meetupAt: '2025-03-28T21:00:00Z',
     meetupLocation: { ru: 'Мурманск, ТЦ Форум', en: 'Murmansk, Forum mall' },
-    externalUrl: 'https://t.me/dvushka_bot',
+    externalUrl: 'https://t.me/twoushka_bot',
     externalLabel: 'Записаться в TG',
   },
   {

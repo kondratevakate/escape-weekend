@@ -17,7 +17,7 @@ export const AddMapModal = () => {
   const handleSubmit = () => {
     // MVP: redirect to Telegram bot with prefilled data
     const text = encodeURIComponent(`New map: ${name}\nLink: ${link}\n${description}`);
-    window.open(`https://t.me/dvushka_bot?start=add_map_${text}`, '_blank');
+    window.open(`https://t.me/twoushka_bot?start=add_map_${text}`, '_blank');
     toast.success(language === 'ru' ? 'Запрос отправлен!' : 'Request sent!');
     setOpen(false);
     setName('');

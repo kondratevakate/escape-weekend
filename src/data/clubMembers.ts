@@ -12,7 +12,7 @@ export const SEED_MEMBERS: ClubMember[] = [
     niches: ['astro', 'photo'],
     location: 'Мурманск',
     joinedAt: '2024-09-01',
-    links: { telegram: 'https://t.me/dvushka_bot', instagram: 'https://instagram.com' },
+    links: { telegram: 'https://t.me/twoushka_bot', instagram: 'https://instagram.com' },
     stats: { postsCount: 3, fireReceived: 47, placesAdded: 8 },
   },
   {
@@ -26,7 +26,7 @@ export const SEED_MEMBERS: ClubMember[] = [
     niches: ['hiking', 'skitour'],
     location: 'Кировск',
     joinedAt: '2024-08-15',
-    links: { telegram: 'https://t.me/dvushka_bot', vas3k: 'https://vas3k.club' },
+    links: { telegram: 'https://t.me/twoushka_bot', vas3k: 'https://vas3k.club' },
     stats: { postsCount: 4, fireReceived: 62, placesAdded: 14 },
   },
   {
@@ -40,7 +40,7 @@ export const SEED_MEMBERS: ClubMember[] = [
     niches: ['kayak'],
     location: 'Териберка',
     joinedAt: '2024-10-02',
-    links: { telegram: 'https://t.me/dvushka_bot', youtube: 'https://youtube.com' },
+    links: { telegram: 'https://t.me/twoushka_bot', youtube: 'https://youtube.com' },
     stats: { postsCount: 2, fireReceived: 31, placesAdded: 5 },
   },
   {
@@ -54,7 +54,7 @@ export const SEED_MEMBERS: ClubMember[] = [
     niches: ['ethno', 'photo'],
     location: 'Ловозеро',
     joinedAt: '2024-07-20',
-    links: { telegram: 'https://t.me/dvushka_bot' },
+    links: { telegram: 'https://t.me/twoushka_bot' },
     stats: { postsCount: 2, fireReceived: 28, placesAdded: 6 },
   },
   {
@@ -68,7 +68,7 @@ export const SEED_MEMBERS: ClubMember[] = [
     niches: ['food', 'coffee'],
     location: 'Мурманск',
     joinedAt: '2024-11-10',
-    links: { telegram: 'https://t.me/dvushka_bot', website: 'https://example.com' },
+    links: { telegram: 'https://t.me/twoushka_bot', website: 'https://example.com' },
     stats: { postsCount: 2, fireReceived: 19, placesAdded: 11 },
   },
   {
@@ -82,7 +82,7 @@ export const SEED_MEMBERS: ClubMember[] = [
     niches: ['birdwatching'],
     location: 'Кандалакша',
     joinedAt: '2025-01-05',
-    links: { telegram: 'https://t.me/dvushka_bot' },
+    links: { telegram: 'https://t.me/twoushka_bot' },
     stats: { postsCount: 1, fireReceived: 12, placesAdded: 4 },
   },
 ];

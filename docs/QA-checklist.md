@@ -104,7 +104,7 @@
 4. Клик по посту → `/club/post/:id` открывает детали.
 5. `/club/join` — форма заявки:
    - Валидация пустых полей.
-   - Кнопка «Отправить через Telegram» открывает `t.me/dvushka_bot`.
+   - Кнопка «Отправить через Telegram» открывает `t.me/twoushka_bot`.
 6. `/club/new` — форма нового поста (если есть доступ).
 
 ---
@@ -192,7 +192,7 @@
 Минимум поддержки:
 - **Desktop**: Chrome последний, Safari 16+, Firefox последний.
 - **Mobile**: iOS Safari 16+, Chrome Android последний.
-- **Telegram Mini App**: открой `t.me/dvushka_bot` → запусти WebApp, прогоняй разделы 1–4.
+- **Telegram Mini App**: открой `t.me/twoushka_bot` → запусти WebApp, прогоняй разделы 1–4.
 
 ---
 

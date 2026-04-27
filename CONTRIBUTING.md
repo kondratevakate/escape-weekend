@@ -136,7 +136,7 @@ See `src/test/` for examples.
 
 - **Bug or feature?** → GitHub issue.
 - **Security issue?** → see [`SECURITY.md`](./SECURITY.md).
-- **Want to chat or join the club?** → [@dvushka_bot](https://t.me/dvushka_bot).
+- **Want to chat or join the club?** → [@twoushka_bot](https://t.me/twoushka_bot).
 
 ---
 

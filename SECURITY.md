@@ -4,7 +4,7 @@
 
 **Please do not open a public GitHub issue for security problems.**
 
-Instead, message the curator directly: [@dvushka_bot](https://t.me/dvushka_bot) on Telegram with subject line `[security]`.
+Instead, message the curator directly: [@twoushka_bot](https://t.me/twoushka_bot) on Telegram with subject line `[security]`.
 
 Include:
 - A description of the issue

@@ -9,7 +9,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { articleBySlug } from '@/content/articles';
 
-const TELEGRAM_BOT_URL = 'https://t.me/dvushka_bot';
+const TELEGRAM_BOT_URL = 'https://t.me/twoushka_bot';
 const TEASER_FRACTION = 0.35;
 
 const ArticlePage = () => {

@@ -45,7 +45,7 @@ export const PremiumGate = ({ children, feature }: PremiumGateProps) => {
         </p>
       </div>
       <Button asChild size="lg" className="w-full gap-2">
-        <a href="https://t.me/dvushka_bot" target="_blank" rel="noopener noreferrer">
+        <a href="https://t.me/twoushka_bot" target="_blank" rel="noopener noreferrer">
           <Send className="h-5 w-5" />
           {isRu ? 'Получить доступ' : 'Get access'}
         </a>

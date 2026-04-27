@@ -92,4 +92,4 @@ Before opening a PR, run `npm run check`.
 ---
 
 Built and curated by humans who actually go to these places.
-Questions, ideas, or want to join the club? → [@dvushka_bot](https://t.me/dvushka_bot)
+Questions, ideas, or want to join the club? → [@twoushka_bot](https://t.me/twoushka_bot)

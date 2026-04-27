@@ -27,7 +27,7 @@ export const LockedScreen = () => {
         </div>
 
         <Button asChild size="lg" className="w-full gap-2">
-          <a href="https://t.me/dvushka_bot" target="_blank" rel="noopener noreferrer">
+          <a href="https://t.me/twoushka_bot" target="_blank" rel="noopener noreferrer">
             <Send className="h-5 w-5" />
             {language === 'ru' ? 'Открыть в Telegram' : 'Open in Telegram'}
           </a>

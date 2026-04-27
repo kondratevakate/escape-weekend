@@ -53,7 +53,7 @@ export const COMMENT_AVATAR_SIZE = 28;
 
 // ─── Telegram ─────────────────────────────────────────────────────────────────
 /** Primary curator/moderation bot. Used for club applications, security reports. */
-export const TG_BOT_USERNAME = 'dvushka_bot';
+export const TG_BOT_USERNAME = 'twoushka_bot';
 /** Legacy bot used by the conversion bridge sheet. */
 export const TG_BRIDGE_BOT_USERNAME = 'KolaGuideBot';
 

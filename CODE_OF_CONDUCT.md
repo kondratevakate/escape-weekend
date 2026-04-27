@@ -30,7 +30,7 @@ This Code of Conduct applies in all project spaces (GitHub, the web app, the clu
 
 ## Enforcement
 
-Reports of abusive, harassing, or otherwise unacceptable behavior may be sent to the curator at [@dvushka_bot](https://t.me/dvushka_bot). All complaints will be reviewed and investigated promptly and fairly.
+Reports of abusive, harassing, or otherwise unacceptable behavior may be sent to the curator at [@twoushka_bot](https://t.me/twoushka_bot). All complaints will be reviewed and investigated promptly and fairly.
 
 The curator is obligated to respect the privacy and security of the reporter of any incident.
 
