@@ -1,6 +1,8 @@
 import murmanskRaw from './murmansk.md?raw';
 import topToursRaw from './top-tours-2025.md?raw';
 import japanRaw from './japan.md?raw';
+import altaiRaw from './altai.md?raw';
+import arkhangelskRaw from './arkhangelsk.md?raw';
 
 export interface Article {
   slug: string;
@@ -37,10 +39,30 @@ export const articles: Article[] = [
     priceRub: 1500,
   },
   {
+    slug: 'altai',
+    title: 'Алтай',
+    region: 'altai',
+    summary:
+      'Лето 2026. Чуйский тракт, Каракольские озёра, Курайская степь, Уймонская долина — маршруты от тех, кто там ходил пешком.',
+    body: altaiRaw,
+    gated: true,
+    comingSoon: true,
+  },
+  {
+    slug: 'arkhangelsk',
+    title: 'Архангельск',
+    region: 'arkhangelsk',
+    summary:
+      'Осень 2026. Соловки, Кенозерье, Пинежские пещеры, Малые Корелы — карта, сезоны и опасности от местных.',
+    body: arkhangelskRaw,
+    gated: true,
+    comingSoon: true,
+  },
+  {
     slug: 'japan',
     title: 'Япония',
     region: 'japan',
-    summary: 'Скоро. Авторский гайд по Японии в разработке.',
+    summary: 'Авторский гайд по Японии в разработке.',
     body: japanRaw,
     gated: true,
     comingSoon: true,
