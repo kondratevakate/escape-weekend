@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Claude Code local state (worktrees, plugin caches, session metadata).
+# Per-user, never to be committed.
+.claude/

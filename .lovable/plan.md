@@ -1,3 +1,9 @@
+> ⚠️ **DEPRECATED — historical record only.**
+> Lovable was dropped as the deployment platform; the project now auto-deploys from
+> GitHub `main` to Cloudflare Pages. The plan documented below was executed in commits
+> `f62b238` (rebrand + design sweep) and `ddbbb3e` (buyer welcome). See
+> `../CLAUDE.md` and `../README.md` for the current product picture. This file is
+> kept for traceability — do **not** add new tasks here.
 
 ## Цель
 1. Переименовать проект: **Hedonist Odyssey → Escape Weekend от Катюшка 2 Ушка**
