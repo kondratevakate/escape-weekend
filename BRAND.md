@@ -1,4 +1,4 @@
-# WoWAtlas — Brand & Tone of Voice
+# Escape Weekend — Brand & Tone of Voice
 
 > Single source of truth for product copy, design, and community communication.
 > If a piece of UI text or marketing material contradicts this document, this document wins.
@@ -10,7 +10,7 @@
 > **EN:** We help people find unbeaten places — and the people who actually know them.
 > **RU:** Помогаем находить нехоженые места и людей, которые их знают.
 
-WoWAtlas is not a directory. It's a niche community map for **adventure-travel enthusiasts** who want depth, honesty, and locals over polish, ads, and SEO slop.
+Escape Weekend is not a directory. It's a niche community map for **adventure-travel enthusiasts** who want depth, honesty, and locals over polish, ads, and SEO slop.
 
 ## Audience
 

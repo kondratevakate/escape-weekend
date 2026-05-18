@@ -11,35 +11,23 @@ export const ExploreCard = ({ onStart }: ExploreCardProps) => {
   return (
     <button
       onClick={onStart}
-      className="relative w-full overflow-hidden rounded-lg text-left group"
+      className="relative w-full overflow-hidden rounded-lg text-left group border border-border bg-card hover:bg-muted/60 transition-colors"
     >
-      {/* Background image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
-        style={{ 
-          backgroundImage: 'url(https://images.unsplash.com/photo-1483347756197-71ef80e95f73?w=600&h=400&fit=crop)',
-        }}
-      />
-      
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
-      
-      {/* Content */}
-      <div className="relative p-2.5 min-h-[60px] flex items-end justify-between gap-2">
+      <div className="relative p-2.5 min-h-[60px] flex items-center justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-0.5">
-            <Compass className="h-3 w-3 text-white shrink-0" />
-            <span className="text-white font-semibold text-xs truncate">
-              {language === 'ru' ? 'Свайпай и открывай' : 'Swipe & Discover'}
+            <Compass className="h-3 w-3 text-primary shrink-0" />
+            <span className="font-semibold text-xs text-foreground truncate">
+              {language === 'ru' ? 'Быстрый просмотр' : 'Quick scan'}
             </span>
           </div>
-          <p className="text-white/70 text-[10px] line-clamp-1">
-            {language === 'ru' ? 'Листайте места как карточки' : 'Browse places like cards'}
+          <p className="text-muted-foreground text-[10px] line-clamp-1">
+            {language === 'ru' ? 'Карточки одна за другой — пролистать все места за 2 минуты' : 'Cards one by one — flip through every place in 2 minutes'}
           </p>
         </div>
-        
-        <div className="shrink-0 h-6 w-6 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/30 transition-colors">
-          <ChevronRight className="h-3.5 w-3.5 text-white" />
+
+        <div className="shrink-0 h-6 w-6 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+          <ChevronRight className="h-3.5 w-3.5 text-foreground" />
         </div>
       </div>
     </button>

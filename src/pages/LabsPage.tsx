@@ -25,7 +25,7 @@ const LabsPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-8">
-      <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40">
+      <header className="border-b border-border bg-background/95 sticky top-0 z-40">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
           <Link
             to="/"

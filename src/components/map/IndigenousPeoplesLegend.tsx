@@ -63,8 +63,8 @@ export const IndigenousPeoplesLegend = memo(({ isVisible, onPeopleClick }: Indig
   if (!isVisible) return null;
 
   return (
-    <div className="absolute bottom-16 left-2 z-[1000] 
-                    bg-background/95 backdrop-blur-sm 
+    <div className="absolute bottom-16 left-2 z-[1000]
+                    bg-background/95
                     rounded-lg shadow-lg border max-w-[220px]">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger className="flex items-center justify-between 

@@ -46,7 +46,7 @@ export const CookieConsent = () => {
     >
       <div className="flex items-stretch">
         {/* Main content - slides out */}
-        <div className="bg-background/80 backdrop-blur-md border border-l-0 rounded-r-xl py-3 px-4 shadow-lg max-w-xs">
+        <div className="bg-background/95 border border-l-0 rounded-r-xl py-3 px-4 shadow-lg max-w-xs">
           <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
             {t('cookies.message')}
           </p>
@@ -75,7 +75,7 @@ export const CookieConsent = () => {
         {/* Tab handle */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex flex-col items-center justify-center gap-1 px-2 py-3 bg-background/60 backdrop-blur-sm border border-l-0 rounded-r-lg hover:bg-background/80 transition-colors"
+          className="flex flex-col items-center justify-center gap-1 px-2 py-3 bg-background/90 border border-l-0 rounded-r-lg hover:bg-background transition-colors"
         >
           <Cookie className="h-4 w-4 text-muted-foreground" />
           <ChevronRight 

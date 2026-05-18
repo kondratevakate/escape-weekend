@@ -57,10 +57,10 @@ const CreatorPublicPage = () => {
     <div className="min-h-screen bg-gradient-to-b from-primary/8 via-background to-background">
       {/* Floating back + share */}
       <div className="fixed top-4 left-4 right-4 z-50 flex justify-between pointer-events-none">
-        <Button variant="secondary" size="sm" className="pointer-events-auto shadow-md backdrop-blur-sm bg-background/80" onClick={() => navigate(-1)}>
+        <Button variant="secondary" size="sm" className="pointer-events-auto shadow-md bg-background/95" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4 mr-1" />{isRu ? 'Назад' : 'Back'}
         </Button>
-        <Button variant="secondary" size="sm" className="pointer-events-auto shadow-md backdrop-blur-sm bg-background/80" onClick={handleShare}>
+        <Button variant="secondary" size="sm" className="pointer-events-auto shadow-md bg-background/95" onClick={handleShare}>
           <Share2 className="h-4 w-4 mr-1" />{isRu ? 'Поделиться' : 'Share'}
         </Button>
       </div>
@@ -84,7 +84,7 @@ const CreatorPublicPage = () => {
         {/* ── Route Planning CTA ── */}
         {profile.routePlanEnabled && profile.routePlanPrice && (
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-[1px]">
-            <div className="rounded-2xl bg-gradient-to-r from-primary/10 to-primary/5 backdrop-blur-sm p-5 text-center space-y-3">
+            <div className="rounded-2xl bg-card p-5 text-center space-y-3">
               <div className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-primary/15">
                 <Navigation className="h-5 w-5 text-primary" />
               </div>

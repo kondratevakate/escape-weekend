@@ -2,7 +2,7 @@
 
 ## Our Pledge
 
-We as members, contributors, and curators pledge to make participation in WoWAtlas a harassment-free experience for everyone — regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, religion, or sexual identity and orientation.
+We as members, contributors, and curators pledge to make participation in Escape Weekend a harassment-free experience for everyone — regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, religion, or sexual identity and orientation.
 
 We pledge to act and interact in ways that contribute to an open, welcoming, diverse, inclusive, and healthy community.
 
@@ -43,4 +43,4 @@ The curator is obligated to respect the privacy and security of the reporter of 
 
 ## Attribution
 
-This Code of Conduct is adapted from the [Contributor Covenant, version 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html), with adjustments specific to WoWAtlas's anti-AI-slop and anti-hidden-promotion stance.
+This Code of Conduct is adapted from the [Contributor Covenant, version 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html), with adjustments specific to Escape Weekend's anti-AI-slop and anti-hidden-promotion stance.

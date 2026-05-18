@@ -15,12 +15,12 @@ const ArticlesIndexPage = () => {
       <main className="container mx-auto px-4 pt-28 pb-20 max-w-5xl">
         <header className="mb-10">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3">
-            {isRu ? 'Гайды и материалы' : 'Guides and articles'}
+            {isRu ? 'Гиды по регионам' : 'Region guides'}
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl">
             {isRu
-              ? 'Авторские маршруты по любимым направлениям. Часть статей открытая, часть — для покупателей.'
-              : 'Curated guides for our favourite destinations. Some articles are open, some are for buyers.'}
+              ? 'Мурманск, Хибины, Териберка — сколько займут дороги, в какие месяцы что закрыто, где автобусы уже всё затоптали. Написано теми, кто туда ездит сам. Без AI-генерации.'
+              : 'Murmansk, Khibiny, Teriberka — how long the roads take, which months close which routes, where tour buses have ruined the spot. Written by people who actually go. No AI-generated text.'}
           </p>
         </header>
 

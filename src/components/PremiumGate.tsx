@@ -32,16 +32,16 @@ export const PremiumGate = ({ children, feature }: PremiumGateProps) => {
       </div>
       <div className="space-y-2">
         <h2 className="text-xl font-bold text-foreground">
-          {isRu ? 'Премиум-функция' : 'Premium Feature'}
+          {isRu ? 'Это для покупателей гайда' : 'For guide buyers only'}
         </h2>
         <p className="text-sm text-muted-foreground">
           {feature
             ? (isRu
-              ? `${feature} — доступна владельцам гайда. Получите доступ через Telegram-бот.`
-              : `${feature} is available to guide owners. Get access via our Telegram bot.`)
+              ? `${feature} открывается после покупки гайда по Мурманску — 1500₽ в боте.`
+              : `${feature} unlocks after you buy the Murmansk guide — 1500₽ in the bot.`)
             : (isRu
-              ? 'Эта функция доступна владельцам гайда. Получите доступ через Telegram-бот.'
-              : 'This feature is available to guide owners. Get access via our Telegram bot.')}
+              ? 'Это открывается после покупки гайда по Мурманску — 1500₽ в боте.'
+              : 'This unlocks after you buy the Murmansk guide — 1500₽ in the bot.')}
         </p>
       </div>
       <Button asChild size="lg" className="w-full gap-2">

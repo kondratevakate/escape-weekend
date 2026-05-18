@@ -16,13 +16,13 @@ export const LockedScreen = () => {
         <div className="space-y-2">
           <h1 className="text-2xl font-bold text-foreground">
             {language === 'ru'
-              ? 'Доступ только для владельцев гайда 🗺'
-              : 'Access for guide owners only 🗺'}
+              ? 'Это для покупателей гайда'
+              : 'For guide buyers only'}
           </h1>
           <p className="text-sm text-muted-foreground">
             {language === 'ru'
-              ? 'Получите доступ через нашего Telegram-бота'
-              : 'Get access via our Telegram bot'}
+              ? 'Гид по Мурманску — 1500₽ в боте. После оплаты придёт ссылка с доступом.'
+              : 'Murmansk guide — 1500₽ in the bot. After payment you get an access link.'}
           </p>
         </div>
 

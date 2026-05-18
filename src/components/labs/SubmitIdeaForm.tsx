@@ -43,8 +43,8 @@ export const SubmitIdeaForm = () => {
       </header>
       <p className="text-sm text-muted-foreground mb-4">
         {ru
-          ? 'Что бы ты хотел увидеть в WoWAtlas? Опиши кратко — отправим в чат куратора.'
-          : 'What would you like to see in WoWAtlas? Describe briefly — we will receive it in our curator chat.'}
+          ? 'Что бы ты хотел увидеть в Escape Weekend? Опиши кратко — отправим в чат куратора.'
+          : 'What would you like to see in Escape Weekend? Describe briefly — we will receive it in our curator chat.'}
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-3">

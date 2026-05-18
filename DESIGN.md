@@ -1,4 +1,4 @@
-# WoWAtlas — Design System
+# Escape Weekend — Design System
 
 > Visual tokens, component rules, and motion guidelines.
 > Read alongside [`BRAND.md`](./BRAND.md) (voice) and [`ARCHITECTURE.md`](./ARCHITECTURE.md) (code).

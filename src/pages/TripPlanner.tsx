@@ -222,7 +222,7 @@ const TripPlannerContent = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border/50">
+      <header className="sticky top-0 z-50 bg-background/95 border-b border-border">
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/">

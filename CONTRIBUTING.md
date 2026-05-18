@@ -1,4 +1,4 @@
-# Contributing to WoWAtlas
+# Contributing to Escape Weekend
 
 Thank you for considering a contribution. This project survives because real people add real places, real warnings, and real code. No AI slop, no fake content.
 
@@ -30,8 +30,8 @@ Pick an issue labeled `good-first-issue` or open a discussion first if it's a su
 ## Development setup
 
 ```sh
-git clone https://github.com/YOUR_USERNAME/wowatlas.git
-cd wowatlas
+git clone git@github.com:kondratevakate/escape-weekend.git
+cd escape-weekend
 npm install
 npm run dev
 ```

@@ -1,4 +1,4 @@
-# WoWAtlas — Architecture
+# Escape Weekend — Architecture
 
 > Map of the codebase for new contributors. If you've never touched the project, read this first.
 

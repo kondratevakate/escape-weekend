@@ -16,7 +16,7 @@ You'll get an acknowledgement within 72 hours. We aim to ship a fix or a mitigat
 
 ## Scope
 
-WoWAtlas is currently a client-side app. The most likely attack surfaces are:
+Escape Weekend is currently a client-side app (with a thin Cloudflare Pages/Workers proxy for the LLM trip-planner). The most likely attack surfaces are:
 
 - XSS via user-submitted club post content (markdown rendering)
 - Malicious payloads in `locations.json` PRs (we manually review every place PR)

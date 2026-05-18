@@ -6,7 +6,7 @@ Where the data on the map comes from, and what licenses it carries.
 |---|---|---|
 | Base map tiles | [CartoDB Positron](https://carto.com/basemaps/) | Free for non-commercial use, attribution required |
 | Underlying geodata | [OpenStreetMap](https://www.openstreetmap.org) contributors | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/) |
-| Places (`locations.json`) | Curated by the WoWAtlas community | AGPL-3.0 (same as code) |
+| Places (`locations.json`) | Curated by the Escape Weekend community | AGPL-3.0 (same as code) |
 | Hazards (`hazardsLayer.ts`) | News reports, ranger statements, member experience | Each entry has a `source` field |
 | Indigenous peoples | Public ethnographic sources, peer-reviewed | Cited per entry |
 | UNESCO sites | [UNESCO World Heritage list](https://whc.unesco.org/) | Public domain |
@@ -18,7 +18,7 @@ When you embed or fork the map, you **must** keep:
 
 1. The OpenStreetMap attribution link in the bottom-right corner of the map (Leaflet does this by default — don't strip it).
 2. The CartoDB attribution.
-3. A link back to the WoWAtlas source if you redistribute substantial portions of `locations.json` (AGPL-3.0 obligation).
+3. A link back to the Escape Weekend source if you redistribute substantial portions of `locations.json` (AGPL-3.0 obligation).
 
 ## How to add data responsibly
 

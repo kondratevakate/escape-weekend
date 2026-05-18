@@ -2,12 +2,19 @@ export type Language = 'ru' | 'en';
 
 export const translations = {
   ru: {
-    // Landing
+    // Landing — currently not rendered on /. Kept for a future marketing landing route.
+    // Voice rules: BRAND.md §Voice.2 "concrete, not flowery". Variant B active (peer authority).
+    // Alternatives (swap headline + subheadline below):
+    //   A) headline: 'Куда ехать в Мурманск — без турагентств и SEO-сайтов.'
+    //      sub:      '120+ мест от тех, кто там был. Без AI-обзоров, без «топ-10», без партнёрок с тур-операторами. Гид по Мурманску — 1500₽, AI-помощник по маршрутам в комплекте.'
+    //   C) headline: 'Мурманск, Хибины, Териберка — окно февраль–март, дороги ещё держат.'
+    //      sub:      'Карта с честными предупреждениями о дорогах, сезонах и опасностях. Платный гид по Мурманску — 1500₽, AI-помощник по маршрутам в комплекте.'
     landing: {
       brand: 'Escape Weekend',
-      headline: 'Откройте красоту Кольского полуострова',
-      subheadline: 'Курированная подборка лучших мест — от северного сияния до древних гор. Исследуйте, сохраняйте, делитесь.',
-      cta: 'Открыть карту',
+      headline: 'Карта Кольского от тех, кто там реально был.',
+      subheadline: '120+ мест с честными комментариями: где автобусы уже всё затоптали, где связи нет 40 км, где можно увидеть китов без переплат. Гид по Мурманску — 1500₽, AI-планировщик в комплекте.',
+      cta: 'Гид по Мурманску · 1500₽',
+      ctaSecondary: 'Сначала открыть карту →',
       noPlaces: 'Нет мест для отображения',
     },
     
@@ -74,15 +81,16 @@ export const translations = {
       allViewed: 'Вы просмотрели все места!',
     },
     
-    // AI Sidebar
+    // AI Sidebar — suggestions written in BRAND.md §Voice.2 voice (concrete questions
+    // a real traveller would ask). Avoid generic "что посмотреть" — that's tour-operator speech.
     ai: {
       title: 'AI Помощник',
       placeholder: 'Спросите что-нибудь...',
       thinking: 'Думаю...',
       suggestions: [
-        'Что посмотреть за 3 дня?',
-        'Где увидеть северное сияние?',
-        'Как добраться до Териберки?',
+        'Хибины за 2 дня без машины — реально?',
+        'Сияние в феврале — где встать на ночь?',
+        'Что брать в Териберку зимой?',
       ],
     },
     
@@ -170,12 +178,14 @@ export const translations = {
   },
   
   en: {
-    // Landing
+    // Landing — currently not rendered on /. Kept for a future marketing landing route.
+    // BRAND.md §Voice.4: independent EN, not a translation of the RU above. Variant B (peer authority).
     landing: {
       brand: 'Escape Weekend',
-      headline: 'Discover the beauty of Kola Peninsula',
-      subheadline: 'A curated collection of the best places — from Northern Lights to ancient mountains. Explore, save, share.',
-      cta: 'Open map',
+      headline: 'A Kola map for people who plan their own trips.',
+      subheadline: '120+ places with honest field notes — closed roads, no-signal zones, when the tour buses arrive. Murmansk guide 1500₽, AI trip-planner included.',
+      cta: 'Get the Murmansk guide · 1500₽',
+      ctaSecondary: 'Open the map first →',
       noPlaces: 'No places to display',
     },
     
@@ -243,14 +253,15 @@ export const translations = {
     },
     
     // AI Sidebar
+    // AI Sidebar — written independently (BRAND.md §Voice.4), not translated from RU.
     ai: {
       title: 'AI Assistant',
       placeholder: 'Ask me anything...',
       thinking: 'Thinking...',
       suggestions: [
-        'What to see in 3 days?',
-        'Where to see Northern Lights?',
-        'How to get to Teriberka?',
+        'Khibiny in 2 days without a car — realistic?',
+        'Aurora in February — where to overnight?',
+        'What to pack for Teriberka in winter?',
       ],
     },
     

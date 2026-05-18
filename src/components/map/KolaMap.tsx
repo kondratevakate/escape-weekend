@@ -264,7 +264,7 @@ export const KolaMap = ({ embedded = false }: KolaMapProps) => {
       )}
 
       {/* Interactive Legend - right side, hidden on mobile */}
-      <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 z-[1000] bg-background/95 backdrop-blur-sm rounded-xl p-3 shadow-lg border">
+      <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 z-[1000] bg-background/95 rounded-xl p-3 shadow-lg border">
         {/* Favorites filter */}
         <button
           onClick={handleToggleFavoritesOnly}

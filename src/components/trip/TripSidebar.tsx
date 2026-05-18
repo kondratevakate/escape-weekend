@@ -61,7 +61,7 @@ export const TripSidebar = memo(({
   };
 
   return (
-    <Card className="p-4 space-y-5 bg-card/80 backdrop-blur-sm">
+    <Card className="p-4 space-y-5 bg-card">
       {/* Dates */}
       <div>
         <label className="text-sm font-medium text-muted-foreground mb-2 block">

@@ -55,7 +55,7 @@ export const DayColumn = memo(({
 
   return (
     <Card
-      className="flex-shrink-0 w-64 md:w-72 p-4 bg-card/50 backdrop-blur-sm border-border/50"
+      className="flex-shrink-0 w-64 md:w-72 p-4 bg-card/90 border-border"
       onDragOver={onDragOver}
       onDrop={(e) => onDrop(e, day.id, day.places.length)}
     >

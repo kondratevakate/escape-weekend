@@ -1,6 +1,6 @@
 ---
 name: ✨ Feature request
-about: Suggest an idea for WoWAtlas
+about: Suggest an idea for Escape Weekend
 title: "[feat] "
 labels: enhancement
 ---

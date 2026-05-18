@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Map, Layers, Search, Bookmark } from 'lucide-react';
+import { Map, BookOpen, Search, Bookmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+// localStorage key kept stable across rebrands — renaming would re-trigger the modal
+// for every existing user. See .lovable/plan.md for the data-preservation rationale.
 const STORAGE_KEY = 'wowatlas_welcome_seen';
 
 interface WelcomeModalProps {
@@ -15,12 +18,13 @@ interface WelcomeModalProps {
 
 export const WelcomeModal = ({
   onExploreMap,
-  onSwipeMode,
+  onSwipeMode: _onSwipeMode,
   onHighlightCollections,
   onOpenStash,
 }: WelcomeModalProps) => {
   const [open, setOpen] = useState(false);
   const { language } = useLanguage();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const seen = localStorage.getItem(STORAGE_KEY);
@@ -41,39 +45,39 @@ export const WelcomeModal = ({
 
   const actions = [
     {
-      icon: Map,
-      emoji: '🗺',
-      titleRu: 'Исследуй карту',
-      titleEn: 'Explore the map',
-      descRu: 'Все места на интерактивной карте',
-      descEn: 'All places on an interactive map',
-      onClick: () => handleAction(onExploreMap),
+      icon: BookOpen,
+      emoji: '📖',
+      titleRu: 'Гиды по регионам',
+      titleEn: 'Region guides',
+      descRu: 'Мурманск — 1500₽, дальше Алтай и Архангельск',
+      descEn: 'Murmansk — 1500₽, Altai & Arkhangelsk coming',
+      onClick: () => handleAction(() => navigate('/articles')),
     },
     {
-      icon: Layers,
-      emoji: '🃏',
-      titleRu: 'Свайп-режим',
-      titleEn: 'Swipe mode',
-      descRu: 'Листай карточки как в Tinder',
-      descEn: 'Swipe cards like Tinder',
-      onClick: () => handleAction(onSwipeMode),
+      icon: Map,
+      emoji: '🗺',
+      titleRu: 'Карта',
+      titleEn: 'Map',
+      descRu: '120+ мест с честными комментариями',
+      descEn: '120+ places with honest field notes',
+      onClick: () => handleAction(onExploreMap),
     },
     {
       icon: Search,
       emoji: '🔍',
-      titleRu: 'Фильтруй по интересам',
-      titleEn: 'Filter by interests',
-      descRu: 'Коллекции: киты, сияние, хайкинг...',
-      descEn: 'Collections: whales, aurora, hiking...',
+      titleRu: 'Фильтры по теме',
+      titleEn: 'Filter by topic',
+      descRu: 'Сияние, киты, хайкинг, каяк, история',
+      descEn: 'Aurora, whales, hiking, kayak, history',
       onClick: () => handleAction(onHighlightCollections),
     },
     {
       icon: Bookmark,
-      emoji: '🗄',
-      titleRu: 'Собери маршрут',
-      titleEn: 'Build your route',
-      descRu: 'Сохраняй места в свой тайник',
-      descEn: 'Save places to your secret stash',
+      emoji: '🔖',
+      titleRu: 'Тайник',
+      titleEn: 'Stash',
+      descRu: 'Сохраняй места — с месяцем поездки',
+      descEn: 'Save places with the month you plan to go',
       onClick: () => handleAction(onOpenStash),
     },
   ];
@@ -82,7 +86,7 @@ export const WelcomeModal = ({
     <Dialog open={open} onOpenChange={(v) => { if (!v) dismiss(); }}>
       <DialogContent className="sm:max-w-md p-6 gap-5">
         <DialogTitle className="text-center text-lg font-bold">
-          {language === 'ru' ? 'Что тут можно сделать?' : 'What can you do here?'}
+          {language === 'ru' ? 'Что тут есть' : "What's here"}
         </DialogTitle>
 
         <div className="grid grid-cols-2 gap-3">

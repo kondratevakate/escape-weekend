@@ -43,7 +43,7 @@ export interface ClubApplicationPayload {
 
 export const sendApplicationToBot = (app: ClubApplicationPayload): void => {
   const text = encodeURIComponent(
-    `🆕 Заявка в клуб WoWAtlas\n\n` +
+    `🆕 Заявка в клуб Escape Weekend\n\n` +
       `👤 ${app.name}\n` +
       `📬 ${app.contact}\n` +
       `🏷 ${app.niches.join(', ')}\n\n` +
@@ -73,7 +73,7 @@ export const shareToTelegram = (url: string, text: string): void => {
  */
 export const openSupportFeature = (ideaId: string, amount: number, ideaTitle: string): void => {
   const text = encodeURIComponent(
-    `💛 Хочу поддержать идею WoWAtlas Labs\n\n` +
+    `💛 Хочу поддержать идею Escape Weekend Labs\n\n` +
       `Идея: ${ideaTitle}\n` +
       `Сумма: ${amount} ₽\n\n` +
       `Напишите, как перевести.`
@@ -97,7 +97,7 @@ export interface LabsSubmissionPayload {
 
 export const sendIdeaToBot = (payload: LabsSubmissionPayload): void => {
   const text = encodeURIComponent(
-    `💡 Новая идея в WoWAtlas Labs\n\n` +
+    `💡 Новая идея в Escape Weekend Labs\n\n` +
       `📝 ${payload.title}\n\n` +
       `${payload.description}\n\n` +
       `💰 Ожидаемая стоимость: ${payload.expectedPrice || '—'}`
