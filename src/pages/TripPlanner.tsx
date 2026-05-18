@@ -14,7 +14,8 @@ import { kolaPlaces } from '@/data/locations';
 import { TripDay } from '@/types/trip';
 import { toast } from 'sonner';
 import { planTrip, isLLMConfigured, LLMUnavailableError, LLMRequestError } from '@/lib/llm';
-import { getCredits, decrementCredits } from '@/lib/credits';
+import { getCredits, decrementCredits, pluralCreditsRu } from '@/lib/credits';
+import { cn } from '@/lib/utils';
 
 const TripPlanner = () => {
   const { language } = useLanguage();
@@ -237,9 +238,21 @@ const TripPlannerContent = () => {
           </div>
           <div className="flex items-center gap-2">
             {accessToken && (
-              <span className="hidden sm:inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <span
+                className={cn(
+                  'inline-flex items-center gap-1 text-xs',
+                  creditsRemaining === 0 ? 'text-destructive' : 'text-muted-foreground'
+                )}
+                title={
+                  creditsRemaining === 0
+                    ? (isRu ? 'Кредиты закончились' : 'Out of credits')
+                    : undefined
+                }
+              >
                 <Sparkles className="h-3.5 w-3.5" />
-                {creditsRemaining} {isRu ? 'кредитов' : 'credits'}
+                {isRu
+                  ? `${creditsRemaining} ${pluralCreditsRu(creditsRemaining)}`
+                  : `${creditsRemaining} ${creditsRemaining === 1 ? 'credit' : 'credits'}`}
               </span>
             )}
             <Button variant="outline" size="sm" disabled={totalPlaces === 0}>
@@ -262,6 +275,7 @@ const TripPlannerContent = () => {
               onGenerateAI={handleGenerateAI}
               isGenerating={isGenerating}
               totalPlaces={totalPlaces}
+              creditsRemaining={accessToken ? creditsRemaining : null}
             />
 
             {/* AI Result */}

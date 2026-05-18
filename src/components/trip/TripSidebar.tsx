@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { Calendar, Car, Sparkles } from 'lucide-react';
 import { TripPlan, VehicleType, vehicleLabels, interestOptions } from '@/types/trip';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { pluralCreditsRu } from '@/lib/credits';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -30,6 +31,12 @@ interface TripSidebarProps {
   onGenerateAI: () => void;
   isGenerating?: boolean;
   totalPlaces: number;
+  /**
+   * Live credit balance. `null` = no buyer token in scope (telegram WebApp /
+   * dev mode / admin) — credits UI is hidden. `0` = exhausted, AI button is
+   * disabled with a referral hint. Positive = normal operation.
+   */
+  creditsRemaining?: number | null;
 }
 
 export const TripSidebar = memo(({
@@ -40,6 +47,7 @@ export const TripSidebar = memo(({
   onGenerateAI,
   isGenerating = false,
   totalPlaces,
+  creditsRemaining = null,
 }: TripSidebarProps) => {
   const { language } = useLanguage();
   const isRu = language === 'ru';
@@ -160,15 +168,23 @@ export const TripSidebar = memo(({
         className="w-full"
         size="lg"
         onClick={onGenerateAI}
-        disabled={!plan.startDate || !plan.endDate || isGenerating}
+        disabled={!plan.startDate || !plan.endDate || isGenerating || creditsRemaining === 0}
       >
         <Sparkles className="h-4 w-4 mr-2" />
         {isGenerating
           ? (isRu ? 'Генерирую...' : 'Generating...')
-          : (isRu ? 'AI: Собери маршрут' : 'AI: Build route')}
+          : creditsRemaining === 0
+            ? (isRu ? 'Кредиты закончились' : 'Out of credits')
+            : (isRu ? 'AI: Собери маршрут' : 'AI: Build route')}
       </Button>
       <p className="text-xs text-center text-muted-foreground -mt-2">
-        {isRu ? '1 кредит' : '1 credit'}
+        {creditsRemaining === 0
+          ? (isRu ? 'Пригласи друга в боте — +50 кредитов' : 'Invite a friend in the bot — +50 credits')
+          : creditsRemaining != null
+            ? (isRu
+                ? `Осталось ${creditsRemaining} ${pluralCreditsRu(creditsRemaining)}`
+                : `${creditsRemaining} ${creditsRemaining === 1 ? 'credit' : 'credits'} left`)
+            : (isRu ? '1 кредит за вызов' : '1 credit per call')}
       </p>
     </Card>
   );
